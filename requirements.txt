@@ -1,2 +1,2 @@
 flask
-fask-core
+flask-cors
