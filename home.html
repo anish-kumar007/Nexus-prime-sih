@@ -1,0 +1,1246 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>Smriti - Elderly Companion</title>
+
+    <!-- Leaflet CSS -->
+    <link
+        rel="stylesheet"
+        href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"
+    />
+
+    <style>
+        * {
+            box-sizing: border-box;
+        }
+
+        body {
+            margin: 0;
+            font-family: Arial, sans-serif;
+            background: #f5f7fa;
+            color: #17202a;
+        }
+
+        button {
+            font-family: inherit;
+            cursor: pointer;
+        }
+
+        .app {
+            max-width: 900px;
+            min-height: 100vh;
+            margin: auto;
+            background: white;
+        }
+
+        /* HEADER */
+
+        header {
+            background: #315c8c;
+            color: white;
+            padding: 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        header h1 {
+            margin: 0;
+            font-size: 32px;
+        }
+
+        .profile-btn {
+            background: white;
+            color: #315c8c;
+            border: none;
+            border-radius: 50%;
+            width: 55px;
+            height: 55px;
+            font-size: 25px;
+        }
+
+        /* SCREENS */
+
+        .screen {
+            display: none;
+            padding: 30px;
+            min-height: calc(100vh - 95px);
+        }
+
+        .screen.active {
+            display: block;
+        }
+
+        h2 {
+            font-size: 36px;
+            margin-top: 5px;
+        }
+
+        p {
+            font-size: 24px;
+            line-height: 1.5;
+        }
+
+        /* HOME */
+
+        .welcome {
+            text-align: center;
+            margin-bottom: 30px;
+        }
+
+        .welcome h2 {
+            margin-bottom: 10px;
+        }
+
+        .home-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 20px;
+        }
+
+        .main-btn {
+            min-height: 130px;
+            border: none;
+            border-radius: 20px;
+            font-size: 28px;
+            font-weight: bold;
+            padding: 20px;
+            background: #e7eef7;
+            color: #17202a;
+        }
+
+        .main-btn:hover {
+            transform: scale(1.02);
+        }
+
+        .games-btn {
+            background: #d9ecff;
+        }
+
+        .progress-btn {
+            background: #e4f5dc;
+        }
+
+        .family-btn {
+            background: #fff0cf;
+        }
+
+        .sos-btn {
+            background: #ffdcdc;
+        }
+
+        /* ASK SMRITI */
+
+        .smriti {
+            margin-top: 30px;
+            width: 100%;
+            padding: 22px;
+            border: none;
+            border-radius: 18px;
+            background: #6947a8;
+            color: white;
+            font-size: 27px;
+            font-weight: bold;
+        }
+
+        /* GAME CARDS */
+
+        .game-card {
+            background: #eef4fb;
+            padding: 25px;
+            margin: 20px 0;
+            border-radius: 20px;
+        }
+
+        .game-card button {
+            width: 100%;
+            min-height: 80px;
+            margin: 10px 0;
+            border: 2px solid #315c8c;
+            border-radius: 15px;
+            background: white;
+            font-size: 26px;
+        }
+
+        .game-card button:hover {
+            background: #d9ecff;
+        }
+
+        .picture {
+            font-size: 100px;
+            text-align: center;
+            margin: 20px;
+        }
+
+        .feedback {
+            text-align: center;
+            font-size: 28px;
+            font-weight: bold;
+            min-height: 45px;
+            margin: 15px;
+        }
+
+        .score {
+            font-size: 25px;
+            font-weight: bold;
+            text-align: center;
+        }
+
+        /* GENERAL BUTTON */
+
+        .back-btn {
+            margin-top: 25px;
+            padding: 18px 28px;
+            font-size: 24px;
+            border: none;
+            border-radius: 15px;
+            background: #315c8c;
+            color: white;
+        }
+
+        .voice-btn {
+            background: #6947a8;
+            color: white;
+            border: none;
+            border-radius: 15px;
+            padding: 18px 25px;
+            font-size: 24px;
+            display: block;
+            margin: 15px auto;
+        }
+
+        /* PROGRESS */
+
+        .progress-box {
+            padding: 25px;
+            border-radius: 20px;
+            background: #eef7e9;
+            margin-bottom: 20px;
+        }
+
+        .big-number {
+            font-size: 55px;
+            font-weight: bold;
+        }
+
+        /* MAP */
+
+        #map {
+            height: 500px;
+            width: 100%;
+            border-radius: 20px;
+            margin-top: 20px;
+        }
+
+        .location-status {
+            font-size: 23px;
+            padding: 15px;
+            background: #eef4fb;
+            border-radius: 15px;
+            margin-top: 15px;
+        }
+
+        /* CONTACTS */
+
+        .contact {
+            padding: 20px;
+            margin: 15px 0;
+            background: #f0f3f7;
+            border-radius: 15px;
+            font-size: 24px;
+        }
+
+        .sos-option {
+            width: 100%;
+            padding: 30px;
+            margin: 15px 0;
+            font-size: 28px;
+            font-weight: bold;
+            border: none;
+            border-radius: 20px;
+        }
+
+        .lost {
+            background: #ffe9b3;
+        }
+
+        .emergency {
+            background: #ffcccc;
+        }
+
+        /* PROFILE */
+
+        .info-box {
+            padding: 20px;
+            background: #f1f3f5;
+            border-radius: 15px;
+            margin: 15px 0;
+            font-size: 23px;
+        }
+
+        /* MOBILE */
+
+        @media (max-width: 600px) {
+
+            .screen {
+                padding: 20px;
+            }
+
+            .home-grid {
+                grid-template-columns: 1fr;
+            }
+
+            h2 {
+                font-size: 30px;
+            }
+
+            p {
+                font-size: 20px;
+            }
+
+            .main-btn {
+                font-size: 24px;
+            }
+
+            #map {
+                height: 400px;
+            }
+        }
+    </style>
+</head>
+
+<body>
+
+<div class="app">
+
+    <!-- HEADER -->
+
+    <header>
+        <h1>🌿 Smriti</h1>
+
+        <button class="profile-btn" onclick="showScreen('profile')">
+            👤
+        </button>
+    </header>
+
+
+    <!-- HOME SCREEN -->
+
+    <section id="home" class="screen active">
+
+        <div class="welcome">
+            <h2>Welcome to Smriti</h2>
+
+            <p>
+                Your friendly companion for everyday activities,
+                memory exercises and staying connected with family.
+            </p>
+        </div>
+
+        <div class="home-grid">
+
+            <button
+                class="main-btn games-btn"
+                onclick="showScreen('games')">
+                🎮<br>
+                Games
+            </button>
+
+            <button
+                class="main-btn progress-btn"
+                onclick="showScreen('progress')">
+                📊<br>
+                Progress
+            </button>
+
+            <button
+                class="main-btn family-btn"
+                onclick="showScreen('family')">
+                👨‍👩‍👧<br>
+                Family Control
+            </button>
+
+            <button
+                class="main-btn sos-btn"
+                onclick="showScreen('sos')">
+                🆘<br>
+                SOS
+            </button>
+
+        </div>
+
+        <button
+            class="smriti"
+            onclick="askSmriti()">
+            🎙️ Ask Smriti
+        </button>
+
+    </section>
+
+
+    <!-- GAMES SCREEN -->
+
+    <section id="games" class="screen">
+
+        <h2>🎮 Games</h2>
+
+        <p>
+            Choose an activity.
+        </p>
+
+        <div class="game-card">
+
+            <h2>🍎 Word–Picture Match</h2>
+
+            <p>
+                Match the word with the correct picture.
+            </p>
+
+            <button onclick="startGame()">
+                ▶ Start Game
+            </button>
+
+        </div>
+
+        <div class="game-card">
+
+            <h2>🧠 Story / Sequence Memory</h2>
+
+            <p>
+                Remember a sequence of objects.
+            </p>
+
+            <button onclick="comingSoon()">
+                Coming Soon
+            </button>
+
+        </div>
+
+        <div class="game-card">
+
+            <h2>🌍 General Knowledge Quiz</h2>
+
+            <p>
+                Answer simple general knowledge questions.
+            </p>
+
+            <button onclick="comingSoon()">
+                Coming Soon
+            </button>
+
+        </div>
+
+        <button class="back-btn" onclick="showScreen('home')">
+            ← Back Home
+        </button>
+
+    </section>
+
+
+    <!-- WORD PICTURE GAME -->
+
+    <section id="wordGame" class="screen">
+
+        <h2>🍎 Word–Picture Match</h2>
+
+        <div class="score">
+            Score: <span id="gameScore">0</span>
+        </div>
+
+        <div class="game-card">
+
+            <p style="text-align:center">
+                Which picture matches:
+            </p>
+
+            <h2 id="wordQuestion"
+                style="text-align:center">
+                APPLE
+            </h2>
+
+            <div class="picture" id="gamePicture">
+                🍎
+            </div>
+
+            <div id="answers">
+
+                <button onclick="answer('APPLE')">
+                    APPLE
+                </button>
+
+                <button onclick="answer('HOUSE')">
+                    HOUSE
+                </button>
+
+                <button onclick="answer('TREE')">
+                    TREE
+                </button>
+
+            </div>
+
+            <div
+                id="feedback"
+                class="feedback">
+            </div>
+
+            <button
+                class="voice-btn"
+                onclick="voiceAnswer()">
+                🎙️ Speak Answer
+            </button>
+
+        </div>
+
+        <button
+            class="back-btn"
+            onclick="showScreen('games')">
+            ← Back to Games
+        </button>
+
+    </section>
+
+
+    <!-- PROGRESS -->
+
+    <section id="progress" class="screen">
+
+        <h2>📊 My Progress</h2>
+
+        <div class="progress-box">
+
+            <p>Word–Picture Match Score</p>
+
+            <div class="big-number" id="progressScore">
+                0
+            </div>
+
+        </div>
+
+        <div class="progress-box">
+
+            <p>Games Played</p>
+
+            <div class="big-number" id="gamesPlayed">
+                0
+            </div>
+
+        </div>
+
+        <p>
+            Keep practicing! Regular cognitive activities
+            can make the experience engaging and enjoyable.
+        </p>
+
+        <button
+            class="back-btn"
+            onclick="showScreen('home')">
+            ← Back Home
+        </button>
+
+    </section>
+
+
+    <!-- FAMILY CONTROL -->
+
+    <section id="family" class="screen">
+
+        <h2>👨‍👩‍👧 Family Control</h2>
+
+        <p>
+            Your saved family and healthcare contacts.
+        </p>
+
+        <div class="contact">
+            👩 Family Member 1<br>
+            <small>Quick Connect</small>
+        </div>
+
+        <div class="contact">
+            👨 Family Member 2<br>
+            <small>Quick Connect</small>
+        </div>
+
+        <div class="contact">
+            🏥 Doctor / Hospital<br>
+            <small>Healthcare Contact</small>
+        </div>
+
+        <p>
+            Up to 5 family contacts can be saved.
+        </p>
+
+        <button
+            class="back-btn"
+            onclick="showScreen('home')">
+            ← Back Home
+        </button>
+
+    </section>
+
+
+    <!-- SOS -->
+
+    <section id="sos" class="screen">
+
+        <h2>🆘 SOS</h2>
+
+        <p>
+            Choose what kind of help you need.
+        </p>
+
+        <button
+            class="sos-option lost"
+            onclick="lostMyWay()">
+            📍 Lost My Way
+            <br>
+            <small>Share my location with family</small>
+        </button>
+
+        <button
+            class="sos-option emergency"
+            onclick="emergency()">
+            🚨 Emergency
+            <br>
+            <small>Alert saved contacts</small>
+        </button>
+
+        <button
+            class="back-btn"
+            onclick="showScreen('home')">
+            ← Back Home
+        </button>
+
+    </section>
+
+
+    <!-- PROFILE -->
+
+    <section id="profile" class="screen">
+
+        <h2>👤 Profile</h2>
+
+        <div class="info-box">
+            <strong>Personal Details</strong>
+            <br><br>
+            Name: Demo Patient
+        </div>
+
+        <div class="info-box">
+            <strong>Language</strong>
+            <br><br>
+            English
+        </div>
+
+        <div class="info-box">
+            <strong>GPS Tracking</strong>
+            <br><br>
+            Enabled
+        </div>
+
+        <div class="info-box">
+            <strong>Accessibility</strong>
+            <br><br>
+            Large text and voice interaction enabled.
+        </div>
+
+        <button
+            class="back-btn"
+            onclick="showScreen('home')">
+            ← Back Home
+        </button>
+
+    </section>
+
+
+    <!-- LOCATION -->
+
+    <section id="location" class="screen">
+
+        <h2>📍 My Location</h2>
+
+        <p>
+            Your current device location is shown below.
+        </p>
+
+        <div id="map"></div>
+
+        <div
+            id="locationStatus"
+            class="location-status">
+            Press "Find My Location" to locate this device.
+        </div>
+
+        <button
+            class="voice-btn"
+            onclick="getLocation()">
+            📍 Find My Location
+        </button>
+
+        <button
+            class="back-btn"
+            onclick="showScreen('home')">
+            ← Back Home
+        </button>
+
+    </section>
+
+</div>
+
+
+<!-- LEAFLET JS -->
+
+<script
+    src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js">
+</script>
+
+
+<script>
+
+    /* =========================
+       SCREEN NAVIGATION
+    ========================= */
+
+    function showScreen(screenName) {
+
+        document
+            .querySelectorAll(".screen")
+            .forEach(screen => {
+                screen.classList.remove("active");
+            });
+
+        document
+            .getElementById(screenName)
+            .classList.add("active");
+
+        if (screenName === "progress") {
+            updateProgress();
+        }
+
+        if (screenName === "location") {
+            setTimeout(() => {
+                initializeMap();
+            }, 100);
+        }
+    }
+
+
+    /* =========================
+       WORD PICTURE GAME
+    ========================= */
+
+    let score = Number(
+        localStorage.getItem("smritiScore") || 0
+    );
+
+    let gamesPlayed = Number(
+        localStorage.getItem("smritiGamesPlayed") || 0
+    );
+
+    let currentQuestion = 0;
+
+    const questions = [
+
+        {
+            word: "APPLE",
+            picture: "🍎",
+            answers: ["APPLE", "HOUSE", "TREE"],
+            correct: "APPLE"
+        },
+
+        {
+            word: "HOUSE",
+            picture: "🏠",
+            answers: ["TREE", "HOUSE", "APPLE"],
+            correct: "HOUSE"
+        },
+
+        {
+            word: "TREE",
+            picture: "🌳",
+            answers: ["APPLE", "TREE", "HOUSE"],
+            correct: "TREE"
+        }
+
+    ];
+
+
+    function startGame() {
+
+        currentQuestion = 0;
+
+        showScreen("wordGame");
+
+        displayQuestion();
+    }
+
+
+    function displayQuestion() {
+
+        const q = questions[currentQuestion];
+
+        document.getElementById(
+            "wordQuestion"
+        ).textContent = q.word;
+
+        document.getElementById(
+            "gamePicture"
+        ).textContent = q.picture;
+
+        const answers =
+            document.getElementById("answers");
+
+        answers.innerHTML = "";
+
+        q.answers.forEach(answerText => {
+
+            const button =
+                document.createElement("button");
+
+            button.textContent = answerText;
+
+            button.onclick = () =>
+                answer(answerText);
+
+            answers.appendChild(button);
+
+        });
+
+        document.getElementById(
+            "feedback"
+        ).textContent = "";
+    }
+
+
+    function answer(selectedAnswer) {
+
+        const q = questions[currentQuestion];
+
+        const feedback =
+            document.getElementById("feedback");
+
+        if (selectedAnswer === q.correct) {
+
+            score++;
+
+            feedback.textContent =
+                "✓ Correct! Well done!";
+
+        } else {
+
+            feedback.textContent =
+                "✗ Not quite. Try the next one!";
+        }
+
+        localStorage.setItem(
+            "smritiScore",
+            score
+        );
+
+        setTimeout(() => {
+
+            currentQuestion++;
+
+            if (currentQuestion >= questions.length) {
+
+                gamesPlayed++;
+
+                localStorage.setItem(
+                    "smritiGamesPlayed",
+                    gamesPlayed
+                );
+
+                feedback.textContent =
+                    "🎉 Game complete!";
+
+                setTimeout(() => {
+                    showScreen("progress");
+                }, 1200);
+
+            } else {
+
+                displayQuestion();
+
+            }
+
+        }, 900);
+
+        document.getElementById(
+            "gameScore"
+        ).textContent = score;
+    }
+
+
+    /* =========================
+       VOICE ANSWER
+    ========================= */
+
+    function voiceAnswer() {
+
+        if (!("webkitSpeechRecognition" in window) &&
+            !("SpeechRecognition" in window)) {
+
+            alert(
+                "Voice recognition is not supported in this browser."
+            );
+
+            return;
+        }
+
+        const SpeechRecognition =
+            window.SpeechRecognition ||
+            window.webkitSpeechRecognition;
+
+        const recognition =
+            new SpeechRecognition();
+
+        recognition.lang = "en-IN";
+
+        recognition.start();
+
+        recognition.onresult = function(event) {
+
+            const spoken =
+                event.results[0][0].transcript
+                .toUpperCase();
+
+            const q =
+                questions[currentQuestion];
+
+            let matchedAnswer = null;
+
+            q.answers.forEach(answer => {
+
+                if (spoken.includes(answer)) {
+                    matchedAnswer = answer;
+                }
+
+            });
+
+            if (matchedAnswer) {
+
+                answer(matchedAnswer);
+
+            } else {
+
+                document.getElementById(
+                    "feedback"
+                ).textContent =
+                    "I didn't understand. Please try again.";
+
+                speak(
+                    "I didn't understand. Please try again."
+                );
+            }
+        };
+    }
+
+
+    /* =========================
+       PROGRESS
+    ========================= */
+
+    function updateProgress() {
+
+        score = Number(
+            localStorage.getItem("smritiScore") || 0
+        );
+
+        gamesPlayed = Number(
+            localStorage.getItem("smritiGamesPlayed") || 0
+        );
+
+        document.getElementById(
+            "progressScore"
+        ).textContent = score;
+
+        document.getElementById(
+            "gamesPlayed"
+        ).textContent = gamesPlayed;
+    }
+
+
+    /* =========================
+       MAP
+    ========================= */
+
+    let map = null;
+    let locationMarker = null;
+
+
+    function initializeMap() {
+
+        if (map !== null) {
+
+            map.invalidateSize();
+
+            return;
+        }
+
+        map = L.map("map").setView(
+            [20.5937, 78.9629],
+            5
+        );
+
+        L.tileLayer(
+            "https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png",
+            {
+                attribution:
+                    '&copy; OpenStreetMap contributors'
+            }
+        ).addTo(map);
+    }
+
+
+    /* =========================
+       REAL GPS
+    ========================= */
+
+    function getLocation() {
+
+        const status =
+            document.getElementById(
+                "locationStatus"
+            );
+
+        if (!navigator.geolocation) {
+
+            status.textContent =
+                "GPS is not supported by this browser.";
+
+            return;
+        }
+
+        status.textContent =
+            "Finding your location...";
+
+        navigator.geolocation.getCurrentPosition(
+
+            function(position) {
+
+                const latitude =
+                    position.coords.latitude;
+
+                const longitude =
+                    position.coords.longitude;
+
+                if (!map) {
+                    initializeMap();
+                }
+
+                map.setView(
+                    [latitude, longitude],
+                    17
+                );
+
+                if (locationMarker) {
+                    map.removeLayer(locationMarker);
+                }
+
+                locationMarker =
+                    L.marker([
+                        latitude,
+                        longitude
+                    ])
+                    .addTo(map)
+                    .bindPopup(
+                        "📍 Your current location"
+                    )
+                    .openPopup();
+
+                status.textContent =
+                    "✓ Your current location has been found.";
+
+                speak(
+                    "Your current location has been found."
+                );
+            },
+
+            function(error) {
+
+                let message =
+                    "Unable to find your location.";
+
+                if (error.code === 1) {
+                    message =
+                        "Location permission was denied.";
+                }
+
+                if (error.code === 2) {
+                    message =
+                        "Your location is currently unavailable.";
+                }
+
+                if (error.code === 3) {
+                    message =
+                        "Location request timed out.";
+                }
+
+                status.textContent = message;
+
+                speak(message);
+            },
+
+            {
+                enableHighAccuracy: true,
+                timeout: 10000,
+                maximumAge: 0
+            }
+
+        );
+    }
+
+
+    /* =========================
+       ASK SMRITI
+    ========================= */
+
+    function askSmriti() {
+
+        const question =
+            prompt(
+                "Ask Smriti:\n\n" +
+                "Try: medicine, game, date, help"
+            );
+
+        if (!question) return;
+
+        const text =
+            question.toLowerCase();
+
+        let response =
+            "I'm sorry, I don't understand that question.";
+
+        if (
+            text.includes("medicine") ||
+            text.includes("tablet") ||
+            text.includes("medicine time")
+        ) {
+
+            response =
+                "Please follow the medicine schedule provided by your doctor.";
+
+        } else if (
+            text.includes("game") ||
+            text.includes("play")
+        ) {
+
+            response =
+                "You can play a cognitive game from the Games section.";
+
+        } else if (
+            text.includes("date") ||
+            text.includes("day")
+        ) {
+
+            response =
+                "Today is " +
+                new Date().toLocaleDateString(
+                    "en-IN",
+                    {
+                        weekday: "long",
+                        year: "numeric",
+                        month: "long",
+                        day: "numeric"
+                    }
+                );
+
+        } else if (
+            text.includes("help") ||
+            text.includes("emergency") ||
+            text.includes("lost")
+        ) {
+
+            response =
+                "I can take you to the SOS section for help.";
+
+            showScreen("sos");
+        }
+
+        alert(response);
+
+        speak(response);
+    }
+
+
+    /* =========================
+       TEXT TO SPEECH
+    ========================= */
+
+    function speak(text) {
+
+        if (!("speechSynthesis" in window)) {
+            return;
+        }
+
+        const utterance =
+            new SpeechSynthesisUtterance(text);
+
+        utterance.lang = "en-IN";
+
+        utterance.rate = 0.9;
+
+        window.speechSynthesis.speak(
+            utterance
+        );
+    }
+
+
+    /* =========================
+       SOS
+    ========================= */
+
+    function lostMyWay() {
+
+        alert(
+            "Lost My Way activated.\n\n" +
+            "The patient's current location would be shared with saved family contacts."
+        );
+
+        showScreen("location");
+
+        setTimeout(() => {
+            getLocation();
+        }, 300);
+    }
+
+
+    function emergency() {
+
+        alert(
+            "Emergency activated.\n\n" +
+            "Saved family and healthcare contacts would be alerted."
+        );
+
+        speak(
+            "Emergency mode activated."
+        );
+    }
+
+
+    /* =========================
+       PLACEHOLDER
+    ========================= */
+
+    function comingSoon() {
+
+        alert(
+            "This feature will be completed in the next development stage."
+        );
+    }
+
+
+    /* =========================
+       INITIAL LOAD
+    ========================= */
+
+    document.getElementById(
+        "gameScore"
+    ).textContent = score;
+
+</script>
+
+</body>
+</html>
