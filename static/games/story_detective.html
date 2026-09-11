@@ -2,6 +2,7 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
+<link rel="manifest" href="/static/manifest.json">
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
@@ -14,6 +15,7 @@
     margin: 0;
     padding: 0;
 }
+
 
 body {
     font-family: Arial, sans-serif;
@@ -2066,6 +2068,12 @@ function showResult() {
         .innerText =
         score;
 
+        fetch('http://localhost:5000/api/save_score', {
+          method: 'POST',
+           headers: {'Content-Type': 'application/json'},
+           body: JSON.stringify({user_id: 1, game_type: 'story_detective', score: score, difficulty: getDifficultyName()})
+                });
+
 
     let message = "";
 
@@ -2177,6 +2185,8 @@ function restartGame() {
 }
 
 </script>
-
+<script>
+if ('serviceWorker' in navigator) { navigator.serviceWorker.register('/static/sw.js'); }
+</script>
 </body>
 </html>
