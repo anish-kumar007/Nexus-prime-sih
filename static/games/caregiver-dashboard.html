@@ -116,32 +116,6 @@
     .btn-call { background: #27ae60; }
     .btn-message { background: #3498db; }
     .btn-history { background: #8e44ad; }
-    .btn-medicine { background: #e67e22; }
-
-    .med-item {
-        display: flex;
-        justify-content: space-between;
-        align-items: center;
-        padding: 11px 0;
-        border-bottom: 1px solid #eee;
-        font-size: 15px;
-    }
-    .taken {
-        background: #d4edda;
-        color: #155724;
-        padding: 4px 11px;
-        border-radius: 12px;
-        font-size: 12px;
-        font-weight: 600;
-    }
-    .pending {
-        background: #fff3cd;
-        color: #856404;
-        padding: 4px 11px;
-        border-radius: 12px;
-        font-size: 12px;
-        font-weight: 600;
-    }
 
     .back-link {
         display: inline-block;
@@ -216,24 +190,6 @@
                 <button class="action-btn btn-call" onclick="alert('Calling patient...')">📞 Call Patient</button>
                 <button class="action-btn btn-message" onclick="alert('Reminder sent!')">💬 Send Reminder</button>
                 <button class="action-btn btn-history" onclick="alert('Activity log')">📋 Activity Log</button>
-                <button class="action-btn btn-medicine" onclick="alert('Medicine settings')">💊 Medicines</button>
-            </div>
-        </div>
-
-        <!-- Medicines -->
-        <div class="card">
-            <h2>💊 Today’s Medicines</h2>
-            <div class="med-item">
-                <span>Morning – Blood Pressure</span>
-                <span class="taken">Taken</span>
-            </div>
-            <div class="med-item">
-                <span>Afternoon – Vitamin D</span>
-                <span class="taken">Taken</span>
-            </div>
-            <div class="med-item">
-                <span>Night – Sleep Aid</span>
-                <span class="pending">Pending</span>
             </div>
         </div>
 
@@ -278,7 +234,7 @@
             initMap(lat, lng);
             document.getElementById("locationTime").textContent = locTime || "Recently";
         } else {
-            initMap(); // default Delhi
+            initMap();
             document.getElementById("locationTime").textContent = "Not available yet";
         }
 
@@ -313,7 +269,6 @@
         }
     }
 
-    // Load immediately + refresh every 4 seconds
     loadData();
     setInterval(loadData, 4000);
 </script>
