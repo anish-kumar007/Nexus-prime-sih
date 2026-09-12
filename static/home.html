@@ -1,6 +1,7 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
+    <link rel="manifest" href="/static/manifest.json">
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
@@ -360,7 +361,7 @@
                 class="main-btn family-btn"
                 onclick="showScreen('family')">
                 👨‍👩‍👧<br>
-                Family Control
+                Family Connect
             </button>
 
             <button
@@ -374,7 +375,7 @@
 
         <button
             class="smriti"
-            onclick="askSmriti()">
+            onclick="window.location.href='ask-smriti-demo.html'">
             🎙️ Ask Smriti
         </button>
 
@@ -413,8 +414,8 @@
                 Remember a sequence of objects.
             </p>
 
-            <button onclick="comingSoon()">
-                Coming Soon
+            <button onclick="window.location.href='games/story_detective.html'">
+                ▶ Start Game
             </button>
 
         </div>
@@ -435,69 +436,6 @@
 
         <button class="back-btn" onclick="showScreen('home')">
             ← Back Home
-        </button>
-
-    </section>
-
-
-    <!-- WORD PICTURE GAME -->
-
-    <section id="wordGame" class="screen">
-
-        <h2>🍎 Word–Picture Match</h2>
-
-        <div class="score">
-            Score: <span id="gameScore">0</span>
-        </div>
-
-        <div class="game-card">
-
-            <p style="text-align:center">
-                Which picture matches:
-            </p>
-
-            <h2 id="wordQuestion"
-                style="text-align:center">
-                APPLE
-            </h2>
-
-            <div class="picture" id="gamePicture">
-                🍎
-            </div>
-
-            <div id="answers">
-
-                <button onclick="answer('APPLE')">
-                    APPLE
-                </button>
-
-                <button onclick="answer('HOUSE')">
-                    HOUSE
-                </button>
-
-                <button onclick="answer('TREE')">
-                    TREE
-                </button>
-
-            </div>
-
-            <div
-                id="feedback"
-                class="feedback">
-            </div>
-
-            <button
-                class="voice-btn"
-                onclick="voiceAnswer()">
-                🎙️ Speak Answer
-            </button>
-
-        </div>
-
-        <button
-            class="back-btn"
-            onclick="showScreen('games')">
-            ← Back to Games
         </button>
 
     </section>
@@ -543,11 +481,11 @@
     </section>
 
 
-    <!-- FAMILY CONTROL -->
+    <!-- FAMILY CONNECT -->
 
     <section id="family" class="screen">
 
-        <h2>👨‍👩‍👧 Family Control</h2>
+        <h2>👨‍👩‍👧 Family Connect</h2>
 
         <p>
             Your saved family and healthcare contacts.
@@ -739,204 +677,6 @@
         localStorage.getItem("smritiGamesPlayed") || 0
     );
 
-    let currentQuestion = 0;
-
-    const questions = [
-
-        {
-            word: "APPLE",
-            picture: "🍎",
-            answers: ["APPLE", "HOUSE", "TREE"],
-            correct: "APPLE"
-        },
-
-        {
-            word: "HOUSE",
-            picture: "🏠",
-            answers: ["TREE", "HOUSE", "APPLE"],
-            correct: "HOUSE"
-        },
-
-        {
-            word: "TREE",
-            picture: "🌳",
-            answers: ["APPLE", "TREE", "HOUSE"],
-            correct: "TREE"
-        }
-
-    ];
-
-
-    function startGame() {
-
-        currentQuestion = 0;
-
-        showScreen("wordGame");
-
-        displayQuestion();
-    }
-
-
-    function displayQuestion() {
-
-        const q = questions[currentQuestion];
-
-        document.getElementById(
-            "wordQuestion"
-        ).textContent = q.word;
-
-        document.getElementById(
-            "gamePicture"
-        ).textContent = q.picture;
-
-        const answers =
-            document.getElementById("answers");
-
-        answers.innerHTML = "";
-
-        q.answers.forEach(answerText => {
-
-            const button =
-                document.createElement("button");
-
-            button.textContent = answerText;
-
-            button.onclick = () =>
-                answer(answerText);
-
-            answers.appendChild(button);
-
-        });
-
-        document.getElementById(
-            "feedback"
-        ).textContent = "";
-    }
-
-
-    function answer(selectedAnswer) {
-
-        const q = questions[currentQuestion];
-
-        const feedback =
-            document.getElementById("feedback");
-
-        if (selectedAnswer === q.correct) {
-
-            score++;
-
-            feedback.textContent =
-                "✓ Correct! Well done!";
-
-        } else {
-
-            feedback.textContent =
-                "✗ Not quite. Try the next one!";
-        }
-
-        localStorage.setItem(
-            "smritiScore",
-            score
-        );
-
-        setTimeout(() => {
-
-            currentQuestion++;
-
-            if (currentQuestion >= questions.length) {
-
-                gamesPlayed++;
-
-                localStorage.setItem(
-                    "smritiGamesPlayed",
-                    gamesPlayed
-                );
-
-                feedback.textContent =
-                    "🎉 Game complete!";
-
-                setTimeout(() => {
-                    showScreen("progress");
-                }, 1200);
-
-            } else {
-
-                displayQuestion();
-
-            }
-
-        }, 900);
-
-        document.getElementById(
-            "gameScore"
-        ).textContent = score;
-    }
-
-
-    /* =========================
-       VOICE ANSWER
-    ========================= */
-
-    function voiceAnswer() {
-
-        if (!("webkitSpeechRecognition" in window) &&
-            !("SpeechRecognition" in window)) {
-
-            alert(
-                "Voice recognition is not supported in this browser."
-            );
-
-            return;
-        }
-
-        const SpeechRecognition =
-            window.SpeechRecognition ||
-            window.webkitSpeechRecognition;
-
-        const recognition =
-            new SpeechRecognition();
-
-        recognition.lang = "en-IN";
-
-        recognition.start();
-
-        recognition.onresult = function(event) {
-
-            const spoken =
-                event.results[0][0].transcript
-                .toUpperCase();
-
-            const q =
-                questions[currentQuestion];
-
-            let matchedAnswer = null;
-
-            q.answers.forEach(answer => {
-
-                if (spoken.includes(answer)) {
-                    matchedAnswer = answer;
-                }
-
-            });
-
-            if (matchedAnswer) {
-
-                answer(matchedAnswer);
-
-            } else {
-
-                document.getElementById(
-                    "feedback"
-                ).textContent =
-                    "I didn't understand. Please try again.";
-
-                speak(
-                    "I didn't understand. Please try again."
-                );
-            }
-        };
-    }
-
 
     /* =========================
        PROGRESS
@@ -1049,6 +789,12 @@
                         "📍 Your current location"
                     )
                     .openPopup();
+
+                    fetch('http://localhost:5000/api/update_location', {
+                         method: 'POST',
+                           headers: {'Content-Type': 'application/json'},
+                           body: JSON.stringify({user_id: 1, latitude: latitude, longitude: longitude})
+                            });
 
                 status.textContent =
                     "✓ Your current location has been found.";
@@ -1241,6 +987,10 @@
     ).textContent = score;
 
 </script>
-
+<script>
+if ('serviceWorker' in navigator) { navigator.serviceWorker.register('/static/sw.js'); }
+</script>
 </body>
 </html>
+
+

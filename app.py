@@ -15,14 +15,24 @@ def get_db_connection():
 def home():
     return "Hello, Nexus Prime!"
 
+@app.route('/api/set_stage', methods=['POST'])
+def set_stage():
+    data = request.get_json()
+    conn = get_db_connection()
+    conn.execute('''
+        INSERT INTO Users (id, name, stage) VALUES (?, ?, ?)
+        ON CONFLICT(id) DO UPDATE SET stage = excluded.stage
+    ''', (data['user_id'], data.get('name', 'Patient'), data['stage']))
+    conn.commit()
+    conn.close()
+    return jsonify({"status": "success", "stage": data['stage']})
+
 @app.route('/api/save_score', methods=['POST'])
 def save_score():
     data = request.get_json()
     conn = get_db_connection()
-    conn.execute(
-        'INSERT INTO GameSessions (user_id, game_type, score, difficulty) VALUES (?, ?, ?, ?)',
-        (data['user_id'], data['game_type'], data['score'], data.get('difficulty', 'Easy'))
-    )
+    conn.execute('INSERT INTO GameSessions (user_id, game_type, score, difficulty) VALUES (?, ?, ?, ?)',
+        (data['user_id'], data['game_type'], data['score'], data.get('difficulty', 'Easy')))
     conn.commit()
     conn.close()
     return jsonify({"status": "success", "message": "Score saved to database"})
