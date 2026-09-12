@@ -2,219 +2,231 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8" />
-<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
 <title>Ask Smriti</title>
 <style>
   :root {
-    --teal-deep: #1f5f5b;
-    --teal-mid: #2f8f89;
-    --sand: #faf6ee;
-    --clay: #c96a3e;
-    --ink: #24322f;
-    --line: #d8cfbd;
+    --teal-deep: #1a4f4b;
+    --teal-mid: #2a7f79;
+    --sand: #f7f3eb;
+    --clay: #c45a2c;
+    --clay-dark: #9a3f1a;
+    --ink: #1e2b28;
+    --muted: #5c6b66;
+    --line: #d4cbb8;
+    --white: #ffffff;
+    --shadow: 0 8px 24px rgba(26, 79, 75, 0.12);
   }
-
-  * { box-sizing: border-box; }
-
+  * { box-sizing: border-box; margin: 0; padding: 0; }
   body {
-    margin: 0;
-    font-family: "Atkinson Hyperlegible", "Segoe UI", system-ui, sans-serif;
+    font-family: "Atkinson Hyperlegible", "Segoe UI", system-ui, -apple-system, sans-serif;
     background: var(--sand);
     color: var(--ink);
+    min-height: 100dvh;
     display: flex;
     justify-content: center;
-    padding: 32px 16px;
+    padding: 20px 16px 40px;
+    line-height: 1.45;
   }
-
   .app {
     width: 100%;
-    max-width: 480px;
+    max-width: 440px;
+    display: flex;
+    flex-direction: column;
+    gap: 18px;
   }
-
-  .header {
-    text-align: center;
-    margin-bottom: 28px;
-  }
-
+  .header { text-align: center; padding: 8px 0 4px; }
   .header h1 {
-    font-size: 2rem;
-    margin: 0 0 4px 0;
+    font-size: 1.85rem;
+    font-weight: 700;
     color: var(--teal-deep);
   }
-
-  .header p {
-    margin: 0;
-    font-size: 1.05rem;
-    color: #5a6b66;
-  }
-
-  .mic-wrap {
+  .header p { margin-top: 4px; font-size: 1.05rem; color: var(--muted); }
+  .status-card {
+    background: var(--white);
+    border-radius: 16px;
+    padding: 16px 18px;
+    box-shadow: var(--shadow);
+    border: 1px solid var(--line);
+    text-align: center;
+    min-height: 64px;
     display: flex;
+    align-items: center;
     justify-content: center;
-    margin: 28px 0;
   }
-
+  .status-text {
+    font-size: 1.15rem;
+    font-weight: 600;
+    color: var(--teal-deep);
+  }
+  .status-text.listening { color: var(--clay); }
+  .status-text.error { color: #b33a3a; }
+  .mic-section {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 14px;
+    padding: 8px 0;
+  }
   .mic-button {
-    width: 140px;
-    height: 140px;
+    width: 148px;
+    height: 148px;
     border-radius: 50%;
     border: none;
     background: var(--teal-mid);
     color: white;
-    font-size: 3rem;
+    font-size: 3.2rem;
     cursor: pointer;
-    box-shadow: 0 6px 0 var(--teal-deep);
-    transition: transform 0.08s ease;
+    box-shadow: 0 8px 0 var(--teal-deep);
+    transition: transform 0.1s ease, box-shadow 0.1s ease, background 0.2s;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    -webkit-tap-highlight-color: transparent;
   }
-
   .mic-button:active {
-    transform: translateY(4px);
-    box-shadow: 0 2px 0 var(--teal-deep);
+    transform: translateY(5px);
+    box-shadow: 0 3px 0 var(--teal-deep);
   }
-
   .mic-button.listening {
     background: var(--clay);
-    box-shadow: 0 6px 0 #8f4526;
-    animation: pulse 1.1s infinite;
+    box-shadow: 0 8px 0 var(--clay-dark);
+    animation: pulse 1.4s ease-out infinite;
   }
-
+  .mic-button:disabled { opacity: 0.55; cursor: not-allowed; }
   @keyframes pulse {
-    0%   { box-shadow: 0 0 0 0 rgba(201, 106, 62, 0.45); }
-    70%  { box-shadow: 0 0 0 22px rgba(201, 106, 62, 0); }
-    100% { box-shadow: 0 0 0 0 rgba(201, 106, 62, 0); }
+    0%   { box-shadow: 0 0 0 0 rgba(196, 90, 44, 0.5); }
+    70%  { box-shadow: 0 0 0 28px rgba(196, 90, 44, 0); }
+    100% { box-shadow: 0 0 0 0 rgba(196, 90, 44, 0); }
   }
-
-  .wake-row {
-    display: flex;
-    justify-content: center;
-    margin-bottom: 14px;
-  }
-
+  .controls { display: flex; flex-direction: column; gap: 12px; }
+  .wake-row { display: flex; justify-content: center; }
   .wake-toggle {
     display: flex;
     align-items: center;
-    gap: 8px;
-    font-size: 1rem;
+    gap: 10px;
+    font-size: 1.05rem;
+    font-weight: 500;
     color: var(--teal-deep);
     cursor: pointer;
+    background: var(--white);
+    padding: 12px 18px;
+    border-radius: 30px;
+    border: 1px solid var(--line);
+    box-shadow: 0 2px 6px rgba(0,0,0,0.04);
+    user-select: none;
   }
-
   .wake-toggle input {
-    width: 20px;
-    height: 20px;
+    width: 22px;
+    height: 22px;
+    accent-color: var(--teal-mid);
     cursor: pointer;
   }
-
-  .lang-row {
-    display: flex;
-    justify-content: center;
-    gap: 8px;
-    margin-bottom: 14px;
-  }
-
+  .lang-row { display: flex; justify-content: center; gap: 10px; }
   .lang-btn {
-    font-size: 0.95rem;
-    padding: 8px 18px;
-    border-radius: 20px;
-    border: 1px solid var(--teal-mid);
-    background: white;
+    flex: 1;
+    max-width: 140px;
+    font-size: 1.05rem;
+    font-weight: 600;
+    padding: 12px 16px;
+    border-radius: 28px;
+    border: 2px solid var(--teal-mid);
+    background: var(--white);
     color: var(--teal-deep);
     cursor: pointer;
   }
-
   .lang-btn.active {
     background: var(--teal-mid);
     color: white;
   }
-
-  .status {
-    text-align: center;
-    font-size: 1.1rem;
-    min-height: 1.6em;
-    color: var(--teal-deep);
-    margin-bottom: 8px;
-  }
-
   .transcript-box {
-    background: white;
+    background: var(--white);
     border: 1px solid var(--line);
-    border-radius: 14px;
+    border-radius: 16px;
     padding: 18px;
-    min-height: 90px;
-    font-size: 1.15rem;
-    line-height: 1.5;
+    min-height: 140px;
+    max-height: 260px;
+    overflow-y: auto;
+    font-size: 1.12rem;
+    line-height: 1.55;
+    box-shadow: var(--shadow);
   }
-
-  .transcript-box .you {
-    color: #7a5b3a;
-    font-weight: bold;
-  }
-
-  .transcript-box .smriti {
-    color: var(--teal-deep);
-    font-weight: bold;
-  }
-
-  .type-row {
-    display: flex;
-    gap: 8px;
-    margin-top: 16px;
-  }
-
+  .transcript-box .placeholder { color: var(--muted); font-style: italic; }
+  .transcript-box p { margin-bottom: 12px; }
+  .you { color: #8a5a2b; font-weight: 700; }
+  .smriti { color: var(--teal-deep); font-weight: 700; }
+  .type-row { display: flex; gap: 10px; }
   .type-row input {
     flex: 1;
-    font-size: 1.05rem;
-    padding: 12px;
-    border-radius: 10px;
+    font-size: 1.08rem;
+    padding: 14px 16px;
+    border-radius: 14px;
     border: 1px solid var(--line);
+    background: var(--white);
   }
-
   .type-row button {
-    font-size: 1.05rem;
-    padding: 12px 18px;
-    border-radius: 10px;
+    font-size: 1.08rem;
+    font-weight: 600;
+    padding: 14px 22px;
+    border-radius: 14px;
     border: none;
     background: var(--teal-deep);
     color: white;
     cursor: pointer;
   }
-
   .faq-hint {
-    margin-top: 22px;
     font-size: 0.95rem;
-    color: #6b6459;
+    color: var(--muted);
     text-align: center;
+    padding: 4px 8px 0;
   }
+  .perm-banner {
+    background: #fff3e0;
+    border: 1px solid #f0c78a;
+    color: #7a4e12;
+    border-radius: 12px;
+    padding: 12px 14px;
+    font-size: 0.98rem;
+    text-align: center;
+    display: none;
+  }
+  .perm-banner.show { display: block; }
 </style>
 </head>
 <body>
-
 <div class="app">
   <div class="header">
     <h1>🌿 Ask Smriti</h1>
-    <p>Tap the microphone and ask a question</p>
+    <p>Your calm voice companion</p>
   </div>
 
-  <div class="mic-wrap">
+  <div class="perm-banner" id="permBanner">
+    Microphone access is needed. Please allow it when the browser asks.
+  </div>
+
+  <div class="status-card">
+    <div class="status-text" id="status">Tap the microphone to speak</div>
+  </div>
+
+  <div class="mic-section">
     <button class="mic-button" id="micBtn">🎤</button>
   </div>
 
-  <div class="wake-row">
-    <label class="wake-toggle">
-      <input type="checkbox" id="wakeToggle" />
-      <span>Listen for "Hello Smriti"</span>
-    </label>
+  <div class="controls">
+    <div class="wake-row">
+      <label class="wake-toggle">
+        <input type="checkbox" id="wakeToggle" />
+        <span id="wakeLabel">Listen for “Hello Smriti”</span>
+      </label>
+    </div>
+    <div class="lang-row">
+      <button class="lang-btn active" data-lang="en">English</button>
+      <button class="lang-btn" data-lang="hi">हिंदी</button>
+    </div>
   </div>
-
-  <div class="lang-row">
-    <button class="lang-btn active" id="langEnBtn" data-lang="en">English</button>
-    <button class="lang-btn" id="langHiBtn" data-lang="hi">हिंदी</button>
-  </div>
-
-  <div class="status" id="status">Tap to speak</div>
 
   <div class="transcript-box" id="transcript">
-    <em>Your conversation will appear here...</em>
+    <span class="placeholder">Your conversation will appear here…</span>
   </div>
 
   <div class="type-row">
@@ -222,396 +234,315 @@
     <button id="typeBtn">Ask</button>
   </div>
 
-  <div class="faq-hint">
-    Switch language above, turn on the toggle and say "Hello Smriti" (or "स्मृति") to wake me up — or just tap the mic.
+  <div class="faq-hint" id="hint">
+    Turn on the toggle and say “Hello Smriti”, or just tap the mic.
   </div>
+
+  <button onclick="window.location.href='home.html'"
+        style="
+            display: block;
+            width: 100%;
+            max-width: 440px;
+            margin: 25px auto 10px;
+            padding: 16px;
+            font-size: 20px;
+            font-weight: bold;
+            border: none;
+            border-radius: 14px;
+            background: #315c8c;
+            color: white;
+            cursor: pointer;
+        ">
+    ← Back to Home
+</button>
+
 </div>
 
 <script>
-/* =======================================================
-   1. THE FAQ "DATABASE"
-   This is the whole "brain" of Smriti. Each entry has:
-   - keywords: words/phrases that should trigger this answer
-   - answer: what Smriti should say back
-   No AI model needed — just plain-text matching.
-   ======================================================= */
 const FAQ_EN = [
-  {
-    keywords: ["hi", "hello", "hey", "namaste"],
-    answer: () => "Hello! How may I help you today?"
-  },
-  {
-    keywords: ["how are you", "how are you doing"],
-    answer: () => "I'm doing well, thank you for asking! How can I help you?"
-  },
-  {
-    keywords: ["good morning"],
-    answer: () => "Good morning! I hope you slept well. What can I do for you?"
-  },
-  {
-    keywords: ["good night"],
-    answer: () => "Good night! Sleep well, I'll be here in the morning."
-  },
-  {
-    keywords: ["thank you", "thanks"],
-    answer: () => "You're most welcome!"
-  },
-  {
-    keywords: ["bye", "goodbye", "see you"],
-    answer: () => "Goodbye! Take care, I'm always here if you need me."
-  },
-  {
-    keywords: ["time", "clock", "what time"],
-    answer: () => `It is currently ${new Date().toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'})}.`
-  },
-  {
-    keywords: ["date", "today", "day is it"],
-    answer: () => `Today is ${new Date().toLocaleDateString([], {weekday: 'long', year: 'numeric', month: 'long', day: 'numeric'})}.`
-  },
-  {
-    keywords: ["where am i", "my location", "location", "lost"],
-    answer: () => "I can show your current location on the map screen. Would you like me to open it?"
-  },
-  {
-    keywords: ["memory game", "play game", "how do i play", "game rules"],
-    answer: () => "To play the memory game, tap two cards to flip them. If they match, they stay open. Try to match all the pairs."
-  },
-  {
-    keywords: ["scared", "afraid", "anxious", "worried", "confused"],
-    answer: () => "It's okay, I'm right here with you. Take a slow breath. Would you like me to call a family member?"
-  },
-  {
-    keywords: ["call family", "call my", "contact family", "sos", "help me"],
-    answer: () => "Calling your family contact now. Stay where you are, help is on the way."
-  },
-  {
-    keywords: ["who are you", "your name", "what are you"],
-    answer: () => "I'm Smriti, your voice companion. I'm here to help you with games, reminders, and finding your way."
-  }
+  { keywords: ["hi", "hello", "hey", "namaste", "good morning", "good afternoon", "good evening"], answer: () => "Hello! How may I help you today?" },
+  { keywords: ["how are you", "how are you doing"], answer: () => "I'm doing well, thank you for asking! How can I help you?" },
+  { keywords: ["good night", "bye", "goodbye", "see you"], answer: () => "Good night! Take care, I'll be here whenever you need me." },
+  { keywords: ["thank you", "thanks"], answer: () => "You're most welcome!" },
+  { keywords: ["time", "what time", "clock"], answer: () => `It is currently ${new Date().toLocaleTimeString([], {hour:'2-digit', minute:'2-digit'})}.` },
+  { keywords: ["date", "today", "what day", "day is it"], answer: () => `Today is ${new Date().toLocaleDateString([], {weekday:'long', year:'numeric', month:'long', day:'numeric'})}.` },
+  { keywords: ["where am i", "my location", "location", "lost"], answer: () => "I can show your current location on the map. Would you like me to open it?" },
+  { keywords: ["call family", "call my son", "call my daughter", "sos", "help me", "emergency"], answer: () => "Calling your family contact now. Please stay where you are. Help is on the way." },
+  { keywords: ["scared", "afraid", "anxious", "worried", "confused", "lonely"], answer: () => "It's okay, I'm right here with you. Take a slow deep breath. Would you like me to call a family member?" },
+  { keywords: ["medicine", "pill", "tablet", "medication"], answer: () => "Please check your medicine box or ask a family member. Would you like me to remind you later?" },
+  { keywords: ["water", "drink water", "thirsty"], answer: () => "Please drink a glass of water. Staying hydrated is important." },
+  { keywords: ["hungry", "food", "eat"], answer: () => "Please have something light to eat. Would you like me to call someone to help?" },
+  { keywords: ["pain", "headache", "not feeling well"], answer: () => "I'm sorry you're in pain. Please rest. Shall I call a family member or doctor?" },
+  { keywords: ["memory game", "play game", "game rules"], answer: () => "To play the memory game, tap two cards to flip them. If they match, they stay open. Try to match all pairs!" },
+  { keywords: ["exercise", "breathing", "relax"], answer: () => "Let's take three slow breaths together. Breathe in... and out... You're doing great." },
+  { keywords: ["who are you", "your name", "smriti"], answer: () => "I'm Smriti, your voice companion. I'm here to help with time, location, games, and calling family when needed." },
+  { keywords: ["weather", "raining", "hot", "cold"], answer: () => "I can't check live weather yet. Please look outside or ask a family member." },
+  { keywords: ["repeat", "say again"], answer: () => "I said: " + (window.lastSmritiReply || "Please ask me again.") },
+  { keywords: ["help", "what can you do"], answer: () => "You can ask me the time, date, location, medicine, games, or say 'call family' for help." }
 ];
 
-// Hindi FAQ — keywords are written the way Chrome's Hindi speech
-// recognizer actually transcribes speech: plain Devanagari text.
-// (Keep both a couple of common phrasings per entry, since people
-// phrase things differently.)
 const FAQ_HI = [
-  {
-    keywords: ["नमस्ते", "हैलो", "हेलो"],
-    answer: () => "नमस्ते! मैं आपकी कैसे मदद कर सकती हूं?"
-  },
-  {
-    keywords: ["आप कैसे हैं", "कैसी हो"],
-    answer: () => "मैं ठीक हूं, पूछने के लिए धन्यवाद! मैं आपकी क्या मदद कर सकती हूं?"
-  },
-  {
-    keywords: ["सुप्रभात", "गुड मॉर्निंग"],
-    answer: () => "सुप्रभात! उम्मीद है आप अच्छे से सोए। मैं आपकी क्या मदद कर सकती हूं?"
-  },
-  {
-    keywords: ["शुभ रात्रि", "गुड नाइट"],
-    answer: () => "शुभ रात्रि! अच्छी नींद लें, मैं सुबह यहीं रहूंगी।"
-  },
-  {
-    keywords: ["धन्यवाद", "शुक्रिया"],
-    answer: () => "आपका स्वागत है!"
-  },
-  {
-    keywords: ["अलविदा", "बाय"],
-    answer: () => "अलविदा! अपना ख्याल रखें, ज़रूरत पड़ने पर मैं यहीं हूं।"
-  },
-  {
-    keywords: ["समय", "टाइम", "क्या समय हुआ"],
-    answer: () => `अभी समय है ${new Date().toLocaleTimeString('hi-IN', {hour: '2-digit', minute:'2-digit'})}.`
-  },
-  {
-    keywords: ["तारीख", "आज का दिन", "आज कौन सा दिन"],
-    answer: () => `आज ${new Date().toLocaleDateString('hi-IN', {weekday: 'long', year: 'numeric', month: 'long', day: 'numeric'})} है.`
-  },
-  {
-    keywords: ["मैं कहां हूं", "मेरी लोकेशन", "जगह", "रास्ता भूल गया"],
-    answer: () => "मैं आपकी वर्तमान लोकेशन नक्शे पर दिखा सकती हूं। क्या मैं उसे खोलूं?"
-  },
-  {
-    keywords: ["मेमोरी गेम", "खेल कैसे खेलें", "गेम के नियम"],
-    answer: () => "मेमोरी गेम खेलने के लिए दो कार्ड को पलटें। अगर वे मेल खाते हैं, तो वे खुले रहेंगे।"
-  },
-  {
-    keywords: ["डर लग रहा है", "घबराहट", "परेशान", "उलझन"],
-    answer: () => "कोई बात नहीं, मैं यहीं हूं आपके साथ। धीरे से सांस लें। क्या मैं परिवार के किसी सदस्य को बुलाऊं?"
-  },
-  {
-    keywords: ["परिवार को बुलाओ", "परिवार से बात", "मदद करो", "एसओएस"],
-    answer: () => "आपके परिवार के संपर्क को अभी कॉल कर रही हूं। वहीं रुकिए, मदद आ रही है।"
-  },
-  {
-    keywords: ["तुम कौन हो", "तुम्हारा नाम", "आप कौन हैं"],
-    answer: () => "मैं स्मृति हूं, आपकी वॉइस साथी। मैं खेल, याद दिलाने और रास्ता ढूंढने में आपकी मदद करती हूं।"
-  }
+  { keywords: ["नमस्ते", "हैलो", "हेलो", "सुप्रभात"], answer: () => "नमस्ते! मैं आपकी कैसे मदद कर सकती हूं?" },
+  { keywords: ["आप कैसे हैं", "कैसी हो"], answer: () => "मैं ठीक हूं, पूछने के लिए धन्यवाद!" },
+  { keywords: ["शुभ रात्रि", "अलविदा", "बाय"], answer: () => "शुभ रात्रि! अपना ख्याल रखें।" },
+  { keywords: ["धन्यवाद", "शुक्रिया"], answer: () => "आपका स्वागत है!" },
+  { keywords: ["समय", "टाइम", "क्या समय"], answer: () => `अभी समय है ${new Date().toLocaleTimeString('hi-IN', {hour:'2-digit', minute:'2-digit'})}.` },
+  { keywords: ["तारीख", "आज का दिन", "आज कौन सा दिन"], answer: () => `आज ${new Date().toLocaleDateString('hi-IN', {weekday:'long', year:'numeric', month:'long', day:'numeric'})} है.` },
+  { keywords: ["मैं कहां हूं", "लोकेशन", "रास्ता भूल गया"], answer: () => "मैं आपकी लोकेशन नक्शे पर दिखा सकती हूं। क्या खोलूं?" },
+  { keywords: ["परिवार को बुलाओ", "मदद करो", "एसओएस"], answer: () => "आपके परिवार को अभी कॉल कर रही हूं। वहीं रुकिए।" },
+  { keywords: ["डर लग रहा है", "घबराहट", "परेशान", "अकेला"], answer: () => "कोई बात नहीं, मैं यहीं हूं। धीरे से सांस लें। क्या परिवार को बुलाऊं?" },
+  { keywords: ["दवा", "दवाई", "गोली"], answer: () => "कृपया अपनी दवा देखें या परिवार से पूछें।" },
+  { keywords: ["पानी", "प्यास"], answer: () => "कृपया एक गिलास पानी पी लीजिए।" },
+  { keywords: ["भूख", "खाना"], answer: () => "कृपया हल्का सा कुछ खा लीजिए।" },
+  { keywords: ["दर्द", "सिर दर्द", "तबीयत खराब"], answer: () => "आराम करें। क्या परिवार या डॉक्टर को बुलाऊं?" },
+  { keywords: ["मेमोरी गेम", "खेल"], answer: () => "दो कार्ड पलटें। मिलने पर वे खुले रहेंगे।" },
+  { keywords: ["सांस", "आराम"], answer: () => "चलिए तीन धीमी सांसें लेते हैं। सांस अंदर... बाहर..." },
+  { keywords: ["तुम कौन हो", "तुम्हारा नाम", "स्मृति"], answer: () => "मैं स्मृति हूं, आपकी वॉइस साथी।" },
+  { keywords: ["मौसम", "बारिश", "गर्मी"], answer: () => "अभी लाइव मौसम नहीं बता सकती। खिड़की से देख लें।" },
+  { keywords: ["दोबारा", "फिर से बोलो"], answer: () => "मैंने कहा: " + (window.lastSmritiReply || "फिर से पूछें।") },
+  { keywords: ["मदद", "क्या कर सकती हो"], answer: () => "आप समय, तारीख, लोकेशन, दवा या 'परिवार को बुलाओ' कह सकते हैं।" }
 ];
 
-// Fallback if nothing matches well enough
-const FALLBACK_EN = "I'm not sure I understood that. You can ask me about the time, your location, the games, or say 'call family' for help.";
-const FALLBACK_HI = "मुझे समझ नहीं आया। आप मुझसे समय, आपकी लोकेशन, खेल के बारे में पूछ सकते हैं, या मदद के लिए 'परिवार को बुलाओ' कहें।";
+const FALLBACK_EN = "I'm not sure I understood that. You can ask about time, date, location, medicine, games, or say 'call family'.";
+const FALLBACK_HI = "मुझे समझ नहीं आया। आप समय, तारीख, लोकेशन, दवा या 'परिवार को बुलाओ' कह सकते हैं।";
 
-/* =======================================================
-   2. KEYWORD MATCHING LOGIC
-   Very simple on purpose: for each FAQ entry, count how many
-   of its keywords appear inside what the user said.
-   Whichever entry scores highest "wins". If the best score
-   is 0, we use the fallback.
-   ======================================================= */
-function findAnswer(userText) {
-  const text = userText.toLowerCase();
-  const activeFaq = currentLang === "hi" ? FAQ_HI : FAQ_EN;
-
-  let bestEntry = null;
-  let bestScore = 0;
-
-  for (const entry of activeFaq) {
-    let score = 0;
-    for (const kw of entry.keywords) {
-      if (text.includes(kw.toLowerCase())) score += 1;
-    }
-    if (score > bestScore) {
-      bestScore = score;
-      bestEntry = entry;
-    }
-  }
-
-  if (bestEntry) return bestEntry.answer();
-  return currentLang === "hi" ? FALLBACK_HI : FALLBACK_EN;
-}
-
-/* =======================================================
-   3. TEXT-TO-SPEECH (Smriti speaking back)
-   ======================================================= */
-function speak(text) {
-  const utterance = new SpeechSynthesisUtterance(text);
-  utterance.rate = 0.9;   // slightly slower — easier for elderly users to follow
-  utterance.pitch = 1;
-  utterance.lang = currentLang === "hi" ? "hi-IN" : "en-IN";
-  window.speechSynthesis.cancel(); // stop anything currently speaking
-  window.speechSynthesis.speak(utterance);
-}
-
-/* =======================================================
-   4. SPEECH-TO-TEXT (listening to the user)
-
-   There are TWO recognizer objects doing two different jobs:
-
-   - wakeRecognizer: runs continuously in the background,
-     only listening for the phrase "hello smriti" (or "hey
-     smriti"/"ok smriti"). It never triggers an FAQ answer
-     by itself — it just "wakes up" the assistant.
-
-   - commandRecognizer: a normal one-shot listener (like
-     before). It starts either when the mic button is
-     tapped, OR automatically right after the wake phrase
-     is heard. Whatever it hears gets passed to findAnswer().
-   ======================================================= */
 const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
+let currentLang = "en";
+let commandRecognizer = null;
+let wakeRecognizer = null;
+let listening = false;
+let wakeModeOn = false;
+let wakeShouldRestart = false;
+let permissionGranted = false;
+let isSpeaking = false;
+window.lastSmritiReply = "";
+
 const micBtn = document.getElementById("micBtn");
 const statusEl = document.getElementById("status");
 const transcriptEl = document.getElementById("transcript");
 const wakeToggle = document.getElementById("wakeToggle");
+const wakeLabel = document.getElementById("wakeLabel");
+const permBanner = document.getElementById("permBanner");
+const hintEl = document.getElementById("hint");
 
-const WAKE_PHRASES_EN = ["hello smriti", "hey smriti", "ok smriti", "okay smriti"];
+const WAKE_PHRASES_EN = ["hello smriti", "hey smriti", "ok smriti", "hi smriti"];
 const WAKE_PHRASES_HI = ["हेलो स्मृति", "नमस्ते स्मृति", "स्मृति"];
 
-let currentLang = "en"; // "en" or "hi" — drives recognition lang, TTS voice, and which FAQ set is used
-let commandRecognizer = null;
-let wakeRecognizer = null;
-let listening = false;      // true while commandRecognizer is capturing a question
-let wakeModeOn = false;     // true while the "listen for wake word" toggle is on
-let wakeShouldRestart = false; // guards against restart-after-intentional-stop races
-
-if (SpeechRecognition) {
-  /* ---- Command recognizer (one question at a time) ---- */
-  commandRecognizer = new SpeechRecognition();
-  commandRecognizer.lang = currentLang === "hi" ? "hi-IN" : "en-IN";
-  commandRecognizer.continuous = false;
-  commandRecognizer.interimResults = false;
-
-  commandRecognizer.onstart = () => {
-    listening = true;
-    micBtn.classList.add("listening");
-    statusEl.textContent = "Listening...";
-  };
-
-  commandRecognizer.onerror = (event) => {
-    console.error("Command recognizer error:", event.error);
-    statusEl.textContent = describeSpeechError(event.error);
-    stopListeningUI();
-  };
-
-  commandRecognizer.onend = () => {
-    stopListeningUI();
-    // After answering, go back to passively listening for the wake word
-    if (wakeModeOn) startWakeRecognizer();
-  };
-
-  commandRecognizer.onresult = (event) => {
-    const said = event.results[0][0].transcript;
-    handleUserInput(said);
-  };
-
-  /* ---- Wake-word recognizer (always listening in background) ---- */
-  wakeRecognizer = new SpeechRecognition();
-  wakeRecognizer.lang = currentLang === "hi" ? "hi-IN" : "en-IN";
-  wakeRecognizer.continuous = true;      // keep listening indefinitely
-  wakeRecognizer.interimResults = true;  // check partial results too, for a snappier reaction
-
-  wakeRecognizer.onresult = (event) => {
-    const phrases = currentLang === "hi" ? WAKE_PHRASES_HI : WAKE_PHRASES_EN;
-    // Look through all results received since the last check
-    for (let i = event.resultIndex; i < event.results.length; i++) {
-      const said = event.results[i][0].transcript.toLowerCase();
-      if (phrases.some(phrase => said.includes(phrase.toLowerCase()))) {
-        wakeRecognizer.stop(); // will trigger onend below, but we don't auto-restart this time
-        wakeShouldRestart = false;
-        speak(currentLang === "hi" ? "जी हां, मैं सुन रही हूं।" : "Yes, I'm listening.");
-        // small delay so Smriti finishes speaking before mic reopens
-        setTimeout(() => {
-          if (commandRecognizer && !listening) commandRecognizer.start();
-        }, 900);
-        return;
-      }
-    }
-  };
-
-  wakeRecognizer.onerror = (event) => {
-    console.error("Wake recognizer error:", event.error);
-    // Common in continuous mode: it times out on silence. Just restart quietly.
-    if (event.error !== "no-speech" && event.error !== "aborted") {
-      statusEl.textContent = describeSpeechError(event.error);
-    }
-  };
-
-  wakeRecognizer.onend = () => {
-    // Browsers auto-stop continuous recognition after a while — restart it
-    // as long as wake mode is still supposed to be on and we're not mid-command.
-    if (wakeModeOn && wakeShouldRestart && !listening) {
-      try { wakeRecognizer.start(); } catch (e) { /* already started, ignore */ }
-    }
-  };
-} else {
-  statusEl.textContent = "Speech recognition not supported in this browser. Use Chrome.";
-  micBtn.disabled = true;
-  wakeToggle.disabled = true;
+function normalize(text) {
+  return text.toLowerCase().replace(/[.,\/#!$%\^&\*;:{}=\-_`~()]/g, "").replace(/\s+/g, " ").trim();
 }
 
-// file:// pages can silently fail mic access in Chrome — warn early
-if (location.protocol === "file:") {
-  statusEl.textContent = "Warning: open this over http://localhost, not by double-clicking the file, or the mic may be blocked.";
-}
-
-function describeSpeechError(error) {
-  if (error === "not-allowed" || error === "service-not-allowed") {
-    return "Mic permission blocked. Click the lock/camera icon in the address bar and allow microphone.";
+function findAnswer(userText) {
+  const text = normalize(userText);
+  const faq = currentLang === "hi" ? FAQ_HI : FAQ_EN;
+  let best = null, bestScore = 0;
+  for (const entry of faq) {
+    let score = 0;
+    for (const kw of entry.keywords) {
+      const k = normalize(kw);
+      if (text === k) score += 10;
+      else if (text.includes(k)) score += k.length > 8 ? 4 : 2;
+    }
+    if (score > bestScore) { bestScore = score; best = entry; }
   }
-  if (error === "no-speech") return "I didn't hear anything. Try again.";
-  if (error === "audio-capture") return "No microphone found. Check your mic is connected.";
-  if (error === "network") return "Network error — speech recognition needs an internet connection.";
-  return "Error: " + error;
+  return (best && bestScore >= 2) ? best.answer() : (currentLang === "hi" ? FALLBACK_HI : FALLBACK_EN);
 }
 
-function startWakeRecognizer() {
-  wakeShouldRestart = true;
-  try { wakeRecognizer.start(); } catch (e) { /* already running, ignore */ }
-  statusEl.textContent = currentLang === "hi" ? 'सक्रिय करने के लिए "स्मृति" कहें' : 'Say "Hello Smriti" to start';
+let cachedVoices = [];
+function loadVoices() { cachedVoices = speechSynthesis.getVoices(); }
+if (window.speechSynthesis) {
+  loadVoices();
+  speechSynthesis.onvoiceschanged = loadVoices;
 }
 
-function stopWakeRecognizer() {
-  wakeShouldRestart = false;
-  wakeRecognizer.stop();
-  statusEl.textContent = currentLang === "hi" ? "टैप करके बोलें" : "Tap to speak";
+function getFemaleVoice(lang) {
+  if (!cachedVoices.length) loadVoices();
+  const prefix = lang.startsWith("hi") ? "hi" : "en";
+  const preferred = ["Google UK English Female","Microsoft Zira","Samantha","Karen","Microsoft Heera","Google हिन्दी","Veena","Aria"];
+  let v = cachedVoices.find(x => preferred.some(n => x.name.includes(n)) && x.lang.toLowerCase().startsWith(prefix));
+  if (!v) v = cachedVoices.find(x => /female|zira|samantha|heera|veena|aria/i.test(x.name) && x.lang.toLowerCase().startsWith(prefix));
+  if (!v) v = cachedVoices.find(x => x.lang.toLowerCase().startsWith(prefix));
+  return v || cachedVoices[0] || null;
+}
+
+function speak(text) {
+  return new Promise(resolve => {
+    if (!window.speechSynthesis) return resolve();
+    speechSynthesis.cancel();
+    isSpeaking = true;
+    setStatus(currentLang === "hi" ? "बोल रही हूं…" : "Speaking…");
+    const u = new SpeechSynthesisUtterance(text);
+    u.rate = 0.88; u.pitch = 1.1;
+    u.lang = currentLang === "hi" ? "hi-IN" : "en-IN";
+    const voice = getFemaleVoice(u.lang);
+    if (voice) u.voice = voice;
+    u.onend = u.onerror = () => { isSpeaking = false; resolve(); };
+    speechSynthesis.speak(u);
+  });
+}
+
+function setStatus(msg, type = "") {
+  statusEl.textContent = msg;
+  statusEl.className = "status-text" + (type ? " " + type : "");
 }
 
 function stopListeningUI() {
   listening = false;
   micBtn.classList.remove("listening");
-  if (!wakeModeOn) statusEl.textContent = currentLang === "hi" ? "टैप करके बोलें" : "Tap to speak";
+  if (!wakeModeOn) setStatus(currentLang === "hi" ? "माइक पर टैप करें" : "Tap the microphone to speak");
 }
 
-/* ---- Wire up the controls ---- */
-micBtn.addEventListener("click", () => {
-  if (!commandRecognizer) return;
-  if (listening) {
-    commandRecognizer.stop();
+function updateLabels() {
+  if (currentLang === "hi") {
+    wakeLabel.textContent = "“स्मृति” सुनें";
+    hintEl.textContent = "टॉगल चालू करें और “स्मृति” बोलें, या माइक पर टैप करें।";
+    document.getElementById("typeInput").placeholder = "या यहाँ लिखें";
+    document.getElementById("typeBtn").textContent = "पूछें";
   } else {
-    commandRecognizer.start();
+    wakeLabel.textContent = "Listen for “Hello Smriti”";
+    hintEl.textContent = "Turn on the toggle and say “Hello Smriti”, or just tap the mic.";
+    document.getElementById("typeInput").placeholder = "Or type your question here";
+    document.getElementById("typeBtn").textContent = "Ask";
   }
-});
+}
 
-wakeToggle.addEventListener("change", () => {
-  if (!wakeRecognizer) return;
-  wakeModeOn = wakeToggle.checked;
-  if (wakeModeOn) {
-    startWakeRecognizer();
-  } else {
-    stopWakeRecognizer();
+async function ensureMicPermission() {
+  if (permissionGranted) return true;
+  try {
+    const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
+    stream.getTracks().forEach(t => t.stop());
+    permissionGranted = true;
+    permBanner.classList.remove("show");
+    return true;
+  } catch (e) {
+    permBanner.classList.add("show");
+    setStatus(currentLang === "hi" ? "माइक की अनुमति दें" : "Please allow microphone access", "error");
+    return false;
   }
-});
+}
 
-/* ---- Language switch ---- */
-const langButtons = document.querySelectorAll(".lang-btn");
-langButtons.forEach(btn => {
-  btn.addEventListener("click", () => {
-    const newLang = btn.dataset.lang; // "en" or "hi"
-    if (newLang === currentLang) return;
-    currentLang = newLang;
+function initRecognizers() {
+  if (!SpeechRecognition) {
+    setStatus("Please use Chrome browser", "error");
+    micBtn.disabled = true;
+    return;
+  }
+  commandRecognizer = new SpeechRecognition();
+  commandRecognizer.continuous = false;
+  commandRecognizer.interimResults = false;
+  commandRecognizer.lang = currentLang === "hi" ? "hi-IN" : "en-IN";
 
-    langButtons.forEach(b => b.classList.toggle("active", b === btn));
+  commandRecognizer.onstart = () => {
+    listening = true;
+    micBtn.classList.add("listening");
+    setStatus(currentLang === "hi" ? "सुन रही हूं…" : "Listening…", "listening");
+  };
+  commandRecognizer.onerror = (e) => {
+    if (e.error !== "aborted") setStatus("Error: " + e.error, "error");
+    stopListeningUI();
+  };
+  commandRecognizer.onend = () => {
+    stopListeningUI();
+    if (wakeModeOn && !isSpeaking) setTimeout(startWakeRecognizer, 400);
+  };
+  commandRecognizer.onresult = (e) => {
+    const said = e.results[0][0].transcript.trim();
+    if (said) handleUserInput(said);
+  };
 
-    const bcp47 = currentLang === "hi" ? "hi-IN" : "en-IN";
-    if (commandRecognizer) commandRecognizer.lang = bcp47;
+  wakeRecognizer = new SpeechRecognition();
+  wakeRecognizer.continuous = true;
+  wakeRecognizer.interimResults = true;
+  wakeRecognizer.lang = currentLang === "hi" ? "hi-IN" : "en-IN";
 
-    if (wakeRecognizer) {
-      wakeRecognizer.lang = bcp47;
-      // if it was listening, restart it so the new language takes effect
-      if (wakeModeOn) {
+  wakeRecognizer.onresult = (e) => {
+    const phrases = currentLang === "hi" ? WAKE_PHRASES_HI : WAKE_PHRASES_EN;
+    for (let i = e.resultIndex; i < e.results.length; i++) {
+      const said = e.results[i][0].transcript.toLowerCase();
+      if (phrases.some(p => said.includes(p))) {
         wakeShouldRestart = false;
-        wakeRecognizer.stop();
-        setTimeout(() => startWakeRecognizer(), 300);
+        try { wakeRecognizer.stop(); } catch(_){}
+        speak(currentLang === "hi" ? "जी हां, मैं सुन रही हूं।" : "Yes, I'm listening.")
+          .then(() => setTimeout(() => { if (!listening) try{commandRecognizer.start()}catch(_){} }, 300));
+        return;
       }
     }
-
-    statusEl.textContent = currentLang === "hi" ? "टैप करके बोलें" : "Tap to speak";
-  });
-});
-
-/* =======================================================
-   5. TYPED INPUT (fallback / testing without a mic)
-   ======================================================= */
-document.getElementById("typeBtn").addEventListener("click", submitTyped);
-document.getElementById("typeInput").addEventListener("keydown", (e) => {
-  if (e.key === "Enter") submitTyped();
-});
-
-function submitTyped() {
-  const input = document.getElementById("typeInput");
-  const text = input.value.trim();
-  if (!text) return;
-  handleUserInput(text);
-  input.value = "";
+  };
+  wakeRecognizer.onerror = (e) => { if (e.error !== "no-speech" && e.error !== "aborted") {} };
+  wakeRecognizer.onend = () => {
+    if (wakeModeOn && wakeShouldRestart && !listening && !isSpeaking)
+      setTimeout(() => { try{wakeRecognizer.start()}catch(_){} }, 300);
+  };
 }
 
-/* =======================================================
-   6. TYING IT TOGETHER
-   ======================================================= */
+function startWakeRecognizer() {
+  if (!wakeRecognizer || !wakeModeOn) return;
+  wakeShouldRestart = true;
+  try { wakeRecognizer.start(); setStatus(currentLang === "hi" ? "“स्मृति” बोलें" : "Say “Hello Smriti”"); } catch(_){}
+}
+
+function stopWakeRecognizer() {
+  wakeShouldRestart = false;
+  try { wakeRecognizer.stop(); } catch(_){}
+  setStatus(currentLang === "hi" ? "माइक पर टैप करें" : "Tap the microphone to speak");
+}
+
+async function startListening() {
+  if (listening || isSpeaking) return;
+  const ok = await ensureMicPermission();
+  if (!ok) return;
+  if (wakeModeOn) { wakeShouldRestart = false; try{wakeRecognizer.stop()}catch(_){} }
+  try { commandRecognizer.start(); } catch(e) { setStatus("Try again", "error"); }
+}
+
 function handleUserInput(text) {
   const answer = findAnswer(text);
+  window.lastSmritiReply = answer;
   appendToTranscript(text, answer);
-  speak(answer);
+  speak(answer).then(() => {
+    if (wakeModeOn) setTimeout(startWakeRecognizer, 500);
+    else setStatus(currentLang === "hi" ? "माइक पर टैप करें" : "Tap the microphone to speak");
+  });
 }
 
-function appendToTranscript(userText, smritiText) {
-  if (transcriptEl.querySelector("em")) transcriptEl.innerHTML = "";
-  transcriptEl.innerHTML += `<p><span class="you">You:</span> ${userText}</p>`;
-  transcriptEl.innerHTML += `<p><span class="smriti">Smriti:</span> ${smritiText}</p>`;
+function appendToTranscript(user, reply) {
+  if (transcriptEl.querySelector(".placeholder")) transcriptEl.innerHTML = "";
+  transcriptEl.innerHTML += `<p><span class="you">You:</span> ${user}</p><p><span class="smriti">Smriti:</span> ${reply}</p>`;
   transcriptEl.scrollTop = transcriptEl.scrollHeight;
 }
-</script>
 
+micBtn.onclick = () => listening ? commandRecognizer.stop() : startListening();
+wakeToggle.onchange = async () => {
+  wakeModeOn = wakeToggle.checked;
+  if (wakeModeOn) {
+    if (!(await ensureMicPermission())) { wakeToggle.checked = false; wakeModeOn = false; return; }
+    startWakeRecognizer();
+  } else stopWakeRecognizer();
+};
+
+document.querySelectorAll(".lang-btn").forEach(btn => {
+  btn.onclick = () => {
+    if (btn.dataset.lang === currentLang) return;
+    currentLang = btn.dataset.lang;
+    document.querySelectorAll(".lang-btn").forEach(b => b.classList.toggle("active", b === btn));
+    updateLabels();
+    const lang = currentLang === "hi" ? "hi-IN" : "en-IN";
+    if (commandRecognizer) commandRecognizer.lang = lang;
+    if (wakeRecognizer) {
+      wakeRecognizer.lang = lang;
+      if (wakeModeOn) { wakeShouldRestart = false; try{wakeRecognizer.stop()}catch(_){} setTimeout(startWakeRecognizer, 400); }
+    }
+  };
+});
+
+document.getElementById("typeBtn").onclick = () => {
+  const t = document.getElementById("typeInput").value.trim();
+  if (t) { handleUserInput(t); document.getElementById("typeInput").value = ""; }
+};
+document.getElementById("typeInput").onkeydown = e => { if (e.key === "Enter") document.getElementById("typeBtn").click(); };
+
+initRecognizers();
+updateLabels();
+</script>
 </body>
 </html>
