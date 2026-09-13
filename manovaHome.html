@@ -1,0 +1,1633 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <link rel="manifest" href="/static/manifest.json">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>Manova - Elderly Companion</title>
+
+    <!-- Leaflet CSS -->
+    <link
+        rel="stylesheet"
+        href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"
+    />
+
+    <style>
+        * {
+            box-sizing: border-box;
+        }
+
+        body {
+            margin: 0;
+            font-family: Arial, sans-serif;
+            background: #f5f7fa;
+            color: #17202a;
+        }
+
+        button {
+            font-family: inherit;
+            cursor: pointer;
+        }
+
+        .app {
+            max-width: 900px;
+            min-height: 100vh;
+            margin: auto;
+            background: white;
+        }
+
+        /* HEADER */
+
+        header {
+            background: #315c8c;
+            color: white;
+            padding: 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        header h1 {
+            margin: 0;
+            font-size: 32px;
+        }
+
+        .profile-btn {
+            background: white;
+            color: #315c8c;
+            border: none;
+            border-radius: 50%;
+            width: 55px;
+            height: 55px;
+            font-size: 25px;
+        }
+
+        /* SCREENS */
+
+        .screen {
+            display: none;
+            padding: 30px;
+            min-height: calc(100vh - 95px);
+        }
+
+        .screen.active {
+            display: block;
+        }
+
+        h2 {
+            font-size: 36px;
+            margin-top: 5px;
+        }
+
+        p {
+            font-size: 24px;
+            line-height: 1.5;
+        }
+
+        /* HOME */
+
+        .welcome {
+            text-align: center;
+            margin-bottom: 30px;
+        }
+
+        .welcome h2 {
+            margin-bottom: 10px;
+        }
+
+        .home-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 20px;
+        }
+
+        .main-btn {
+            min-height: 130px;
+            border: none;
+            border-radius: 20px;
+            font-size: 28px;
+            font-weight: bold;
+            padding: 20px;
+            background: #e7eef7;
+            color: #17202a;
+        }
+
+        .main-btn:hover {
+            transform: scale(1.02);
+        }
+
+        .games-btn {
+            background: #d9ecff;
+        }
+
+        .progress-btn {
+            background: #e4f5dc;
+        }
+
+        .family-btn {
+            background: #fff0cf;
+        }
+
+        .sos-btn {
+            background: #ffdcdc;
+        }
+
+        /* ASK SMRITI */
+
+        .smriti {
+            margin-top: 30px;
+            width: 100%;
+            padding: 22px;
+            border: none;
+            border-radius: 18px;
+            background: #6947a8;
+            color: white;
+            font-size: 27px;
+            font-weight: bold;
+        }
+
+        /* GAME CARDS */
+
+        .game-card {
+            background: #eef4fb;
+            padding: 25px;
+            margin: 20px 0;
+            border-radius: 20px;
+        }
+
+        .game-card button {
+            width: 100%;
+            min-height: 80px;
+            margin: 10px 0;
+            border: 2px solid #315c8c;
+            border-radius: 15px;
+            background: white;
+            font-size: 26px;
+        }
+
+        .game-card button:hover {
+            background: #d9ecff;
+        }
+
+        .picture {
+            font-size: 100px;
+            text-align: center;
+            margin: 20px;
+        }
+
+        .feedback {
+            text-align: center;
+            font-size: 28px;
+            font-weight: bold;
+            min-height: 45px;
+            margin: 15px;
+        }
+
+        .score {
+            font-size: 25px;
+            font-weight: bold;
+            text-align: center;
+        }
+
+        /* GENERAL BUTTON */
+
+        .back-btn {
+            margin-top: 25px;
+            padding: 18px 28px;
+            font-size: 24px;
+            border: none;
+            border-radius: 15px;
+            background: #315c8c;
+            color: white;
+        }
+
+        .voice-btn {
+            background: #6947a8;
+            color: white;
+            border: none;
+            border-radius: 15px;
+            padding: 18px 25px;
+            font-size: 24px;
+            display: block;
+            margin: 15px auto;
+        }
+
+        /* PROGRESS */
+
+        .progress-box {
+            padding: 25px;
+            border-radius: 20px;
+            background: #eef7e9;
+            margin-bottom: 20px;
+        }
+
+        .big-number {
+            font-size: 55px;
+            font-weight: bold;
+        }
+
+        /* MAP */
+
+        #map {
+            height: 500px;
+            width: 100%;
+            border-radius: 20px;
+            margin-top: 20px;
+        }
+
+        .location-status {
+            font-size: 23px;
+            padding: 15px;
+            background: #eef4fb;
+            border-radius: 15px;
+            margin-top: 15px;
+        }
+
+        /* CONTACTS */
+
+        .contact {
+            padding: 20px;
+            margin: 15px 0;
+            background: #f0f3f7;
+            border-radius: 15px;
+            font-size: 24px;
+        }
+
+        .contacts-section {
+            background: #eef4fb;
+            padding: 20px;
+            border-radius: 20px;
+            margin: 20px 0;
+        }
+
+        .contacts-heading {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 15px;
+        }
+
+        .contacts-heading h3 {
+            margin: 0;
+            font-size: 28px;
+        }
+
+        .add-contact-btn {
+            width: 55px;
+            height: 55px;
+            flex-shrink: 0;
+            border: none;
+            border-radius: 50%;
+            background: #315c8c;
+            color: white;
+            font-size: 38px;
+            line-height: 1;
+            font-weight: bold;
+        }
+
+        .contact-editor {
+            background: white;
+            padding: 18px;
+            border-radius: 15px;
+            margin-top: 15px;
+            border: 2px solid #d5e0eb;
+        }
+
+        .contact-editor label {
+            display: block;
+            font-size: 21px;
+            font-weight: bold;
+            margin-bottom: 7px;
+        }
+
+        .contact-editor input {
+            width: 100%;
+            min-height: 55px;
+            padding: 10px 14px;
+            border: 2px solid #b9c9da;
+            border-radius: 10px;
+            font-size: 20px;
+            margin-bottom: 12px;
+        }
+
+        .contact-actions {
+            display: flex;
+            gap: 10px;
+        }
+
+        .contact-save-btn,
+        .contact-delete-btn {
+            min-height: 50px;
+            padding: 10px 18px;
+            border: none;
+            border-radius: 10px;
+            font-size: 19px;
+            font-weight: bold;
+        }
+
+        .contact-save-btn {
+            background: #315c8c;
+            color: white;
+            flex: 1;
+        }
+
+        .contact-delete-btn {
+            background: #ffdcdc;
+            color: #17202a;
+        }
+
+        .saved-contact {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 12px;
+            background: white;
+            padding: 18px;
+            border-radius: 15px;
+            margin-top: 15px;
+            border: 2px solid #d5e0eb;
+            font-size: 22px;
+        }
+
+        .saved-contact-info {
+            flex: 1;
+        }
+
+        .saved-contact-info strong {
+            font-size: 23px;
+        }
+
+        .edit-contact-btn {
+            border: none;
+            border-radius: 10px;
+            background: #e7eef7;
+            padding: 10px 14px;
+            font-size: 19px;
+            font-weight: bold;
+        }
+
+        .contact-limit {
+            font-size: 18px;
+            margin-bottom: 0;
+        }
+
+        .sos-option {
+            width: 100%;
+            padding: 30px;
+            margin: 15px 0;
+            font-size: 28px;
+            font-weight: bold;
+            border: none;
+            border-radius: 20px;
+        }
+
+        .lost {
+            background: #ffe9b3;
+        }
+
+        .emergency {
+            background: #ffcccc;
+        }
+
+        /* PROFILE */
+
+        .profile-card {
+            background: #eef4fb;
+            padding: 25px;
+            border-radius: 20px;
+            margin: 20px 0;
+        }
+
+        .profile-avatar {
+            width: 90px;
+            height: 90px;
+            border-radius: 50%;
+            background: white;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 48px;
+            margin: 0 auto 20px;
+            border: 3px solid #315c8c;
+        }
+
+        .profile-field {
+            margin: 20px 0;
+        }
+
+        .profile-field label {
+            display: block;
+            font-size: 23px;
+            font-weight: bold;
+            margin-bottom: 8px;
+        }
+
+        .profile-field input,
+        .profile-field select {
+            width: 100%;
+            min-height: 58px;
+            padding: 12px 15px;
+            border: 2px solid #b9c9da;
+            border-radius: 12px;
+            background: white;
+            font-size: 21px;
+            font-family: inherit;
+        }
+
+        .gender-options {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+        }
+
+        .gender-option {
+            flex: 1;
+            min-width: 120px;
+            min-height: 55px;
+            padding: 10px;
+            border: 2px solid #b9c9da;
+            border-radius: 12px;
+            background: white;
+            font-size: 20px;
+        }
+
+        .gender-option.selected {
+            background: #d9ecff;
+            border-color: #315c8c;
+            font-weight: bold;
+        }
+
+        .location-control {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 15px;
+            background: white;
+            padding: 15px;
+            border-radius: 12px;
+            border: 2px solid #b9c9da;
+        }
+
+        .location-status-profile {
+            font-size: 21px;
+            font-weight: bold;
+        }
+
+        .location-toggle {
+            min-height: 52px;
+            padding: 10px 18px;
+            border: none;
+            border-radius: 12px;
+            background: #315c8c;
+            color: white;
+            font-size: 20px;
+        }
+
+        .save-profile-btn {
+            width: 100%;
+            min-height: 65px;
+            margin-top: 10px;
+            border: none;
+            border-radius: 15px;
+            background: #315c8c;
+            color: white;
+            font-size: 25px;
+            font-weight: bold;
+        }
+
+        .profile-message {
+            text-align: center;
+            font-size: 20px;
+            font-weight: bold;
+            min-height: 30px;
+            margin-top: 15px;
+        }
+
+        /* MOBILE */
+
+        @media (max-width: 600px) {
+
+            .screen {
+                padding: 20px;
+            }
+
+            .home-grid {
+                grid-template-columns: 1fr;
+            }
+
+            h2 {
+                font-size: 30px;
+            }
+
+            p {
+                font-size: 20px;
+            }
+
+            .main-btn {
+                font-size: 24px;
+            }
+
+            #map {
+                height: 400px;
+            }
+        }
+    </style>
+</head>
+
+<body>
+
+<div class="app">
+
+    <!-- HEADER -->
+
+    <header>
+        <h1>🌿 Manova</h1>
+
+        <button class="profile-btn" onclick="showScreen('profile')">
+            👤
+        </button>
+    </header>
+
+
+    <!-- HOME SCREEN -->
+
+    <section id="home" class="screen active">
+
+        <div class="welcome">
+            <h2>Welcome to Manova</h2>
+
+            <p>
+                Your friendly companion for everyday activities,
+                memory exercises and staying connected with family.
+            </p>
+        </div>
+
+        <div class="home-grid">
+
+            <button
+                class="main-btn games-btn"
+                onclick="showScreen('games')">
+                🎮<br>
+                Games
+            </button>
+
+            <button
+                class="main-btn progress-btn"
+                onclick="showScreen('progress')">
+                📊<br>
+                Progress
+            </button>
+
+            <button
+                class="main-btn family-btn"
+                onclick="showScreen('family')">
+                👨‍👩‍👧<br>
+                Family Connect
+            </button>
+
+            <button
+                class="main-btn sos-btn"
+                onclick="showScreen('sos')">
+                🆘<br>
+                SOS
+            </button>
+
+        </div>
+
+        <button
+            class="smriti"
+            onclick="window.location.href='ask-smriti-demo.html'">
+            🎙️ Ask Smriti
+        </button>
+
+    </section>
+
+
+    <!-- GAMES SCREEN -->
+
+    <section id="games" class="screen">
+
+        <h2>🎮 Games</h2>
+
+        <p>
+            Choose an activity.
+        </p>
+
+        <div class="game-card">
+
+            <h2>🍎 Word–Picture Match</h2>
+
+            <p>
+                Match the word with the correct picture.
+            </p>
+
+            <button onclick="startGame()">
+                ▶ Start Game
+            </button>
+
+        </div>
+
+        <div class="game-card">
+
+            <h2>🧠 Story / Sequence Memory</h2>
+
+            <p>
+                Remember a sequence of objects.
+            </p>
+
+            <button onclick="window.location.href='games/story_detective.html'">
+                ▶ Start Game
+            </button>
+
+        </div>
+
+        <div class="game-card">
+
+            <h2>🌍 General Knowledge Quiz</h2>
+
+            <p>
+                Answer simple general knowledge questions.
+            </p>
+
+            <button onclick="comingSoon()">
+                Coming Soon
+            </button>
+
+        </div>
+
+        <button class="back-btn" onclick="showScreen('home')">
+            ← Back Home
+        </button>
+
+    </section>
+
+
+    <!-- PROGRESS -->
+
+    <section id="progress" class="screen">
+
+        <h2>📊 My Progress</h2>
+
+        <div class="progress-box">
+
+            <p>Word–Picture Match Score</p>
+
+            <div class="big-number" id="progressScore">
+                0
+            </div>
+
+        </div>
+
+        <div class="progress-box">
+
+            <p>Games Played</p>
+
+            <div class="big-number" id="gamesPlayed">
+                0
+            </div>
+
+        </div>
+
+        <p>
+            Keep practicing! Regular cognitive activities
+            can make the experience engaging and enjoyable.
+        </p>
+
+        <button
+            class="back-btn"
+            onclick="showScreen('home')">
+            ← Back Home
+        </button>
+
+    </section>
+
+
+    <!-- FAMILY CONNECT -->
+
+    <section id="family" class="screen">
+
+        <h2>👨‍👩‍👧 Family Connect</h2>
+
+        <p>
+            Add family members and healthcare contacts you may need to reach quickly.
+        </p>
+
+        <div class="contacts-section">
+            <div class="contacts-heading">
+                <h3>👨‍👩‍👧 Family Members</h3>
+                <button
+                    type="button"
+                    class="add-contact-btn"
+                    onclick="addFamilyMember()"
+                    aria-label="Add family member">
+                    +
+                </button>
+            </div>
+
+            <div id="familyContacts"></div>
+
+            <p class="contact-limit">
+                You can save up to 5 family members.
+            </p>
+        </div>
+
+        <div class="contacts-section">
+            <div class="contacts-heading">
+                <h3>🏥 Doctor / Hospital</h3>
+                <button
+                    type="button"
+                    class="add-contact-btn"
+                    onclick="addDoctor()"
+                    aria-label="Add doctor or hospital">
+                    +
+                </button>
+            </div>
+
+            <div id="doctorContacts"></div>
+
+            <p class="contact-limit">
+                Add doctors, hospitals or other healthcare contacts.
+            </p>
+        </div>
+
+        <button
+            class="back-btn"
+            onclick="showScreen('home')">
+            ← Back Home
+        </button>
+
+    </section>
+
+
+    <!-- SOS -->
+
+    <section id="sos" class="screen">
+
+        <h2>🆘 SOS</h2>
+
+        <p>
+            Choose what kind of help you need.
+        </p>
+
+        <button
+            class="sos-option lost"
+            onclick="lostMyWay()">
+            📍 Lost My Way
+            <br>
+            <small>Share my location with family</small>
+        </button>
+
+        <button
+            class="sos-option emergency"
+            onclick="emergency()">
+            🚨 Emergency
+            <br>
+            <small>Alert saved contacts</small>
+        </button>
+
+        <button
+            class="back-btn"
+            onclick="showScreen('home')">
+            ← Back Home
+        </button>
+
+    </section>
+
+
+    <!-- PROFILE -->
+
+    <section id="profile" class="screen">
+
+        <h2>👤 Profile</h2>
+
+        <div class="profile-card">
+
+            <div class="profile-avatar">👤</div>
+
+            <div class="profile-field">
+                <label for="profileName">Name</label>
+                <input
+                    id="profileName"
+                    type="text"
+                    placeholder="Enter your name"
+                    autocomplete="name">
+            </div>
+
+            <div class="profile-field">
+                <label>Gender</label>
+                <div class="gender-options">
+                    <button type="button" class="gender-option" data-gender="Male"
+                        onclick="selectGender('Male')">Male</button>
+                    <button type="button" class="gender-option" data-gender="Female"
+                        onclick="selectGender('Female')">Female</button>
+                    <button type="button" class="gender-option" data-gender="Other"
+                        onclick="selectGender('Other')">Other</button>
+                    <button type="button" class="gender-option" data-gender="Prefer not to say"
+                        onclick="selectGender('Prefer not to say')">Prefer not to say</button>
+                </div>
+            </div>
+
+            <div class="profile-field">
+                <label for="profileAge">Age</label>
+                <input
+                    id="profileAge"
+                    type="number"
+                    min="1"
+                    max="120"
+                    placeholder="Enter your age">
+            </div>
+
+            <div class="profile-field">
+                <label>📍 Location Access</label>
+                <div class="location-control">
+                    <span id="profileLocationStatus"
+                          class="location-status-profile">
+                        🔴 Denied
+                    </span>
+                    <button
+                        type="button"
+                        class="location-toggle"
+                        onclick="requestProfileLocation()">
+                        Allow Location
+                    </button>
+                </div>
+            </div>
+
+            <div class="profile-field">
+                <label for="profileLanguage">Language</label>
+                <select id="profileLanguage">
+                    <option value="English">English</option>
+                    <option value="Hindi">Hindi</option>
+                    <option value="Assamese">Assamese (অসমীয়া)</option>
+                </select>
+            </div>
+
+            <button
+                type="button"
+                class="save-profile-btn"
+                onclick="saveProfile()">
+                ✓ Save Profile
+            </button>
+
+            <div id="profileMessage" class="profile-message"></div>
+
+        </div>
+
+        <button class="back-btn" onclick="showScreen('home')">
+            ← Back Home
+        </button>
+
+    </section>
+
+
+    <!-- LOCATION -->
+
+    <section id="location" class="screen">
+
+        <h2>📍 My Location</h2>
+
+        <p>
+            Your current device location is shown below.
+        </p>
+
+        <div id="map"></div>
+
+        <div
+            id="locationStatus"
+            class="location-status">
+            Press "Find My Location" to locate this device.
+        </div>
+
+        <button
+            class="voice-btn"
+            onclick="getLocation()">
+            📍 Find My Location
+        </button>
+
+        <button
+            class="back-btn"
+            onclick="showScreen('home')">
+            ← Back Home
+        </button>
+
+    </section>
+
+</div>
+
+
+<!-- LEAFLET JS -->
+
+<script
+    src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js">
+</script>
+
+
+<script>
+
+    /* =========================
+       SCREEN NAVIGATION
+    ========================= */
+
+    function showScreen(screenName) {
+
+        document
+            .querySelectorAll(".screen")
+            .forEach(screen => {
+                screen.classList.remove("active");
+            });
+
+        document
+            .getElementById(screenName)
+            .classList.add("active");
+
+        if (screenName === "progress") {
+            updateProgress();
+        }
+
+        if (screenName === "profile") {
+            loadProfile();
+        }
+
+        if (screenName === "family") {
+            renderContacts();
+        }
+
+        if (screenName === "location") {
+            setTimeout(() => {
+                initializeMap();
+            }, 100);
+        }
+    }
+
+
+    /* =========================
+       WORD PICTURE GAME
+    ========================= */
+
+    let score = Number(
+        localStorage.getItem("smritiScore") || 0
+    );
+
+    let gamesPlayed = Number(
+        localStorage.getItem("smritiGamesPlayed") || 0
+    );
+
+
+    /* =========================
+       PROGRESS
+    ========================= */
+
+    function updateProgress() {
+
+        score = Number(
+            localStorage.getItem("smritiScore") || 0
+        );
+
+        gamesPlayed = Number(
+            localStorage.getItem("smritiGamesPlayed") || 0
+        );
+
+        document.getElementById(
+            "progressScore"
+        ).textContent = score;
+
+        document.getElementById(
+            "gamesPlayed"
+        ).textContent = gamesPlayed;
+    }
+
+
+    /* =========================
+       MAP
+    ========================= */
+
+    let map = null;
+    let locationMarker = null;
+
+
+    function initializeMap() {
+
+        if (map !== null) {
+
+            map.invalidateSize();
+
+            return;
+        }
+
+        map = L.map("map").setView(
+            [20.5937, 78.9629],
+            5
+        );
+
+        L.tileLayer(
+            "https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png",
+            {
+                attribution:
+                    '&copy; OpenStreetMap contributors'
+            }
+        ).addTo(map);
+    }
+
+
+    /* =========================
+       REAL GPS
+    ========================= */
+
+    function getLocation() {
+
+        const status =
+            document.getElementById(
+                "locationStatus"
+            );
+
+        if (!navigator.geolocation) {
+
+            status.textContent =
+                "GPS is not supported by this browser.";
+
+            return;
+        }
+
+        status.textContent =
+            "Finding your location...";
+
+        navigator.geolocation.getCurrentPosition(
+
+            function(position) {
+
+                const latitude =
+                    position.coords.latitude;
+
+                const longitude =
+                    position.coords.longitude;
+
+                if (!map) {
+                    initializeMap();
+                }
+
+                map.setView(
+                    [latitude, longitude],
+                    17
+                );
+
+                if (locationMarker) {
+                    map.removeLayer(locationMarker);
+                }
+
+                locationMarker =
+                    L.marker([
+                        latitude,
+                        longitude
+                    ])
+                    .addTo(map)
+                    .bindPopup(
+                        "📍 Your current location"
+                    )
+                    .openPopup();
+
+                    fetch('http://localhost:5000/api/update_location', {
+                         method: 'POST',
+                           headers: {'Content-Type': 'application/json'},
+                           body: JSON.stringify({user_id: 1, latitude: latitude, longitude: longitude})
+                            });
+
+                status.textContent =
+                    "✓ Your current location has been found.";
+
+                speak(
+                    "Your current location has been found."
+                );
+            },
+
+            function(error) {
+
+                let message =
+                    "Unable to find your location.";
+
+                if (error.code === 1) {
+                    message =
+                        "Location permission was denied.";
+                }
+
+                if (error.code === 2) {
+                    message =
+                        "Your location is currently unavailable.";
+                }
+
+                if (error.code === 3) {
+                    message =
+                        "Location request timed out.";
+                }
+
+                status.textContent = message;
+
+                speak(message);
+            },
+
+            {
+                enableHighAccuracy: true,
+                timeout: 10000,
+                maximumAge: 0
+            }
+
+        );
+    }
+
+
+    /* =========================
+       ASK SMRITI
+    ========================= */
+
+    function askSmriti() {
+
+        const question =
+            prompt(
+                "Ask Smriti:\n\n" +
+                "Try: medicine, game, date, help"
+            );
+
+        if (!question) return;
+
+        const text =
+            question.toLowerCase();
+
+        let response =
+            "I'm sorry, I don't understand that question.";
+
+        if (
+            text.includes("medicine") ||
+            text.includes("tablet") ||
+            text.includes("medicine time")
+        ) {
+
+            response =
+                "Please follow the medicine schedule provided by your doctor.";
+
+        } else if (
+            text.includes("game") ||
+            text.includes("play")
+        ) {
+
+            response =
+                "You can play a cognitive game from the Games section.";
+
+        } else if (
+            text.includes("date") ||
+            text.includes("day")
+        ) {
+
+            response =
+                "Today is " +
+                new Date().toLocaleDateString(
+                    "en-IN",
+                    {
+                        weekday: "long",
+                        year: "numeric",
+                        month: "long",
+                        day: "numeric"
+                    }
+                );
+
+        } else if (
+            text.includes("help") ||
+            text.includes("emergency") ||
+            text.includes("lost")
+        ) {
+
+            response =
+                "I can take you to the SOS section for help.";
+
+            showScreen("sos");
+        }
+
+        alert(response);
+
+        speak(response);
+    }
+
+
+    /* =========================
+       TEXT TO SPEECH
+    ========================= */
+
+    function speak(text) {
+
+        if (!("speechSynthesis" in window)) {
+            return;
+        }
+
+        const utterance =
+            new SpeechSynthesisUtterance(text);
+
+        utterance.lang = "en-IN";
+
+        utterance.rate = 0.9;
+
+        window.speechSynthesis.speak(
+            utterance
+        );
+    }
+
+
+    /* =========================
+       SOS
+    ========================= */
+
+    function lostMyWay() {
+
+        alert(
+            "Lost My Way activated.\n\n" +
+            "The patient's current location would be shared with saved family contacts."
+        );
+
+        showScreen("location");
+
+        setTimeout(() => {
+            getLocation();
+        }, 300);
+    }
+
+
+    function emergency() {
+
+        alert(
+            "Emergency activated.\n\n" +
+            "Saved family and healthcare contacts would be alerted."
+        );
+
+        speak(
+            "Emergency mode activated."
+        );
+    }
+
+
+    /* =========================
+       PLACEHOLDER
+    ========================= */
+
+    function comingSoon() {
+
+        alert(
+            "This feature will be completed in the next development stage."
+        );
+    }
+
+
+    /* =========================
+       FAMILY & HEALTHCARE CONTACTS
+    ========================= */
+
+    let familyContacts =
+        JSON.parse(localStorage.getItem("manovaFamilyContacts") || "[]");
+
+    let doctorContacts =
+        JSON.parse(localStorage.getItem("manovaDoctorContacts") || "[]");
+
+    function saveContacts() {
+        localStorage.setItem(
+            "manovaFamilyContacts",
+            JSON.stringify(familyContacts)
+        );
+
+        localStorage.setItem(
+            "manovaDoctorContacts",
+            JSON.stringify(doctorContacts)
+        );
+    }
+
+    function renderContacts() {
+        const familyContainer =
+            document.getElementById("familyContacts");
+
+        const doctorContainer =
+            document.getElementById("doctorContacts");
+
+        if (!familyContainer || !doctorContainer) return;
+
+        familyContainer.innerHTML = "";
+        doctorContainer.innerHTML = "";
+
+        familyContacts.forEach((contact, index) => {
+            familyContainer.appendChild(
+                createSavedContact(contact, index, "family")
+            );
+        });
+
+        doctorContacts.forEach((contact, index) => {
+            doctorContainer.appendChild(
+                createSavedContact(contact, index, "doctor")
+            );
+        });
+    }
+
+    function createSavedContact(contact, index, type) {
+        const wrapper = document.createElement("div");
+        wrapper.className = "saved-contact";
+
+        const info = document.createElement("div");
+        info.className = "saved-contact-info";
+
+        const icon = type === "family" ? "👤" : "🏥";
+        const role = type === "family"
+            ? "Family Member"
+            : "Healthcare Contact";
+
+        info.innerHTML =
+            icon + " <strong>" + escapeHtml(contact.name) +
+            "</strong><br><small>" + role;
+
+        if (contact.phone) {
+            info.innerHTML += " • " + escapeHtml(contact.phone);
+        }
+
+        info.innerHTML += "</small>";
+
+        const editButton = document.createElement("button");
+        editButton.className = "edit-contact-btn";
+        editButton.textContent = "✏️ Edit";
+        editButton.onclick = function() {
+            editContact(index, type);
+        };
+
+        wrapper.appendChild(info);
+        wrapper.appendChild(editButton);
+
+        return wrapper;
+    }
+
+    function escapeHtml(value) {
+        return String(value)
+            .replace(/&/g, "&amp;")
+            .replace(/</g, "&lt;")
+            .replace(/>/g, "&gt;")
+            .replace(/"/g, "&quot;")
+            .replace(/'/g, "&#039;");
+    }
+
+    function addFamilyMember() {
+        if (familyContacts.length >= 5) {
+            alert("You can save up to 5 family members.");
+            return;
+        }
+
+        showContactEditor(null, "family");
+    }
+
+    function addDoctor() {
+        showContactEditor(null, "doctor");
+    }
+
+    function editContact(index, type) {
+        const contacts =
+            type === "family" ? familyContacts : doctorContacts;
+
+        showContactEditor(index, type, contacts[index]);
+    }
+
+    function showContactEditor(index, type, existing = null) {
+        const container =
+            type === "family"
+                ? document.getElementById("familyContacts")
+                : document.getElementById("doctorContacts");
+
+        const editor = document.createElement("div");
+        editor.className = "contact-editor";
+
+        const title =
+            type === "family"
+                ? (existing ? "Edit Family Member" : "Add Family Member")
+                : (existing ? "Edit Doctor / Hospital" : "Add Doctor / Hospital");
+
+        const nameLabel =
+            type === "family" ? "Family Member Name" : "Doctor / Hospital Name";
+
+        editor.innerHTML = `
+            <h3>${title}</h3>
+
+            <label>Name</label>
+            <input
+                type="text"
+                class="contact-name-input"
+                placeholder="${nameLabel}"
+                value="${existing ? escapeHtml(existing.name) : ""}">
+
+            <label>Phone Number (optional)</label>
+            <input
+                type="tel"
+                class="contact-phone-input"
+                placeholder="Enter phone number"
+                value="${existing ? escapeHtml(existing.phone || "") : ""}">
+
+            <div class="contact-actions">
+                <button type="button" class="contact-save-btn">
+                    ✓ ${existing ? "Update" : "Save"}
+                </button>
+
+                <button type="button" class="contact-delete-btn">
+                    Cancel
+                </button>
+            </div>
+        `;
+
+        const nameInput =
+            editor.querySelector(".contact-name-input");
+
+        const phoneInput =
+            editor.querySelector(".contact-phone-input");
+
+        editor.querySelector(".contact-save-btn").onclick = function() {
+            const name = nameInput.value.trim();
+            const phone = phoneInput.value.trim();
+
+            if (!name) {
+                alert("Please enter a name.");
+                nameInput.focus();
+                return;
+            }
+
+            const contact = {
+                name: name,
+                phone: phone
+            };
+
+            const contacts =
+                type === "family" ? familyContacts : doctorContacts;
+
+            if (index === null) {
+                contacts.push(contact);
+            } else {
+                contacts[index] = contact;
+            }
+
+            saveContacts();
+            renderContacts();
+        };
+
+        editor.querySelector(".contact-delete-btn").onclick = function() {
+            renderContacts();
+        };
+
+        container.appendChild(editor);
+        nameInput.focus();
+    }
+
+    /* =========================
+       PROFILE
+    ========================= */
+
+    let selectedGender = localStorage.getItem("smritiGender") || "";
+    let profileLocationAllowed =
+        localStorage.getItem("smritiLocationAllowed") === "true";
+
+    function selectGender(gender) {
+        selectedGender = gender;
+
+        document.querySelectorAll(".gender-option").forEach(button => {
+            button.classList.toggle(
+                "selected",
+                button.dataset.gender === gender
+            );
+        });
+    }
+
+    function loadProfile() {
+        document.getElementById("profileName").value =
+            localStorage.getItem("smritiName") || "";
+
+        document.getElementById("profileAge").value =
+            localStorage.getItem("smritiAge") || "";
+
+        document.getElementById("profileLanguage").value =
+            localStorage.getItem("smritiLanguage") || "English";
+
+        selectGender(selectedGender);
+        updateProfileLocationStatus();
+    }
+
+    function saveProfile() {
+        const name = document.getElementById("profileName").value.trim();
+        const age = document.getElementById("profileAge").value;
+        const language = document.getElementById("profileLanguage").value;
+
+        if (!name) {
+            alert("Please enter your name.");
+            return;
+        }
+
+        if (!age || Number(age) < 1 || Number(age) > 120) {
+            alert("Please enter a valid age.");
+            return;
+        }
+
+        if (!selectedGender) {
+            alert("Please select your gender.");
+            return;
+        }
+
+        localStorage.setItem("smritiName", name);
+        localStorage.setItem("smritiAge", age);
+        localStorage.setItem("smritiGender", selectedGender);
+        localStorage.setItem("smritiLanguage", language);
+        localStorage.setItem(
+            "smritiLocationAllowed",
+            profileLocationAllowed
+        );
+
+        document.getElementById("profileMessage").textContent =
+            "✓ Profile saved successfully.";
+
+        updateWelcomeName();
+        speak("Your profile has been saved.");
+    }
+
+    function updateWelcomeName() {
+        const name = localStorage.getItem("smritiName");
+        const welcomeTitle = document.querySelector("#home .welcome h2");
+
+        if (name) {
+            welcomeTitle.textContent = "Welcome, " + name + "!";
+        } else {
+            welcomeTitle.textContent = "Welcome to Manova";
+        }
+    }
+
+    function updateProfileLocationStatus() {
+        const status =
+            document.getElementById("profileLocationStatus");
+
+        const button =
+            document.querySelector(".location-toggle");
+
+        if (profileLocationAllowed) {
+            status.textContent = "🟢 Allowed";
+            button.textContent = "Disable";
+        } else {
+            status.textContent = "🔴 Denied";
+            button.textContent = "Allow Location";
+        }
+    }
+
+    function requestProfileLocation() {
+        if (!navigator.geolocation) {
+            alert("Location is not supported by this browser.");
+            return;
+        }
+
+        if (profileLocationAllowed) {
+            profileLocationAllowed = false;
+            localStorage.setItem("smritiLocationAllowed", "false");
+            updateProfileLocationStatus();
+            return;
+        }
+
+        navigator.geolocation.getCurrentPosition(
+            function(position) {
+                profileLocationAllowed = true;
+                localStorage.setItem("smritiLocationAllowed", "true");
+                updateProfileLocationStatus();
+
+                alert(
+                    "Location access allowed successfully."
+                );
+            },
+            function(error) {
+                profileLocationAllowed = false;
+                localStorage.setItem("smritiLocationAllowed", "false");
+                updateProfileLocationStatus();
+
+                if (error.code === 1) {
+                    alert(
+                        "Location permission was denied. " +
+                        "You can allow it from your browser settings."
+                    );
+                } else {
+                    alert("Unable to access your location right now.");
+                }
+            },
+            {
+                enableHighAccuracy: true,
+                timeout: 10000,
+                maximumAge: 0
+            }
+        );
+    }
+
+    /* =========================
+       INITIAL LOAD
+    ========================= */
+
+    updateWelcomeName();
+    loadProfile();
+    renderContacts();
+
+</script>
+<script>
+if ('serviceWorker' in navigator) { navigator.serviceWorker.register('/static/sw.js'); }
+</script>
+</body>
+</html>
+
+
+
+
