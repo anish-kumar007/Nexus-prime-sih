@@ -74,5 +74,65 @@ def latest_location(user_id):
         return jsonify({"error": "No location recorded yet"}), 404
     return jsonify(dict(row))
 
+
+@app.route('/api/create_caregiver', methods=['POST'])
+def create_caregiver():
+    data = request.get_json()
+    conn = get_db_connection()
+    conn.execute('''
+        INSERT INTO Users (id, name, role) VALUES (?, ?, 'caregiver')
+        ON CONFLICT(id) DO UPDATE SET name = excluded.name
+    ''', (data['user_id'], data.get('name', 'Caregiver')))
+    conn.commit()
+    conn.close()
+    return jsonify({"status": "success"})
+
+@app.route('/api/link_caregiver', methods=['POST'])
+def link_caregiver():
+    data = request.get_json()
+    conn = get_db_connection()
+    conn.execute(
+        'INSERT INTO CaregiverLinks (caregiver_id, patient_id) VALUES (?, ?)',
+        (data['caregiver_id'], data['patient_id'])
+    )
+    conn.commit()
+    conn.close()
+    return jsonify({"status": "success"})
+
+@app.route('/api/caregiver/<int:caregiver_id>/patients')
+def get_linked_patients(caregiver_id):
+    conn = get_db_connection()
+    rows = conn.execute('''
+        SELECT Users.id, Users.name, Users.stage
+        FROM CaregiverLinks
+        JOIN Users ON Users.id = CaregiverLinks.patient_id
+        WHERE CaregiverLinks.caregiver_id = ?
+    ''', (caregiver_id,)).fetchall()
+    conn.close()
+    return jsonify([dict(row) for row in rows])
+
+
+@app.route('/api/trigger_alert', methods=['POST'])
+def trigger_alert():
+    data = request.get_json()
+    conn = get_db_connection()
+    conn.execute(
+        'INSERT INTO Alerts (user_id, type, status) VALUES (?, ?, ?)',
+        (data['user_id'], data['type'], 'Active')
+    )
+    conn.commit()
+    conn.close()
+    return jsonify({"status": "success"})
+
+@app.route('/api/alerts/<int:user_id>')
+def get_alerts(user_id):
+    conn = get_db_connection()
+    rows = conn.execute(
+        'SELECT type, status, timestamp FROM Alerts WHERE user_id = ? ORDER BY id DESC LIMIT 5',
+        (user_id,)
+    ).fetchall()
+    conn.close()
+    return jsonify([dict(row) for row in rows])
+
 if __name__ == '__main__':
     app.run(debug=True, host='127.0.0.1', port=5000)

@@ -1193,6 +1193,12 @@ function endGame() {
         .textContent =
         `${t.yourScore} ${score}`;
 
+        fetch('/api/save_score', {
+        method: 'POST',
+        headers: {'Content-Type': 'application/json'},
+        body: JSON.stringify({user_id: 1, game_type: 'story_detective', score: score, difficulty: difficultyNames[difficulty]})
+    }).catch(err => console.error('Save failed:', err));
+
 }
 
 

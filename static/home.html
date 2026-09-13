@@ -5,7 +5,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-    <title>Smriti - Elderly Companion</title>
+    <title>Manova - Elderly Companion</title>
 
     <!-- Leaflet CSS -->
     <link
@@ -254,6 +254,124 @@
             font-size: 24px;
         }
 
+        .contacts-section {
+            background: #eef4fb;
+            padding: 20px;
+            border-radius: 20px;
+            margin: 20px 0;
+        }
+
+        .contacts-heading {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 15px;
+        }
+
+        .contacts-heading h3 {
+            margin: 0;
+            font-size: 28px;
+        }
+
+        .add-contact-btn {
+            width: 55px;
+            height: 55px;
+            flex-shrink: 0;
+            border: none;
+            border-radius: 50%;
+            background: #315c8c;
+            color: white;
+            font-size: 38px;
+            line-height: 1;
+            font-weight: bold;
+        }
+
+        .contact-editor {
+            background: white;
+            padding: 18px;
+            border-radius: 15px;
+            margin-top: 15px;
+            border: 2px solid #d5e0eb;
+        }
+
+        .contact-editor label {
+            display: block;
+            font-size: 21px;
+            font-weight: bold;
+            margin-bottom: 7px;
+        }
+
+        .contact-editor input {
+            width: 100%;
+            min-height: 55px;
+            padding: 10px 14px;
+            border: 2px solid #b9c9da;
+            border-radius: 10px;
+            font-size: 20px;
+            margin-bottom: 12px;
+        }
+
+        .contact-actions {
+            display: flex;
+            gap: 10px;
+        }
+
+        .contact-save-btn,
+        .contact-delete-btn {
+            min-height: 50px;
+            padding: 10px 18px;
+            border: none;
+            border-radius: 10px;
+            font-size: 19px;
+            font-weight: bold;
+        }
+
+        .contact-save-btn {
+            background: #315c8c;
+            color: white;
+            flex: 1;
+        }
+
+        .contact-delete-btn {
+            background: #ffdcdc;
+            color: #17202a;
+        }
+
+        .saved-contact {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 12px;
+            background: white;
+            padding: 18px;
+            border-radius: 15px;
+            margin-top: 15px;
+            border: 2px solid #d5e0eb;
+            font-size: 22px;
+        }
+
+        .saved-contact-info {
+            flex: 1;
+        }
+
+        .saved-contact-info strong {
+            font-size: 23px;
+        }
+
+        .edit-contact-btn {
+            border: none;
+            border-radius: 10px;
+            background: #e7eef7;
+            padding: 10px 14px;
+            font-size: 19px;
+            font-weight: bold;
+        }
+
+        .contact-limit {
+            font-size: 18px;
+            margin-bottom: 0;
+        }
+
         .sos-option {
             width: 100%;
             padding: 30px;
@@ -274,12 +392,116 @@
 
         /* PROFILE */
 
-        .info-box {
-            padding: 20px;
-            background: #f1f3f5;
-            border-radius: 15px;
-            margin: 15px 0;
+        .profile-card {
+            background: #eef4fb;
+            padding: 25px;
+            border-radius: 20px;
+            margin: 20px 0;
+        }
+
+        .profile-avatar {
+            width: 90px;
+            height: 90px;
+            border-radius: 50%;
+            background: white;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 48px;
+            margin: 0 auto 20px;
+            border: 3px solid #315c8c;
+        }
+
+        .profile-field {
+            margin: 20px 0;
+        }
+
+        .profile-field label {
+            display: block;
             font-size: 23px;
+            font-weight: bold;
+            margin-bottom: 8px;
+        }
+
+        .profile-field input,
+        .profile-field select {
+            width: 100%;
+            min-height: 58px;
+            padding: 12px 15px;
+            border: 2px solid #b9c9da;
+            border-radius: 12px;
+            background: white;
+            font-size: 21px;
+            font-family: inherit;
+        }
+
+        .gender-options {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+        }
+
+        .gender-option {
+            flex: 1;
+            min-width: 120px;
+            min-height: 55px;
+            padding: 10px;
+            border: 2px solid #b9c9da;
+            border-radius: 12px;
+            background: white;
+            font-size: 20px;
+        }
+
+        .gender-option.selected {
+            background: #d9ecff;
+            border-color: #315c8c;
+            font-weight: bold;
+        }
+
+        .location-control {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 15px;
+            background: white;
+            padding: 15px;
+            border-radius: 12px;
+            border: 2px solid #b9c9da;
+        }
+
+        .location-status-profile {
+            font-size: 21px;
+            font-weight: bold;
+        }
+
+        .location-toggle {
+            min-height: 52px;
+            padding: 10px 18px;
+            border: none;
+            border-radius: 12px;
+            background: #315c8c;
+            color: white;
+            font-size: 20px;
+        }
+
+        .save-profile-btn {
+            width: 100%;
+            min-height: 65px;
+            margin-top: 10px;
+            border: none;
+            border-radius: 15px;
+            background: #315c8c;
+            color: white;
+            font-size: 25px;
+            font-weight: bold;
+        }
+
+        .profile-message {
+            text-align: center;
+            font-size: 20px;
+            font-weight: bold;
+            min-height: 30px;
+            margin-top: 15px;
         }
 
         /* MOBILE */
@@ -320,7 +542,7 @@
     <!-- HEADER -->
 
     <header>
-        <h1>🌿 Smriti</h1>
+        <h1>🌿 Manova</h1>
 
         <button class="profile-btn" onclick="showScreen('profile')">
             👤
@@ -333,7 +555,7 @@
     <section id="home" class="screen active">
 
         <div class="welcome">
-            <h2>Welcome to Smriti</h2>
+            <h2>Welcome to Manova</h2>
 
             <p>
                 Your friendly companion for everyday activities,
@@ -400,7 +622,7 @@
                 Match the word with the correct picture.
             </p>
 
-            <button onclick="startGame()">
+            <button onclick="window.location.href='games/word_picture_match.html'">
                 ▶ Start Game
             </button>
 
@@ -488,27 +710,46 @@
         <h2>👨‍👩‍👧 Family Connect</h2>
 
         <p>
-            Your saved family and healthcare contacts.
+            Add family members and healthcare contacts you may need to reach quickly.
         </p>
 
-        <div class="contact">
-            👩 Family Member 1<br>
-            <small>Quick Connect</small>
+        <div class="contacts-section">
+            <div class="contacts-heading">
+                <h3>👨‍👩‍👧 Family Members</h3>
+                <button
+                    type="button"
+                    class="add-contact-btn"
+                    onclick="addFamilyMember()"
+                    aria-label="Add family member">
+                    +
+                </button>
+            </div>
+
+            <div id="familyContacts"></div>
+
+            <p class="contact-limit">
+                You can save up to 5 family members.
+            </p>
         </div>
 
-        <div class="contact">
-            👨 Family Member 2<br>
-            <small>Quick Connect</small>
-        </div>
+        <div class="contacts-section">
+            <div class="contacts-heading">
+                <h3>🏥 Doctor / Hospital</h3>
+                <button
+                    type="button"
+                    class="add-contact-btn"
+                    onclick="addDoctor()"
+                    aria-label="Add doctor or hospital">
+                    +
+                </button>
+            </div>
 
-        <div class="contact">
-            🏥 Doctor / Hospital<br>
-            <small>Healthcare Contact</small>
-        </div>
+            <div id="doctorContacts"></div>
 
-        <p>
-            Up to 5 family contacts can be saved.
-        </p>
+            <p class="contact-limit">
+                Add doctors, hospitals or other healthcare contacts.
+            </p>
+        </div>
 
         <button
             class="back-btn"
@@ -560,33 +801,80 @@
 
         <h2>👤 Profile</h2>
 
-        <div class="info-box">
-            <strong>Personal Details</strong>
-            <br><br>
-            Name: Demo Patient
+        <div class="profile-card">
+
+            <div class="profile-avatar">👤</div>
+
+            <div class="profile-field">
+                <label for="profileName">Name</label>
+                <input
+                    id="profileName"
+                    type="text"
+                    placeholder="Enter your name"
+                    autocomplete="name">
+            </div>
+
+            <div class="profile-field">
+                <label>Gender</label>
+                <div class="gender-options">
+                    <button type="button" class="gender-option" data-gender="Male"
+                        onclick="selectGender('Male')">Male</button>
+                    <button type="button" class="gender-option" data-gender="Female"
+                        onclick="selectGender('Female')">Female</button>
+                    <button type="button" class="gender-option" data-gender="Other"
+                        onclick="selectGender('Other')">Other</button>
+                    <button type="button" class="gender-option" data-gender="Prefer not to say"
+                        onclick="selectGender('Prefer not to say')">Prefer not to say</button>
+                </div>
+            </div>
+
+            <div class="profile-field">
+                <label for="profileAge">Age</label>
+                <input
+                    id="profileAge"
+                    type="number"
+                    min="1"
+                    max="120"
+                    placeholder="Enter your age">
+            </div>
+
+            <div class="profile-field">
+                <label>📍 Location Access</label>
+                <div class="location-control">
+                    <span id="profileLocationStatus"
+                          class="location-status-profile">
+                        🔴 Denied
+                    </span>
+                    <button
+                        type="button"
+                        class="location-toggle"
+                        onclick="requestProfileLocation()">
+                        Allow Location
+                    </button>
+                </div>
+            </div>
+
+            <div class="profile-field">
+                <label for="profileLanguage">Language</label>
+                <select id="profileLanguage">
+                    <option value="English">English</option>
+                    <option value="Hindi">Hindi</option>
+                    <option value="Assamese">Assamese (অসমীয়া)</option>
+                </select>
+            </div>
+
+            <button
+                type="button"
+                class="save-profile-btn"
+                onclick="saveProfile()">
+                ✓ Save Profile
+            </button>
+
+            <div id="profileMessage" class="profile-message"></div>
+
         </div>
 
-        <div class="info-box">
-            <strong>Language</strong>
-            <br><br>
-            English
-        </div>
-
-        <div class="info-box">
-            <strong>GPS Tracking</strong>
-            <br><br>
-            Enabled
-        </div>
-
-        <div class="info-box">
-            <strong>Accessibility</strong>
-            <br><br>
-            Large text and voice interaction enabled.
-        </div>
-
-        <button
-            class="back-btn"
-            onclick="showScreen('home')">
+        <button class="back-btn" onclick="showScreen('home')">
             ← Back Home
         </button>
 
@@ -657,6 +945,14 @@
             updateProgress();
         }
 
+        if (screenName === "profile") {
+            loadProfile();
+        }
+
+        if (screenName === "family") {
+            renderContacts();
+        }
+
         if (screenName === "location") {
             setTimeout(() => {
                 initializeMap();
@@ -676,6 +972,10 @@
     let gamesPlayed = Number(
         localStorage.getItem("smritiGamesPlayed") || 0
     );
+
+    // Stub patient ID until Profile/login is actually wired up —
+    // every save call across this app uses this same value.
+    const USER_ID = 1;
 
 
     /* =========================
@@ -790,11 +1090,17 @@
                     )
                     .openPopup();
 
-                    fetch('http://localhost:5000/api/update_location', {
-                         method: 'POST',
-                           headers: {'Content-Type': 'application/json'},
-                           body: JSON.stringify({user_id: 1, latitude: latitude, longitude: longitude})
-                            });
+                    fetch('/api/update_location', {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({
+                            user_id: USER_ID,
+                            latitude: latitude,
+                            longitude: longitude
+                        })
+                    }).catch(err =>
+                        console.error('Location save failed:', err)
+                    );
 
                 status.textContent =
                     "✓ Your current location has been found.";
@@ -940,6 +1246,17 @@
 
     function lostMyWay() {
 
+        fetch('/api/trigger_alert', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+                user_id: USER_ID,
+                type: 'Lost My Way'
+            })
+        }).catch(err =>
+            console.error('Alert failed:', err)
+        );
+
         alert(
             "Lost My Way activated.\n\n" +
             "The patient's current location would be shared with saved family contacts."
@@ -954,6 +1271,17 @@
 
 
     function emergency() {
+
+        fetch('/api/trigger_alert', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+                user_id: USER_ID,
+                type: 'Emergency'
+            })
+        }).catch(err =>
+            console.error('Alert failed:', err)
+        );
 
         alert(
             "Emergency activated.\n\n" +
@@ -979,12 +1307,351 @@
 
 
     /* =========================
+       FAMILY & HEALTHCARE CONTACTS
+    ========================= */
+
+    let familyContacts =
+        JSON.parse(localStorage.getItem("manovaFamilyContacts") || "[]");
+
+    let doctorContacts =
+        JSON.parse(localStorage.getItem("manovaDoctorContacts") || "[]");
+
+    function saveContacts() {
+        localStorage.setItem(
+            "manovaFamilyContacts",
+            JSON.stringify(familyContacts)
+        );
+
+        localStorage.setItem(
+            "manovaDoctorContacts",
+            JSON.stringify(doctorContacts)
+        );
+    }
+
+    function renderContacts() {
+        const familyContainer =
+            document.getElementById("familyContacts");
+
+        const doctorContainer =
+            document.getElementById("doctorContacts");
+
+        if (!familyContainer || !doctorContainer) return;
+
+        familyContainer.innerHTML = "";
+        doctorContainer.innerHTML = "";
+
+        familyContacts.forEach((contact, index) => {
+            familyContainer.appendChild(
+                createSavedContact(contact, index, "family")
+            );
+        });
+
+        doctorContacts.forEach((contact, index) => {
+            doctorContainer.appendChild(
+                createSavedContact(contact, index, "doctor")
+            );
+        });
+    }
+
+    function createSavedContact(contact, index, type) {
+        const wrapper = document.createElement("div");
+        wrapper.className = "saved-contact";
+
+        const info = document.createElement("div");
+        info.className = "saved-contact-info";
+
+        const icon = type === "family" ? "👤" : "🏥";
+        const role = type === "family"
+            ? "Family Member"
+            : "Healthcare Contact";
+
+        info.innerHTML =
+            icon + " <strong>" + escapeHtml(contact.name) +
+            "</strong><br><small>" + role;
+
+        if (contact.phone) {
+            info.innerHTML += " • " + escapeHtml(contact.phone);
+        }
+
+        info.innerHTML += "</small>";
+
+        const editButton = document.createElement("button");
+        editButton.className = "edit-contact-btn";
+        editButton.textContent = "✏️ Edit";
+        editButton.onclick = function() {
+            editContact(index, type);
+        };
+
+        wrapper.appendChild(info);
+        wrapper.appendChild(editButton);
+
+        return wrapper;
+    }
+
+    function escapeHtml(value) {
+        return String(value)
+            .replace(/&/g, "&amp;")
+            .replace(/</g, "&lt;")
+            .replace(/>/g, "&gt;")
+            .replace(/"/g, "&quot;")
+            .replace(/'/g, "&#039;");
+    }
+
+    function addFamilyMember() {
+        if (familyContacts.length >= 5) {
+            alert("You can save up to 5 family members.");
+            return;
+        }
+
+        showContactEditor(null, "family");
+    }
+
+    function addDoctor() {
+        showContactEditor(null, "doctor");
+    }
+
+    function editContact(index, type) {
+        const contacts =
+            type === "family" ? familyContacts : doctorContacts;
+
+        showContactEditor(index, type, contacts[index]);
+    }
+
+    function showContactEditor(index, type, existing = null) {
+        const container =
+            type === "family"
+                ? document.getElementById("familyContacts")
+                : document.getElementById("doctorContacts");
+
+        const editor = document.createElement("div");
+        editor.className = "contact-editor";
+
+        const title =
+            type === "family"
+                ? (existing ? "Edit Family Member" : "Add Family Member")
+                : (existing ? "Edit Doctor / Hospital" : "Add Doctor / Hospital");
+
+        const nameLabel =
+            type === "family" ? "Family Member Name" : "Doctor / Hospital Name";
+
+        editor.innerHTML = `
+            <h3>${title}</h3>
+
+            <label>Name</label>
+            <input
+                type="text"
+                class="contact-name-input"
+                placeholder="${nameLabel}"
+                value="${existing ? escapeHtml(existing.name) : ""}">
+
+            <label>Phone Number (optional)</label>
+            <input
+                type="tel"
+                class="contact-phone-input"
+                placeholder="Enter phone number"
+                value="${existing ? escapeHtml(existing.phone || "") : ""}">
+
+            <div class="contact-actions">
+                <button type="button" class="contact-save-btn">
+                    ✓ ${existing ? "Update" : "Save"}
+                </button>
+
+                <button type="button" class="contact-delete-btn">
+                    Cancel
+                </button>
+            </div>
+        `;
+
+        const nameInput =
+            editor.querySelector(".contact-name-input");
+
+        const phoneInput =
+            editor.querySelector(".contact-phone-input");
+
+        editor.querySelector(".contact-save-btn").onclick = function() {
+            const name = nameInput.value.trim();
+            const phone = phoneInput.value.trim();
+
+            if (!name) {
+                alert("Please enter a name.");
+                nameInput.focus();
+                return;
+            }
+
+            const contact = {
+                name: name,
+                phone: phone
+            };
+
+            const contacts =
+                type === "family" ? familyContacts : doctorContacts;
+
+            if (index === null) {
+                contacts.push(contact);
+            } else {
+                contacts[index] = contact;
+            }
+
+            saveContacts();
+            renderContacts();
+        };
+
+        editor.querySelector(".contact-delete-btn").onclick = function() {
+            renderContacts();
+        };
+
+        container.appendChild(editor);
+        nameInput.focus();
+    }
+
+    /* =========================
+       PROFILE
+    ========================= */
+
+    let selectedGender = localStorage.getItem("smritiGender") || "";
+    let profileLocationAllowed =
+        localStorage.getItem("smritiLocationAllowed") === "true";
+
+    function selectGender(gender) {
+        selectedGender = gender;
+
+        document.querySelectorAll(".gender-option").forEach(button => {
+            button.classList.toggle(
+                "selected",
+                button.dataset.gender === gender
+            );
+        });
+    }
+
+    function loadProfile() {
+        document.getElementById("profileName").value =
+            localStorage.getItem("smritiName") || "";
+
+        document.getElementById("profileAge").value =
+            localStorage.getItem("smritiAge") || "";
+
+        document.getElementById("profileLanguage").value =
+            localStorage.getItem("smritiLanguage") || "English";
+
+        selectGender(selectedGender);
+        updateProfileLocationStatus();
+    }
+
+    function saveProfile() {
+        const name = document.getElementById("profileName").value.trim();
+        const age = document.getElementById("profileAge").value;
+        const language = document.getElementById("profileLanguage").value;
+
+        if (!name) {
+            alert("Please enter your name.");
+            return;
+        }
+
+        if (!age || Number(age) < 1 || Number(age) > 120) {
+            alert("Please enter a valid age.");
+            return;
+        }
+
+        if (!selectedGender) {
+            alert("Please select your gender.");
+            return;
+        }
+
+        localStorage.setItem("smritiName", name);
+        localStorage.setItem("smritiAge", age);
+        localStorage.setItem("smritiGender", selectedGender);
+        localStorage.setItem("smritiLanguage", language);
+        localStorage.setItem(
+            "smritiLocationAllowed",
+            profileLocationAllowed
+        );
+
+        document.getElementById("profileMessage").textContent =
+            "✓ Profile saved successfully.";
+
+        updateWelcomeName();
+        speak("Your profile has been saved.");
+    }
+
+    function updateWelcomeName() {
+        const name = localStorage.getItem("smritiName");
+        const welcomeTitle = document.querySelector("#home .welcome h2");
+
+        if (name) {
+            welcomeTitle.textContent = "Welcome, " + name + "!";
+        } else {
+            welcomeTitle.textContent = "Welcome to Manova";
+        }
+    }
+
+    function updateProfileLocationStatus() {
+        const status =
+            document.getElementById("profileLocationStatus");
+
+        const button =
+            document.querySelector(".location-toggle");
+
+        if (profileLocationAllowed) {
+            status.textContent = "🟢 Allowed";
+            button.textContent = "Disable";
+        } else {
+            status.textContent = "🔴 Denied";
+            button.textContent = "Allow Location";
+        }
+    }
+
+    function requestProfileLocation() {
+        if (!navigator.geolocation) {
+            alert("Location is not supported by this browser.");
+            return;
+        }
+
+        if (profileLocationAllowed) {
+            profileLocationAllowed = false;
+            localStorage.setItem("smritiLocationAllowed", "false");
+            updateProfileLocationStatus();
+            return;
+        }
+
+        navigator.geolocation.getCurrentPosition(
+            function(position) {
+                profileLocationAllowed = true;
+                localStorage.setItem("smritiLocationAllowed", "true");
+                updateProfileLocationStatus();
+
+                alert(
+                    "Location access allowed successfully."
+                );
+            },
+            function(error) {
+                profileLocationAllowed = false;
+                localStorage.setItem("smritiLocationAllowed", "false");
+                updateProfileLocationStatus();
+
+                if (error.code === 1) {
+                    alert(
+                        "Location permission was denied. " +
+                        "You can allow it from your browser settings."
+                    );
+                } else {
+                    alert("Unable to access your location right now.");
+                }
+            },
+            {
+                enableHighAccuracy: true,
+                timeout: 10000,
+                maximumAge: 0
+            }
+        );
+    }
+
+    /* =========================
        INITIAL LOAD
     ========================= */
 
-    document.getElementById(
-        "gameScore"
-    ).textContent = score;
+    updateWelcomeName();
+    loadProfile();
+    renderContacts();
 
 </script>
 <script>
@@ -992,8 +1659,3 @@ if ('serviceWorker' in navigator) { navigator.serviceWorker.register('/static/sw
 </script>
 </body>
 </html>
-
-
-
-
-

@@ -219,54 +219,45 @@
     }
 
     function loadData() {
-        // Scores
-        const score = localStorage.getItem("smritiScore") || 0;
-        const games = localStorage.getItem("smritiGamesPlayed") || 0;
-        document.getElementById("totalScore").textContent = score;
-        document.getElementById("gamesPlayedStat").textContent = games;
+        const userId = 1;
 
-        // Location
-        const lat = parseFloat(localStorage.getItem("smritiLat"));
-        const lng = parseFloat(localStorage.getItem("smritiLng"));
-        const locTime = localStorage.getItem("smritiLocationTime");
+        fetch(`/api/progress/${userId}`).then(r => r.json()).then(data => {
+            const history = data.history || [];
+            document.getElementById("gamesPlayedStat").textContent = history.length;
+            document.getElementById("totalScore").textContent = history.reduce((sum, h) => sum + h.score, 0);
+        });
 
-        if (lat && lng) {
-            initMap(lat, lng);
-            document.getElementById("locationTime").textContent = locTime || "Recently";
-        } else {
-            initMap();
-            document.getElementById("locationTime").textContent = "Not available yet";
-        }
-
-        // Alerts
-        const alerts = JSON.parse(localStorage.getItem("smritiAlerts") || "[]");
-        const list = document.getElementById("alertsList");
-        const badge = document.getElementById("statusBadge");
-
-        if (alerts.length === 0) {
-            list.innerHTML = `<p style="color:#888;">No alerts yet</p>`;
-            badge.className = "status-badge safe";
-            badge.textContent = "● Safe";
-        } else {
-            list.innerHTML = "";
-            let hasActive = false;
-
-            alerts.slice(0, 5).forEach(alert => {
-                const div = document.createElement("div");
-                div.className = "alert-item" + (alert.status === "Active" ? " active" : "");
-                div.innerHTML = `<strong>${alert.type}</strong><br><small>${alert.time} • ${alert.status}</small>`;
-                list.appendChild(div);
-                if (alert.status === "Active") hasActive = true;
-            });
-
-            if (hasActive) {
-                badge.className = "status-badge alert";
-                badge.textContent = "● Needs Attention";
+        fetch(`/api/latest_location/${userId}`).then(r => r.json()).then(data => {
+            if (data.latitude) {
+                initMap(data.latitude, data.longitude);
+                document.getElementById("locationTime").textContent = data.timestamp;
             } else {
+                initMap();
+                document.getElementById("locationTime").textContent = "Not available yet";
+            }
+        });
+
+        fetch(`/api/alerts/${userId}`).then(r => r.json()).then(alerts => {
+            const list = document.getElementById("alertsList");
+            const badge = document.getElementById("statusBadge");
+            if (!alerts.length) {
+                list.innerHTML = `<p style="color:#888;">No alerts yet</p>`;
                 badge.className = "status-badge safe";
                 badge.textContent = "● Safe";
+            } else {
+                list.innerHTML = "";
+                let hasActive = false;
+                alerts.forEach(a => {
+                    const div = document.createElement("div");
+                    div.className = "alert-item" + (a.status === "Active" ? " active" : "");
+                    div.innerHTML = `<strong>${a.type}</strong><br><small>${a.timestamp} • ${a.status}</small>`;
+                    list.appendChild(div);
+                    if (a.status === "Active") hasActive = true;
+                });
+                badge.className = hasActive ? "status-badge alert" : "status-badge safe";
+                badge.textContent = hasActive ? "● Needs Attention" : "● Safe";
             }
-        }
+        });
     }
 
     loadData();
