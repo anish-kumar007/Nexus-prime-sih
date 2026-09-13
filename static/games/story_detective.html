@@ -4,535 +4,267 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-
-<title>Story Detective</title>
+<title>Adaptive Story Detective</title>
 
 <style>
-
 * {
     box-sizing: border-box;
-    margin: 0;
-    padding: 0;
 }
 
 body {
+    margin: 0;
     font-family: Arial, sans-serif;
-    min-height: 100vh;
-
-    background: linear-gradient(
-        135deg,
-        #667eea,
-        #764ba2
-    );
-
-    display: flex;
-    justify-content: center;
-    align-items: center;
-
-    padding: 20px;
+    background: #f4f7f8;
+    color: #222;
 }
 
-.game {
-    width: 100%;
-    max-width: 850px;
-
-    background: white;
-
-    border-radius: 25px;
-
-    padding: 30px;
-
-    box-shadow:
-        0 15px 40px rgba(0,0,0,0.25);
+.container {
+    max-width: 900px;
+    margin: 30px auto;
+    padding: 25px;
 }
 
 h1 {
     text-align: center;
-    color: #4b3f72;
+    font-size: 38px;
     margin-bottom: 10px;
 }
 
-.subtitle {
+h2 {
+    font-size: 30px;
+}
+
+h3 {
+    font-size: 25px;
+}
+
+p, li {
+    font-size: 21px;
+    line-height: 1.7;
+}
+
+.card {
+    background: white;
+    padding: 25px;
+    margin: 20px 0;
+    border-radius: 18px;
+    box-shadow: 0 3px 12px rgba(0,0,0,0.12);
+}
+
+.language-buttons {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 12px;
+    justify-content: center;
+    margin: 20px 0;
+}
+
+button {
+    font-size: 20px;
+    padding: 14px 22px;
+    border: 2px solid #333;
+    border-radius: 12px;
+    background: #fff;
+    cursor: pointer;
+    min-width: 130px;
+}
+
+button:hover {
+    background: #e9f2ff;
+}
+
+button.selected {
+    background: #333;
+    color: white;
+}
+
+button:focus-visible {
+    outline: 4px solid #ff9800;
+    outline-offset: 3px;
+}
+
+.option {
+    display: block;
+    width: 100%;
+    margin: 12px 0;
+    text-align: left;
+    font-size: 21px;
+}
+
+.option.correct {
+    background: #c8f7c5;
+    border-color: #198754;
+}
+
+.option.wrong {
+    background: #ffd6d6;
+    border-color: #dc3545;
+}
+
+#feedback {
+    font-weight: bold;
+    font-size: 22px;
+    margin-top: 20px;
+}
+
+.correct-text {
+    color: #087f23;
+}
+
+.wrong-text {
+    color: #b00020;
+}
+
+#timer {
+    font-size: 25px;
+    font-weight: bold;
     text-align: center;
-    color: #666;
-    margin-bottom: 25px;
+    margin: 15px;
+}
+
+#score {
+    font-size: 23px;
+    font-weight: bold;
+    text-align: center;
+}
+
+#difficulty {
+    font-size: 23px;
+    font-weight: bold;
+    text-align: center;
+}
+
+#nextBtn,
+#startBtn,
+#restartBtn {
+    display: block;
+    margin: 20px auto;
+    background: #222;
+    color: white;
 }
 
 .hidden {
     display: none;
 }
 
-
-/* HOME */
-
-.selection {
-    display: flex;
-    gap: 15px;
-
-    justify-content: center;
-
-    flex-wrap: wrap;
-
-    margin: 20px 0;
-}
-
-.selection button {
-
-    padding: 12px 25px;
-
-    border: 2px solid #667eea;
-
-    background: white;
-
-    color: #4b3f72;
-
-    border-radius: 12px;
-
-    cursor: pointer;
-
-    font-size: 16px;
-}
-
-.selection button.selected {
-
-    background: #667eea;
-
-    color: white;
-}
-
-.start-btn,
-.next-btn,
-.restart-btn {
-
-    display: block;
-
-    margin: 25px auto 0;
-
-    padding: 14px 35px;
-
-    border: none;
-
-    border-radius: 12px;
-
-    background: #667eea;
-
-    color: white;
-
-    font-size: 17px;
-
-    cursor: pointer;
-}
-
-.start-btn:hover,
-.next-btn:hover,
-.restart-btn:hover {
-
-    opacity: 0.85;
-}
-
-
-/* GAME */
-
-.top-bar {
-
-    display: flex;
-
-    justify-content: space-between;
-
-    gap: 10px;
-
-    margin-bottom: 20px;
-
-    font-weight: bold;
-
-    color: #4b3f72;
-
-    flex-wrap: wrap;
-}
-
-.difficulty-display {
-
-    text-align: center;
-
-    margin-bottom: 15px;
-
-    color: #667eea;
-
-    font-weight: bold;
-
-    font-size: 17px;
-}
-
-.progress-container {
-
-    height: 10px;
-
-    background: #eee;
-
+.story {
+    background: #fffdf0;
+    border-left: 7px solid #555;
+    padding: 20px;
     border-radius: 10px;
-
-    margin-bottom: 25px;
 }
 
 .progress {
-
-    height: 100%;
-
-    width: 0%;
-
-    background: #667eea;
-
-    border-radius: 10px;
-
-    transition: width 0.3s;
-}
-
-.story-box {
-
-    background: #f5f5ff;
-
-    padding: 25px;
-
-    border-radius: 18px;
-
-    line-height: 1.7;
-
-    font-size: 18px;
-
-    margin-bottom: 20px;
-}
-
-.story-title {
-
-    color: #4b3f72;
-
-    margin-bottom: 12px;
-}
-
-.question-box {
-
-    margin-top: 20px;
-}
-
-.question {
-
-    font-size: 21px;
-
-    font-weight: bold;
-
-    margin-bottom: 18px;
-}
-
-.options {
-
-    display: grid;
-
-    gap: 12px;
-}
-
-.option {
-
-    padding: 15px;
-
-    border: 2px solid #ddd;
-
-    background: white;
-
-    border-radius: 12px;
-
-    cursor: pointer;
-
-    text-align: left;
-
-    font-size: 16px;
-}
-
-.option:hover {
-
-    background: #f1f1ff;
-}
-
-.option.correct {
-
-    background: #c8f7c5;
-
-    border-color: green;
-}
-
-.option.wrong {
-
-    background: #ffd0d0;
-
-    border-color: red;
-}
-
-.feedback {
-
-    margin-top: 15px;
-
-    font-weight: bold;
-
-    min-height: 25px;
-}
-
-
-/* RESULT */
-
-.result {
-
+    font-size: 20px;
     text-align: center;
+    margin: 10px;
 }
 
-.result h2 {
-
-    color: #4b3f72;
-
-    margin-bottom: 15px;
-}
-
-.score {
-
-    font-size: 45px;
-
-    font-weight: bold;
-
-    color: #667eea;
-
-    margin: 20px;
-}
-
-.badge {
-
-    display: inline-block;
-
-    padding: 10px 20px;
-
-    border-radius: 20px;
-
-    background: #eee;
-
-    margin-top: 10px;
-}
-
-
-@media(max-width:600px) {
-
-    .game {
-
-        padding: 20px;
+@media (max-width: 600px) {
+    .container {
+        padding: 12px;
     }
 
-    .story-box {
-
-        font-size: 16px;
+    h1 {
+        font-size: 30px;
     }
 
-    .question {
+    h2 {
+        font-size: 25px;
+    }
 
+    p, li, button {
         font-size: 18px;
     }
 
-    .top-bar {
-
-        justify-content: center;
+    button {
+        width: 100%;
     }
 }
-
 </style>
 </head>
 
-
 <body>
 
-<div class="game">
+<div class="container">
 
+<h1>🕵️ Story Detective</h1>
 
-    <!-- HOME SCREEN -->
+<div id="startScreen" class="card">
 
-    <div id="homeScreen">
+    <h2 id="welcomeTitle">Choose Your Language</h2>
 
-        <h1>🕵️ Story Detective</h1>
+    <div class="language-buttons">
 
-        <p class="subtitle">
-            Read the story carefully and test your memory!
-        </p>
+        <button id="englishBtn"
+                onclick="selectLanguage('english')"
+                aria-label="Select English">
+            English
+        </button>
 
+        <button id="hindiBtn"
+                onclick="selectLanguage('hindi')"
+                aria-label="Select Hindi">
+            हिंदी
+        </button>
 
-        <h3>Select Language</h3>
+        <button id="bengaliBtn"
+                onclick="selectLanguage('bengali')"
+                aria-label="Select Bengali">
+            বাংলা
+        </button>
 
-        <div class="selection">
-
-            <button
-                id="englishBtn"
-                onclick="selectLanguage('english')">
-
-                English
-
-            </button>
-
-
-            <button
-                id="hindiBtn"
-                onclick="selectLanguage('hindi')">
-
-                हिंदी
-
-            </button>
-
-        </div>
-
-
-        <p style="text-align:center; color:#666; margin-top:20px;">
-            🧠 Difficulty will automatically adapt according to your answers.
-        </p>
-
-
-        <button
-            class="start-btn"
-            onclick="startGame()">
-
-            🚀 Start Game
-
+        <button id="assameseBtn"
+                onclick="selectLanguage('assamese')"
+                aria-label="Select Assamese">
+            অসমীয়া
         </button>
 
     </div>
 
+    <button id="startBtn" onclick="startGame()">
+        Start Game
+    </button>
+
+</div>
 
 
-    <!-- GAME SCREEN -->
+<div id="gameScreen" class="hidden">
 
-    <div id="gameScreen" class="hidden">
+    <div class="card">
 
+        <div id="progress" class="progress"></div>
 
-        <div class="top-bar">
+        <div id="difficulty"></div>
 
-            <span id="storyNumber">
-                📖 Story 1 / 3
-            </span>
+        <div id="score"></div>
 
-            <span id="questionNumber">
-                Question 1 / 9
-            </span>
-
-            <span id="timer">
-                ⏱️ 30
-            </span>
-
-            <span id="scoreText">
-                ⭐ Score: 0
-            </span>
-
-        </div>
-
-
-        <div
-            class="difficulty-display"
-            id="difficultyText">
-
-            🟢 Easy
-
-        </div>
-
-
-        <div class="progress-container">
-
-            <div
-                class="progress"
-                id="progress">
-            </div>
-
-        </div>
-
-
-        <div class="story-box">
-
-            <h2
-                class="story-title"
-                id="storyTitle">
-
-                Story
-
-            </h2>
-
-
-            <p id="storyText"></p>
-
-        </div>
-
-
-        <div class="question-box">
-
-            <p
-                class="question"
-                id="questionText">
-            </p>
-
-
-            <div
-                class="options"
-                id="options">
-            </div>
-
-
-            <p
-                class="feedback"
-                id="feedback">
-            </p>
-
-        </div>
-
-
-        <button
-            class="next-btn hidden"
-            id="nextBtn"
-            onclick="nextQuestion()">
-
-            Next Question →
-
-        </button>
+        <div id="timer" aria-live="assertive"></div>
 
     </div>
 
 
+    <div class="card">
 
-    <!-- RESULT SCREEN -->
+        <h2 id="storyTitle"></h2>
 
-    <div
-        id="resultScreen"
-        class="hidden result">
+        <div id="storyText" class="story"></div>
 
-        <h1>🎉 Game Complete!</h1>
-
-        <h2>Your Final Score</h2>
+    </div>
 
 
-        <div
-            class="score"
-            id="finalScore">
+    <div class="card">
 
-            0
+        <h3 id="question"></h3>
 
-        </div>
+        <div id="options"></div>
 
+        <div id="feedback" aria-live="polite"></div>
 
-        <p id="resultMessage"></p>
-
-
-        <div
-            class="badge"
-            id="badge">
-
-            🧠 Story Detective
-
-        </div>
-
-
-        <button
-            class="restart-btn"
-            onclick="restartGame()">
-
-            🔄 Play Again
-
+        <button id="nextBtn"
+                class="hidden"
+                onclick="nextQuestion()">
+            Next
         </button>
 
     </div>
@@ -540,969 +272,580 @@ h1 {
 </div>
 
 
+<div id="endScreen" class="card hidden">
+
+    <h2 id="finalTitle"></h2>
+
+    <p id="finalScore"></p>
+
+    <button id="restartBtn" onclick="restartGame()">
+        Play Again
+    </button>
+
+</div>
+
+</div>
+
 
 <script>
-
-
-/* =========================
-   GAME VARIABLES
-========================= */
-
 
 let language = "english";
 
 let currentStory = 0;
-
 let currentQuestion = 0;
 
 let score = 0;
 
-let timer;
+let difficulty = 0;
 
-let timeLeft = 30;
+let timer;
+let timeLeft;
+
+let questionAnswered = false;
 
 
 /*
 Difficulty:
-
 0 = Easy
 1 = Medium
 2 = Hard
 */
 
-let difficultyLevel = 0;
-
-
-/*
-Each story has 3 questions.
-
-For every question we have
-Easy / Medium / Hard versions.
-*/
-
-
-const stories = [
-
-/* =================================
-   STORY 1
-================================= */
-
-{
-
-    english: {
-
-        title: "The Lost Puppy",
-
-        text:
-        "Riya was walking in the park when she saw a small brown puppy. The puppy was sitting near a tree. Riya gave it some water and called the animal shelter. Soon, the puppy was taken safely to the shelter.",
-
-        questions: {
-
-            easy: [
-
-                {
-                    question: "What color was the puppy?",
-
-                    options: [
-                        "Black",
-                        "Brown",
-                        "White",
-                        "Grey"
-                    ],
-
-                    answer: 1
-                },
-
-                {
-                    question: "Where was the puppy sitting?",
-
-                    options: [
-                        "Near a tree",
-                        "Near a shop",
-                        "Inside a house",
-                        "Near a river"
-                    ],
-
-                    answer: 0
-                },
-
-                {
-                    question: "What did Riya give the puppy?",
-
-                    options: [
-                        "Milk",
-                        "Food",
-                        "Water",
-                        "Juice"
-                    ],
-
-                    answer: 2
-                }
-
-            ],
-
-            medium: [
-
-                {
-                    question: "Where was Riya when she saw the puppy?",
-
-                    options: [
-                        "At school",
-                        "In the park",
-                        "At home",
-                        "At the market"
-                    ],
-
-                    answer: 1
-                },
-
-                {
-                    question: "Who did Riya call?",
-
-                    options: [
-                        "Her friend",
-                        "The police",
-                        "The animal shelter",
-                        "Her teacher"
-                    ],
-
-                    answer: 2
-                },
-
-                {
-                    question: "What happened to the puppy at the end?",
-
-                    options: [
-                        "It ran away",
-                        "It went home",
-                        "It was taken safely to the shelter",
-                        "It stayed under the tree"
-                    ],
-
-                    answer: 2
-                }
-
-            ],
-
-            hard: [
-
-                {
-                    question: "What did Riya do before calling the animal shelter?",
-
-                    options: [
-                        "She took the puppy home",
-                        "She gave the puppy water",
-                        "She bought food",
-                        "She called her friend"
-                    ],
-
-                    answer: 1
-                },
-
-                {
-                    question: "Where was the puppy in relation to the tree?",
-
-                    options: [
-                        "Inside the tree",
-                        "Behind the tree",
-                        "Near the tree",
-                        "Far from the tree"
-                    ],
-
-                    answer: 2
-                },
-
-                {
-                    question: "Why was the animal shelter contacted?",
-
-                    options: [
-                        "To find food",
-                        "To safely take care of the puppy",
-                        "To find Riya",
-                        "To clean the park"
-                    ],
-
-                    answer: 1
-                }
-
-            ]
-
-        }
-
-    },
-
-
-    hindi: {
-
-        title: "खोया हुआ पिल्ला",
-
-        text:
-        "रिया पार्क में घूम रही थी। उसने एक छोटा भूरा पिल्ला देखा। पिल्ला एक पेड़ के पास बैठा था। रिया ने उसे पानी दिया और पशु आश्रय केंद्र को फोन किया। जल्द ही पिल्ले को सुरक्षित रूप से आश्रय केंद्र ले जाया गया।",
-
-        questions: {
-
-            easy: [
-
-                {
-                    question: "पिल्ले का रंग क्या था?",
-
-                    options: [
-                        "काला",
-                        "भूरा",
-                        "सफेद",
-                        "ग्रे"
-                    ],
-
-                    answer: 1
-                },
-
-                {
-                    question: "पिल्ला कहाँ बैठा था?",
-
-                    options: [
-                        "पेड़ के पास",
-                        "दुकान के पास",
-                        "घर के अंदर",
-                        "नदी के पास"
-                    ],
-
-                    answer: 0
-                },
-
-                {
-                    question: "रिया ने पिल्ले को क्या दिया?",
-
-                    options: [
-                        "दूध",
-                        "खाना",
-                        "पानी",
-                        "जूस"
-                    ],
-
-                    answer: 2
-                }
-
-            ],
-
-            medium: [
-
-                {
-                    question: "रिया ने पिल्ले को कहाँ देखा?",
-
-                    options: [
-                        "स्कूल में",
-                        "पार्क में",
-                        "घर पर",
-                        "बाजार में"
-                    ],
-
-                    answer: 1
-                },
-
-                {
-                    question: "रिया ने किसे फोन किया?",
-
-                    options: [
-                        "अपने दोस्त को",
-                        "पुलिस को",
-                        "पशु आश्रय केंद्र को",
-                        "शिक्षक को"
-                    ],
-
-                    answer: 2
-                },
-
-                {
-                    question: "अंत में पिल्ले के साथ क्या हुआ?",
-
-                    options: [
-                        "वह भाग गया",
-                        "वह घर चला गया",
-                        "उसे सुरक्षित रूप से आश्रय केंद्र ले जाया गया",
-                        "वह पेड़ के नीचे रहा"
-                    ],
-
-                    answer: 2
-                }
-
-            ],
-
-            hard: [
-
-                {
-                    question: "पशु आश्रय केंद्र को फोन करने से पहले रिया ने क्या किया?",
-
-                    options: [
-                        "पिल्ले को घर ले गई",
-                        "पिल्ले को पानी दिया",
-                        "खाना खरीदा",
-                        "दोस्त को फोन किया"
-                    ],
-
-                    answer: 1
-                },
-
-                {
-                    question: "पिल्ला पेड़ के कहाँ था?",
-
-                    options: [
-                        "पेड़ के अंदर",
-                        "पेड़ के पीछे",
-                        "पेड़ के पास",
-                        "पेड़ से दूर"
-                    ],
-
-                    answer: 2
-                },
-
-                {
-                    question: "पशु आश्रय केंद्र से संपर्क क्यों किया गया?",
-
-                    options: [
-                        "खाना लेने के लिए",
-                        "पिल्ले की सुरक्षित देखभाल के लिए",
-                        "रिया को खोजने के लिए",
-                        "पार्क साफ करने के लिए"
-                    ],
-
-                    answer: 1
-                }
-
-            ]
-
-        }
-
-    }
-
-},
-
-
-
-/* =================================
-   STORY 2
-================================= */
-
-{
-
-    english: {
-
-        title: "The Rainy Morning",
-
-        text:
-        "Arjun woke up early on Sunday morning. It was raining outside, so he decided to stay home. He made a cup of hot chocolate and read his favorite book. Later, he helped his mother prepare lunch.",
-
-        questions: {
-
-            easy: [
-
-                {
-                    question: "What day was it?",
-
-                    options: [
-                        "Monday",
-                        "Friday",
-                        "Sunday",
-                        "Saturday"
-                    ],
-
-                    answer: 2
-                },
-
-                {
-                    question: "What was the weather like?",
-
-                    options: [
-                        "Sunny",
-                        "Rainy",
-                        "Snowy",
-                        "Windy"
-                    ],
-
-                    answer: 1
-                },
-
-                {
-                    question: "What did Arjun drink?",
-
-                    options: [
-                        "Tea",
-                        "Coffee",
-                        "Juice",
-                        "Hot chocolate"
-                    ],
-
-                    answer: 3
-                }
-
-            ],
-
-            medium: [
-
-                {
-                    question: "Why did Arjun stay home?",
-
-                    options: [
-                        "He was tired",
-                        "It was raining",
-                        "He had homework",
-                        "His friends visited"
-                    ],
-
-                    answer: 1
-                },
-
-                {
-                    question: "What did Arjun read?",
-
-                    options: [
-                        "A newspaper",
-                        "A comic",
-                        "His favorite book",
-                        "A magazine"
-                    ],
-
-                    answer: 2
-                },
-
-                {
-                    question: "Whom did Arjun help later?",
-
-                    options: [
-                        "His brother",
-                        "His father",
-                        "His teacher",
-                        "His mother"
-                    ],
-
-                    answer: 3
-                }
-
-            ],
-
-            hard: [
-
-                {
-                    question: "What did Arjun do after making hot chocolate?",
-
-                    options: [
-                        "Went outside",
-                        "Read his favorite book",
-                        "Played football",
-                        "Called his friend"
-                    ],
-
-                    answer: 1
-                },
-
-                {
-                    question: "When did Arjun wake up?",
-
-                    options: [
-                        "Late Sunday night",
-                        "Early Sunday morning",
-                        "Early Monday morning",
-                        "Saturday afternoon"
-                    ],
-
-                    answer: 1
-                },
-
-                {
-                    question: "What did Arjun help prepare?",
-
-                    options: [
-                        "Breakfast",
-                        "Dinner",
-                        "Lunch",
-                        "Snacks"
-                    ],
-
-                    answer: 2
-                }
-
-            ]
-
-        }
-
-    },
-
-
-    hindi: {
-
-        title: "बारिश की सुबह",
-
-        text:
-        "अर्जुन रविवार की सुबह जल्दी उठा। बाहर बारिश हो रही थी, इसलिए उसने घर पर रहने का फैसला किया। उसने गर्म चॉकलेट बनाई और अपनी पसंदीदा किताब पढ़ी। बाद में उसने अपनी माँ को दोपहर का खाना बनाने में मदद की।",
-
-        questions: {
-
-            easy: [
-
-                {
-                    question: "दिन कौन सा था?",
-
-                    options: [
-                        "सोमवार",
-                        "शुक्रवार",
-                        "रविवार",
-                        "शनिवार"
-                    ],
-
-                    answer: 2
-                },
-
-                {
-                    question: "मौसम कैसा था?",
-
-                    options: [
-                        "धूप वाला",
-                        "बारिश वाला",
-                        "बर्फीला",
-                        "हवादार"
-                    ],
-
-                    answer: 1
-                },
-
-                {
-                    question: "अर्जुन ने क्या पिया?",
-
-                    options: [
-                        "चाय",
-                        "कॉफी",
-                        "जूस",
-                        "गर्म चॉकलेट"
-                    ],
-
-                    answer: 3
-                }
-
-            ],
-
-            medium: [
-
-                {
-                    question: "अर्जुन घर पर क्यों रहा?",
-
-                    options: [
-                        "वह थका था",
-                        "बारिश हो रही थी",
-                        "उसे होमवर्क करना था",
-                        "उसके दोस्त आए थे"
-                    ],
-
-                    answer: 1
-                },
-
-                {
-                    question: "अर्जुन ने क्या पढ़ा?",
-
-                    options: [
-                        "अखबार",
-                        "कॉमिक",
-                        "अपनी पसंदीदा किताब",
-                        "पत्रिका"
-                    ],
-
-                    answer: 2
-                },
-
-                {
-                    question: "बाद में अर्जुन ने किसकी मदद की?",
-
-                    options: [
-                        "अपने भाई की",
-                        "अपने पिता की",
-                        "अपने शिक्षक की",
-                        "अपनी माँ की"
-                    ],
-
-                    answer: 3
-                }
-
-            ],
-
-            hard: [
-
-                {
-                    question: "गर्म चॉकलेट बनाने के बाद अर्जुन ने क्या किया?",
-
-                    options: [
-                        "बाहर गया",
-                        "अपनी पसंदीदा किताब पढ़ी",
-                        "फुटबॉल खेला",
-                        "दोस्त को फोन किया"
-                    ],
-
-                    answer: 1
-                },
-
-                {
-                    question: "अर्जुन कब उठा?",
-
-                    options: [
-                        "रविवार की रात देर से",
-                        "रविवार की सुबह जल्दी",
-                        "सोमवार की सुबह जल्दी",
-                        "शनिवार की दोपहर"
-                    ],
-
-                    answer: 1
-                },
-
-                {
-                    question: "अर्जुन ने क्या बनाने में मदद की?",
-
-                    options: [
-                        "नाश्ता",
-                        "रात का खाना",
-                        "दोपहर का खाना",
-                        "स्नैक्स"
-                    ],
-
-                    answer: 2
-                }
-
-            ]
-
-        }
-
-    }
-
-},
-
-
-
-/* =================================
-   STORY 3
-================================= */
-
-{
-
-    english: {
-
-        title: "The School Garden",
-
-        text:
-        "Meena and her friends planted flowers in the school garden. They planted roses, sunflowers and lilies. After planting the flowers, they watered them carefully. Their teacher thanked them for taking care of the garden.",
-
-        questions: {
-
-            easy: [
-
-                {
-                    question: "Where did Meena plant flowers?",
-
-                    options: [
-                        "At home",
-                        "In the school garden",
-                        "In a park",
-                        "Near a river"
-                    ],
-
-                    answer: 1
-                },
-
-                {
-                    question: "Which flower did they plant?",
-
-                    options: [
-                        "Roses",
-                        "Tulips",
-                        "Lotus",
-                        "Jasmine"
-                    ],
-
-                    answer: 0
-                },
-
-                {
-                    question: "What did they do after planting?",
-
-                    options: [
-                        "Went home",
-                        "Played games",
-                        "Watered the flowers",
-                        "Picked the flowers"
-                    ],
-
-                    answer: 2
-                }
-
-            ],
-
-            medium: [
-
-                {
-                    question: "Who planted flowers with Meena?",
-
-                    options: [
-                        "Her teacher",
-                        "Her friends",
-                        "Her parents",
-                        "Her neighbors"
-                    ],
-
-                    answer: 1
-                },
-
-                {
-                    question: "Which group contains flowers mentioned in the story?",
-
-                    options: [
-                        "Roses, sunflowers and lilies",
-                        "Tulips, roses and jasmine",
-                        "Lotus, lilies and tulips",
-                        "Jasmine, roses and lotus"
-                    ],
-
-                    answer: 0
-                },
-
-                {
-                    question: "Why did the teacher thank them?",
-
-                    options: [
-                        "For winning a competition",
-                        "For bringing food",
-                        "For taking care of the garden",
-                        "For cleaning the classroom"
-                    ],
-
-                    answer: 2
-                }
-
-            ],
-
-            hard: [
-
-                {
-                    question: "What happened immediately after planting the flowers?",
-
-                    options: [
-                        "They went home",
-                        "They watered them",
-                        "They picked them",
-                        "They called their teacher"
-                    ],
-
-                    answer: 1
-                },
-
-                {
-                    question: "Who thanked the students?",
-
-                    options: [
-                        "The principal",
-                        "Their teacher",
-                        "Their parents",
-                        "The gardener"
-                    ],
-
-                    answer: 1
-                },
-
-                {
-                    question: "What was the main activity described in the story?",
-
-                    options: [
-                        "Cleaning a classroom",
-                        "Planting and caring for flowers",
-                        "Playing in the garden",
-                        "Buying flowers"
-                    ],
-
-                    answer: 1
-                }
-
-            ]
-
-        }
-
-    },
-
-
-    hindi: {
-
-        title: "स्कूल का बगीचा",
-
-        text:
-        "मीना और उसके दोस्तों ने स्कूल के बगीचे में फूल लगाए। उन्होंने गुलाब, सूरजमुखी और लिली लगाए। फूल लगाने के बाद उन्होंने उन्हें ध्यान से पानी दिया। उनके शिक्षक ने बगीचे की देखभाल करने के लिए उन्हें धन्यवाद दिया।",
-
-        questions: {
-
-            easy: [
-
-                {
-                    question: "मीना ने फूल कहाँ लगाए?",
-
-                    options: [
-                        "घर पर",
-                        "स्कूल के बगीचे में",
-                        "पार्क में",
-                        "नदी के पास"
-                    ],
-
-                    answer: 1
-                },
-
-                {
-                    question: "उन्होंने कौन सा फूल लगाया?",
-
-                    options: [
-                        "गुलाब",
-                        "ट्यूलिप",
-                        "कमल",
-                        "चमेली"
-                    ],
-
-                    answer: 0
-                },
-
-                {
-                    question: "फूल लगाने के बाद उन्होंने क्या किया?",
-
-                    options: [
-                        "घर चले गए",
-                        "खेल खेले",
-                        "फूलों में पानी दिया",
-                        "फूल तोड़ लिए"
-                    ],
-
-                    answer: 2
-                }
-
-            ],
-
-            medium: [
-
-                {
-                    question: "मीना के साथ फूल किसने लगाए?",
-
-                    options: [
-                        "उसके शिक्षक ने",
-                        "उसके दोस्तों ने",
-                        "उसके माता-पिता ने",
-                        "उसके पड़ोसियों ने"
-                    ],
-
-                    answer: 1
-                },
-
-                {
-                    question: "कहानी में किन फूलों का उल्लेख है?",
-
-                    options: [
-                        "गुलाब, सूरजमुखी और लिली",
-                        "ट्यूलिप, गुलाब और चमेली",
-                        "कमल, लिली और ट्यूलिप",
-                        "चमेली, गुलाब और कमल"
-                    ],
-
-                    answer: 0
-                },
-
-                {
-                    question: "शिक्षक ने उन्हें धन्यवाद क्यों दिया?",
-
-                    options: [
-                        "प्रतियोगिता जीतने के लिए",
-                        "खाना लाने के लिए",
-                        "बगीचे की देखभाल करने के लिए",
-                        "कक्षा साफ करने के लिए"
-                    ],
-
-                    answer: 2
-                }
-
-            ],
-
-            hard: [
-
-                {
-                    question: "फूल लगाने के तुरंत बाद क्या हुआ?",
-
-                    options: [
-                        "वे घर चले गए",
-                        "उन्होंने फूलों में पानी दिया",
-                        "उन्होंने फूल तोड़ लिए",
-                        "उन्होंने शिक्षक को फोन किया"
-                    ],
-
-                    answer: 1
-                },
-
-                {
-                    question: "विद्यार्थियों को धन्यवाद किसने दिया?",
-
-                    options: [
-                        "प्रधानाचार्य ने",
-                        "उनके शिक्षक ने",
-                        "उनके माता-पिता ने",
-                        "माली ने"
-                    ],
-
-                    answer: 1
-                },
-
-                {
-                    question: "कहानी में मुख्य गतिविधि क्या थी?",
-
-                    options: [
-                        "कक्षा साफ करना",
-                        "फूल लगाना और उनकी देखभाल करना",
-                        "बगीचे में खेलना",
-                        "फूल खरीदना"
-                    ],
-
-                    answer: 1
-                }
-
-            ]
-
-        }
-
-    }
-
-}
-
+const difficultyNames = [
+    "Easy",
+    "Medium",
+    "Hard"
+];
+
+const points = [
+    10,
+    20,
+    30
+];
+
+const timeLimits = [
+    30,
+    25,
+    20
 ];
 
 
+/* =========================
+   TRANSLATIONS
+========================= */
+
+const translations = {
+
+english: {
+
+    easy: "Easy",
+    medium: "Medium",
+    hard: "Hard",
+
+    start: "Start Game",
+    next: "Next",
+    playAgain: "Play Again",
+
+    story: "Story",
+    question: "Question",
+
+    time: "Time",
+    score: "Score",
+
+    correct: "Correct! 🎉",
+    wrong: "Wrong.",
+    timeout: "Time is up! ⏰",
+
+    correctAnswer: "The correct answer is:",
+    nextDifficulty: "Next difficulty:",
+
+    finished: "Game Finished!",
+    yourScore: "Your final score is:",
+
+    stories: [
+
+        {
+            title: "The Lost Puppy",
+            text: "Riya was walking in the park one morning. She heard a small puppy crying near a tree. The puppy looked scared and alone. Riya gave it some water and asked a nearby shopkeeper for help. Soon, the puppy's owner arrived and thanked Riya.",
+
+            questions: [
+
+                {
+                    q: "Where was Riya walking?",
+                    options: ["In a park", "At school", "In a market", "At home"],
+                    answer: 0
+                },
+
+                {
+                    q: "What did Riya give the puppy?",
+                    options: ["Milk", "Water", "Bread", "Juice"],
+                    answer: 1
+                },
+
+                {
+                    q: "Who helped Riya find the puppy's owner?",
+                    options: ["A teacher", "A doctor", "A shopkeeper", "A policeman"],
+                    answer: 2
+                }
+
+            ]
+        },
+
+        {
+            title: "The Missing Lunch Box",
+            text: "Aman brought his favorite lunch box to school. During lunch break, he could not find it. He remembered that he had left it near the library. Aman went back to the library and found the lunch box on a table. He was happy to get it back.",
+
+            questions: [
+
+                {
+                    q: "What did Aman bring to school?",
+                    options: ["A book", "A lunch box", "A ball", "A bag"],
+                    answer: 1
+                },
+
+                {
+                    q: "Where did Aman think he had left it?",
+                    options: ["Near the library", "In the playground", "At home", "In the bus"],
+                    answer: 0
+                },
+
+                {
+                    q: "Where was the lunch box finally found?",
+                    options: ["On a chair", "Under a tree", "On a table", "Inside a bag"],
+                    answer: 2
+                }
+
+            ]
+        },
+
+        {
+            title: "The Garden Surprise",
+            text: "Meena went to her grandmother's garden in the evening. She noticed that many flowers had opened. Near the flowers, she saw several colorful butterflies. Her grandmother explained that butterflies often visit flowers to collect nectar. Meena enjoyed watching them.",
+
+            questions: [
+
+                {
+                    q: "Whose garden did Meena visit?",
+                    options: ["Her friend's", "Her grandmother's", "Her teacher's", "Her neighbor's"],
+                    answer: 1
+                },
+
+                {
+                    q: "What did Meena see near the flowers?",
+                    options: ["Birds", "Cats", "Butterflies", "Dogs"],
+                    answer: 2
+                },
+
+                {
+                    q: "Why do butterflies visit flowers?",
+                    options: ["To collect nectar", "To sleep", "To build houses", "To find water"],
+                    answer: 0
+                }
+
+            ]
+        }
+
+    ]
+},
+
 
 /* =========================
-   LANGUAGE
+   HINDI
+========================= */
+
+hindi: {
+
+    easy: "आसान",
+    medium: "मध्यम",
+    hard: "कठिन",
+
+    start: "खेल शुरू करें",
+    next: "अगला",
+    playAgain: "फिर से खेलें",
+
+    story: "कहानी",
+    question: "प्रश्न",
+
+    time: "समय",
+    score: "स्कोर",
+
+    correct: "सही! 🎉",
+    wrong: "गलत।",
+    timeout: "समय समाप्त! ⏰",
+
+    correctAnswer: "सही उत्तर है:",
+    nextDifficulty: "अगला स्तर:",
+
+    finished: "खेल समाप्त!",
+    yourScore: "आपका अंतिम स्कोर है:",
+
+    stories: [
+
+        {
+            title: "खोया हुआ पिल्ला",
+            text: "रिया एक सुबह पार्क में घूम रही थी। उसने एक पेड़ के पास एक छोटे पिल्ले के रोने की आवाज सुनी। पिल्ला डरा हुआ और अकेला था। रिया ने उसे पानी दिया और पास के दुकानदार से मदद मांगी। कुछ देर बाद पिल्ले का मालिक आया और उसने रिया को धन्यवाद दिया।",
+
+            questions: [
+
+                {
+                    q: "रिया कहाँ घूम रही थी?",
+                    options: ["पार्क में", "स्कूल में", "बाजार में", "घर पर"],
+                    answer: 0
+                },
+
+                {
+                    q: "रिया ने पिल्ले को क्या दिया?",
+                    options: ["दूध", "पानी", "रोटी", "जूस"],
+                    answer: 1
+                },
+
+                {
+                    q: "पिल्ले के मालिक को ढूंढने में रिया की मदद किसने की?",
+                    options: ["शिक्षक", "डॉक्टर", "दुकानदार", "पुलिसकर्मी"],
+                    answer: 2
+                }
+
+            ]
+        },
+
+        {
+            title: "गुम हुआ लंच बॉक्स",
+            text: "अमन अपना पसंदीदा लंच बॉक्स स्कूल लेकर आया था। लंच के समय उसे अपना लंच बॉक्स नहीं मिला। उसे याद आया कि उसने उसे लाइब्रेरी के पास रखा था। अमन वापस लाइब्रेरी गया और उसे एक मेज पर अपना लंच बॉक्स मिल गया। वह बहुत खुश हुआ।",
+
+            questions: [
+
+                {
+                    q: "अमन स्कूल क्या लेकर आया था?",
+                    options: ["किताब", "लंच बॉक्स", "गेंद", "बैग"],
+                    answer: 1
+                },
+
+                {
+                    q: "अमन को लगा कि उसने लंच बॉक्स कहाँ रखा था?",
+                    options: ["लाइब्रेरी के पास", "खेल के मैदान में", "घर पर", "बस में"],
+                    answer: 0
+                },
+
+                {
+                    q: "लंच बॉक्स आखिर में कहाँ मिला?",
+                    options: ["कुर्सी पर", "पेड़ के नीचे", "मेज पर", "बैग के अंदर"],
+                    answer: 2
+                }
+
+            ]
+        },
+
+        {
+            title: "बगीचे का सरप्राइज",
+            text: "मीना शाम को अपनी दादी के बगीचे में गई। उसने देखा कि कई फूल खिल चुके थे। फूलों के पास उसे कई रंग-बिरंगी तितलियाँ दिखाई दीं। दादी ने बताया कि तितलियाँ फूलों से रस लेने के लिए आती हैं। मीना उन्हें देखकर बहुत खुश हुई।",
+
+            questions: [
+
+                {
+                    q: "मीना किसके बगीचे में गई?",
+                    options: ["अपनी दोस्त के", "अपनी दादी के", "अपने शिक्षक के", "पड़ोसी के"],
+                    answer: 1
+                },
+
+                {
+                    q: "मीना ने फूलों के पास क्या देखा?",
+                    options: ["पक्षी", "बिल्लियाँ", "तितलियाँ", "कुत्ते"],
+                    answer: 2
+                },
+
+                {
+                    q: "तितलियाँ फूलों पर क्यों आती हैं?",
+                    options: ["रस लेने के लिए", "सोने के लिए", "घर बनाने के लिए", "पानी ढूंढने के लिए"],
+                    answer: 0
+                }
+
+            ]
+        }
+
+    ]
+},
+
+
+/* =========================
+   BENGALI
+========================= */
+
+bengali: {
+
+    easy: "সহজ",
+    medium: "মাঝারি",
+    hard: "কঠিন",
+
+    start: "খেলা শুরু করুন",
+    next: "পরবর্তী",
+    playAgain: "আবার খেলুন",
+
+    story: "গল্প",
+    question: "প্রশ্ন",
+
+    time: "সময়",
+    score: "স্কোর",
+
+    correct: "সঠিক! 🎉",
+    wrong: "ভুল।",
+    timeout: "সময় শেষ! ⏰",
+
+    correctAnswer: "সঠিক উত্তর হলো:",
+    nextDifficulty: "পরবর্তী স্তর:",
+
+    finished: "খেলা শেষ!",
+    yourScore: "আপনার মোট স্কোর:",
+
+    stories: [
+
+        {
+            title: "হারিয়ে যাওয়া কুকুরছানা",
+            text: "রিয়া এক সকালে পার্কে হাঁটছিল। সে একটি গাছের কাছে একটি ছোট কুকুরছানার কান্না শুনতে পেল। কুকুরছানাটি ভয় পেয়েছিল এবং একা ছিল। রিয়া তাকে জল দিল এবং কাছের এক দোকানদারের কাছে সাহায্য চাইল। কিছুক্ষণ পরে কুকুরছানাটির মালিক এসে রিয়াকে ধন্যবাদ দিলেন।",
+
+            questions: [
+
+                {
+                    q: "রিয়া কোথায় হাঁটছিল?",
+                    options: ["পার্কে", "স্কুলে", "বাজারে", "বাড়িতে"],
+                    answer: 0
+                },
+
+                {
+                    q: "রিয়া কুকুরছানাটিকে কী দিয়েছিল?",
+                    options: ["দুধ", "জল", "রুটি", "জুস"],
+                    answer: 1
+                },
+
+                {
+                    q: "কুকুরছানাটির মালিককে খুঁজে পেতে রিয়াকে কে সাহায্য করেছিল?",
+                    options: ["একজন শিক্ষক", "একজন ডাক্তার", "একজন দোকানদার", "একজন পুলিশ"],
+                    answer: 2
+                }
+
+            ]
+        },
+
+        {
+            title: "হারিয়ে যাওয়া টিফিন বক্স",
+            text: "অমন তার প্রিয় টিফিন বক্সটি স্কুলে নিয়ে এসেছিল। টিফিনের সময় সে সেটি খুঁজে পেল না। তার মনে পড়ল যে সে টিফিন বক্সটি লাইব্রেরির কাছে রেখেছিল। অমন লাইব্রেরিতে ফিরে গেল এবং একটি টেবিলের উপর টিফিন বক্সটি খুঁজে পেল। সে খুব খুশি হলো।",
+
+            questions: [
+
+                {
+                    q: "অমন স্কুলে কী নিয়ে এসেছিল?",
+                    options: ["একটি বই", "একটি টিফিন বক্স", "একটি বল", "একটি ব্যাগ"],
+                    answer: 1
+                },
+
+                {
+                    q: "অমন কোথায় টিফিন বক্সটি রেখেছিল বলে মনে করেছিল?",
+                    options: ["লাইব্রেরির কাছে", "খেলার মাঠে", "বাড়িতে", "বাসে"],
+                    answer: 0
+                },
+
+                {
+                    q: "টিফিন বক্সটি শেষ পর্যন্ত কোথায় পাওয়া গেল?",
+                    options: ["একটি চেয়ারে", "একটি গাছের নিচে", "একটি টেবিলের উপর", "একটি ব্যাগের ভিতরে"],
+                    answer: 2
+                }
+
+            ]
+        },
+
+        {
+            title: "বাগানের চমক",
+            text: "মীনা সন্ধ্যায় তার দিদার বাগানে গেল। সে দেখল অনেক ফুল ফুটেছে। ফুলের কাছে সে অনেক রঙিন প্রজাপতি দেখতে পেল। তার দিদা বললেন যে প্রজাপতিরা ফুল থেকে মধুরস সংগ্রহ করতে আসে। মীনা তাদের দেখতে খুব আনন্দ পেল।",
+
+            questions: [
+
+                {
+                    q: "মীনা কার বাগানে গিয়েছিল?",
+                    options: ["তার বন্ধুর", "তার দিদার", "তার শিক্ষকের", "তার প্রতিবেশীর"],
+                    answer: 1
+                },
+
+                {
+                    q: "মীনা ফুলের কাছে কী দেখেছিল?",
+                    options: ["পাখি", "বিড়াল", "প্রজাপতি", "কুকুর"],
+                    answer: 2
+                },
+
+                {
+                    q: "প্রজাপতিরা ফুলে কেন আসে?",
+                    options: ["মধুরস সংগ্রহ করতে", "ঘুমাতে", "বাড়ি বানাতে", "জল খুঁজতে"],
+                    answer: 0
+                }
+
+            ]
+        }
+
+    ]
+},
+
+
+/* =========================
+   ASSAMESE
+========================= */
+
+assamese: {
+
+    easy: "সহজ",
+    medium: "মধ্যম",
+    hard: "কঠিন",
+
+    start: "খেল আৰম্ভ কৰক",
+    next: "পৰৱৰ্তী",
+    playAgain: "পুনৰ খেলক",
+
+    story: "গল্প",
+    question: "প্ৰশ্ন",
+
+    time: "সময়",
+    score: "স্কোৰ",
+
+    correct: "শুদ্ধ! 🎉",
+    wrong: "ভুল।",
+    timeout: "সময় শেষ! ⏰",
+
+    correctAnswer: "শুদ্ধ উত্তৰটো হ'ল:",
+    nextDifficulty: "পৰৱৰ্তী স্তৰ:",
+
+    finished: "খেল শেষ!",
+    yourScore: "আপোনাৰ মুঠ স্কোৰ:",
+
+    stories: [
+
+        {
+            title: "হেৰাই যোৱা কুকুৰ পোৱালি",
+            text: "ৰিয়া এদিন ৰাতিপুৱা এখন উদ্যানত খোজ কাঢ়ি আছিল। তাই এজোপা গছৰ ওচৰত এটা সৰু কুকুৰ পোৱালিৰ কান্দোন শুনিলে। কুকুৰ পোৱালিটো ভয় খাইছিল আৰু অকলশৰীয়া আছিল। ৰিয়াই তাক পানী দিলে আৰু ওচৰৰ এজন দোকানীৰ সহায় বিচাৰিলে। কিছু সময়ৰ পিছত কুকুৰ পোৱালিটোৰ মালিক আহি ৰিয়াক ধন্যবাদ দিলে।",
+
+            questions: [
+
+                {
+                    q: "ৰিয়া ক'ত খোজ কাঢ়ি আছিল?",
+                    options: ["উদ্যানত", "বিদ্যালয়ত", "বজাৰত", "ঘৰত"],
+                    answer: 0
+                },
+
+                {
+                    q: "ৰিয়াই কুকুৰ পোৱালিটোক কি দিলে?",
+                    options: ["গাখীৰ", "পানী", "ৰুটি", "জুচ"],
+                    answer: 1
+                },
+
+                {
+                    q: "কুকুৰ পোৱালিটোৰ মালিকক বিচাৰি উলিয়াবলৈ ৰিয়াক কোনে সহায় কৰিছিল?",
+                    options: ["এজন শিক্ষকে", "এজন চিকিৎসকে", "এজন দোকানীয়ে", "এজন আৰক্ষীয়ে"],
+                    answer: 2
+                }
+
+            ]
+        },
+
+        {
+            title: "হেৰাই যোৱা টিফিন বাকচ",
+            text: "অমনে তাৰ প্ৰিয় টিফিন বাকচটো বিদ্যালয়লৈ লৈ আহিছিল। টিফিনৰ সময়ত সি টিফিন বাকচটো বিচাৰি নাপালে। তাৰ মনত পৰিল যে সি টিফিন বাকচটো পুথিভঁৰালৰ ওচৰত থৈছিল। অমন পুথিভঁৰাললৈ উভতি গ'ল আৰু এখন মেজৰ ওপৰত টিফিন বাকচটো বিচাৰি পালে। সি বৰ সুখী হ'ল।",
+
+            questions: [
+
+                {
+                    q: "অমনে বিদ্যালয়লৈ কি লৈ আহিছিল?",
+                    options: ["এখন কিতাপ", "এটা টিফিন বাকচ", "এটা বল", "এটা বেগ"],
+                    answer: 1
+                },
+
+                {
+                    q: "অমনে টিফিন বাকচটো ক'ত থৈছিল বুলি ভাবিছিল?",
+                    options: ["পুথিভঁৰালৰ ওচৰত", "খেলপথাৰত", "ঘৰত", "বাছত"],
+                    answer: 0
+                },
+
+                {
+                    q: "টিফিন বাকচটো শেষত ক'ত পোৱা গ'ল?",
+                    options: ["এখন চকীত", "এজোপা গছৰ তলত", "এখন মেজৰ ওপৰত", "এটা বেগৰ ভিতৰত"],
+                    answer: 2
+                }
+
+            ]
+        },
+
+        {
+            title: "বাগিচাৰ আচৰিত দৃশ্য",
+            text: "মীনা সন্ধিয়া তাইৰ আইতাকৰ বাগিচালৈ গ'ল। তাই দেখিলে যে বহুতো ফুল ফুলিছে। ফুলবোৰৰ ওচৰত তাই কেইবাটাও ৰঙীন পখিলা দেখিলে। আইতাকে ক'লে যে পখিলাবোৰ ফুলৰ পৰা মধু সংগ্ৰহ কৰিবলৈ আহে। মীনাই পখিলাবোৰ চাই বৰ আনন্দ পালে।",
+
+            questions: [
+
+                {
+                    q: "মীনা কাৰ বাগিচালৈ গৈছিল?",
+                    options: ["তাইৰ বন্ধুৰ", "তাইৰ আইতাকৰ", "তাইৰ শিক্ষকৰ", "তাইৰ ওচৰ-চুবুৰীয়াৰ"],
+                    answer: 1
+                },
+
+                {
+                    q: "মীনাই ফুলৰ ওচৰত কি দেখিছিল?",
+                    options: ["চৰাই", "মেকুৰী", "পখিলা", "কুকুৰ"],
+                    answer: 2
+                },
+
+                {
+                    q: "পখিলাবোৰ ফুললৈ কিয় আহে?",
+                    options: ["মধু সংগ্ৰহ কৰিবলৈ", "শুবলৈ", "ঘৰ সাজিবলৈ", "পানী বিচাৰিবলৈ"],
+                    answer: 0
+                }
+
+            ]
+        }
+
+    ]
+}
+
+};
+
+
+/* =========================
+   LANGUAGE SELECTION
 ========================= */
 
 function selectLanguage(lang) {
 
     language = lang;
 
-    document
-        .getElementById("englishBtn")
-        .classList.remove("selected");
+    const buttons = [
+        "englishBtn",
+        "hindiBtn",
+        "bengaliBtn",
+        "assameseBtn"
+    ];
 
-    document
-        .getElementById("hindiBtn")
-        .classList.remove("selected");
+    buttons.forEach(id => {
+        document.getElementById(id).classList.remove("selected");
+    });
 
+    document.getElementById(lang + "Btn").classList.add("selected");
 
-    if (lang === "english") {
+    document.documentElement.lang =
+        lang === "hindi" ? "hi" :
+        lang === "bengali" ? "bn" :
+        lang === "assamese" ? "as" :
+        "en";
 
-        document
-            .getElementById("englishBtn")
-            .classList.add("selected");
-
-    } else {
-
-        document
-            .getElementById("hindiBtn")
-            .classList.add("selected");
-
-    }
-
+    updateStaticText();
 }
 
+
+/* =========================
+   STATIC TEXT
+========================= */
+
+function updateStaticText() {
+
+    const t = translations[language];
+
+    document.getElementById("startBtn").textContent = t.start;
+    document.getElementById("nextBtn").textContent = t.next;
+    document.getElementById("restartBtn").textContent = t.playAgain;
+
+}
 
 
 /* =========================
@@ -1512,475 +855,277 @@ function selectLanguage(lang) {
 function startGame() {
 
     currentStory = 0;
-
     currentQuestion = 0;
 
     score = 0;
 
-    /*
-    Every new game starts at Easy.
-    */
+    difficulty = 0;
 
-    difficultyLevel = 0;
+    document.getElementById("startScreen").classList.add("hidden");
+    document.getElementById("endScreen").classList.add("hidden");
+    document.getElementById("gameScreen").classList.remove("hidden");
 
-
-    document
-        .getElementById("homeScreen")
-        .classList.add("hidden");
+    loadQuestion();
+}
 
 
-    document
-        .getElementById("resultScreen")
-        .classList.add("hidden");
+/* =========================
+   LOAD QUESTION
+========================= */
 
+function loadQuestion() {
 
-    document
-        .getElementById("gameScreen")
-        .classList.remove("hidden");
+    clearInterval(timer);
 
+    questionAnswered = false;
 
-    showQuestion();
+    const t = translations[language];
+
+    const story = t.stories[currentStory];
+
+    const question = story.questions[currentQuestion];
+
+    document.getElementById("storyTitle").textContent =
+        story.title;
+
+    document.getElementById("storyText").textContent =
+        story.text;
+
+    document.getElementById("question").textContent =
+        question.q;
+
+    document.getElementById("progress").textContent =
+        `${t.story} ${currentStory + 1}/3 — ${t.question} ${currentQuestion + 1}/3`;
+
+    document.getElementById("difficulty").textContent =
+        `${t.medium === "मध्यम" ? "कठिनाई" : "Difficulty"}: ${getDifficultyName()}`;
+
+    document.getElementById("score").textContent =
+        `${t.score}: ${score}`;
+
+    document.getElementById("feedback").textContent = "";
+
+    document.getElementById("nextBtn").classList.add("hidden");
+
+    const optionsContainer =
+        document.getElementById("options");
+
+    optionsContainer.innerHTML = "";
+
+    question.options.forEach((option, index) => {
+
+        const button = document.createElement("button");
+
+        button.className = "option";
+
+        button.textContent = option;
+
+        button.setAttribute(
+            "aria-label",
+            `Option ${index + 1}: ${option}`
+        );
+
+        button.onclick = () =>
+            checkAnswer(index);
+
+        optionsContainer.appendChild(button);
+
+    });
+
+    startTimer();
 
 }
 
 
-
 /* =========================
-   GET DIFFICULTY NAME
+   DIFFICULTY
 ========================= */
 
 function getDifficultyName() {
 
-    if (difficultyLevel === 0) {
+    const t = translations[language];
 
-        return "Easy";
+    if (difficulty === 0) return t.easy;
+    if (difficulty === 1) return t.medium;
 
-    }
-
-    if (difficultyLevel === 1) {
-
-        return "Medium";
-
-    }
-
-    return "Hard";
-
+    return t.hard;
 }
-
-
-
-/* =========================
-   GET DIFFICULTY EMOJI
-========================= */
-
-function getDifficultyEmoji() {
-
-    if (difficultyLevel === 0) {
-
-        return "🟢";
-
-    }
-
-    if (difficultyLevel === 1) {
-
-        return "🟡";
-
-    }
-
-    return "🔴";
-
-}
-
 
 
 /* =========================
    TIMER
 ========================= */
 
-function getTime() {
+function startTimer() {
 
-    if (difficultyLevel === 0) {
+    timeLeft = timeLimits[difficulty];
 
-        return 30;
-
-    }
-
-    if (difficultyLevel === 1) {
-
-        return 25;
-
-    }
-
-    return 20;
-
-}
-
-
-
-/* =========================
-   SHOW QUESTION
-========================= */
-
-function showQuestion() {
-
-    clearInterval(timer);
-
-
-    timeLeft = getTime();
-
-
-    document
-        .getElementById("timer")
-        .innerText =
-        "⏱️ " + timeLeft;
-
+    updateTimer();
 
     timer = setInterval(() => {
 
         timeLeft--;
 
-        document
-            .getElementById("timer")
-            .innerText =
-            "⏱️ " + timeLeft;
-
+        updateTimer();
 
         if (timeLeft <= 0) {
 
             clearInterval(timer);
 
-            lockOptions();
-
-
-            document
-                .getElementById("feedback")
-                .innerText =
-                "⏰ Time's up!";
-
-
-            document
-                .getElementById("nextBtn")
-                .classList.remove("hidden");
+            handleTimeout();
 
         }
 
     }, 1000);
 
-
-
-    const story =
-        stories[currentStory][language];
-
-
-    const difficultyNames =
-        ["easy", "medium", "hard"];
-
-
-    const level =
-        difficultyNames[difficultyLevel];
-
-
-    const question =
-        story.questions[level][currentQuestion];
-
-
-    /*
-    Story information
-    */
-
-    document
-        .getElementById("storyNumber")
-        .innerText =
-        "📖 Story " +
-        (currentStory + 1) +
-        " / " +
-        stories.length;
-
-
-    /*
-    Overall question number.
-    */
-
-    const totalQuestion =
-        (currentStory * 3) +
-        currentQuestion +
-        1;
-
-
-    document
-        .getElementById("questionNumber")
-        .innerText =
-        "Question " +
-        totalQuestion +
-        " / " +
-        (stories.length * 3);
-
-
-    /*
-    Difficulty display
-    */
-
-    document
-        .getElementById("difficultyText")
-        .innerText =
-        getDifficultyEmoji() +
-        " " +
-        getDifficultyName() +
-        " Difficulty";
-
-
-    /*
-    Score
-    */
-
-    document
-        .getElementById("scoreText")
-        .innerText =
-        "⭐ Score: " + score;
-
-
-    /*
-    Story
-    */
-
-    document
-        .getElementById("storyTitle")
-        .innerText =
-        "📖 " + story.title;
-
-
-    document
-        .getElementById("storyText")
-        .innerText =
-        story.text;
-
-
-    /*
-    Question
-    */
-
-    document
-        .getElementById("questionText")
-        .innerText =
-        question.question;
-
-
-    /*
-    Options
-    */
-
-    const options =
-        document.getElementById("options");
-
-
-    options.innerHTML = "";
-
-
-    question.options.forEach(
-        (option, index) => {
-
-            const button =
-                document.createElement("button");
-
-
-            button.className =
-                "option";
-
-
-            button.innerText =
-                option;
-
-
-            button.onclick =
-                () => checkAnswer(
-                    index,
-                    button
-                );
-
-
-            options.appendChild(button);
-
-        }
-    );
-
-
-    document
-        .getElementById("feedback")
-        .innerText = "";
-
-
-    document
-        .getElementById("nextBtn")
-        .classList.add("hidden");
-
-
-    /*
-    Progress bar
-    */
-
-    const completed =
-        (currentStory * 3) +
-        currentQuestion;
-
-
-    const total =
-        stories.length * 3;
-
-
-    document
-        .getElementById("progress")
-        .style.width =
-        (completed / total * 100) + "%";
-
 }
 
+
+function updateTimer() {
+
+    const t = translations[language];
+
+    document.getElementById("timer").textContent =
+        `${t.time}: ${timeLeft}s`;
+
+}
 
 
 /* =========================
    CHECK ANSWER
 ========================= */
 
-function checkAnswer(
-    selected,
-    button
-) {
+function checkAnswer(selectedIndex) {
+
+    if (questionAnswered) return;
+
+    questionAnswered = true;
 
     clearInterval(timer);
 
-
-    const difficultyNames =
-        ["easy", "medium", "hard"];
-
-
-    const level =
-        difficultyNames[difficultyLevel];
-
-
-    const story =
-        stories[currentStory][language];
-
+    const t = translations[language];
 
     const question =
-        story.questions[level][currentQuestion];
+        translations[language]
+        .stories[currentStory]
+        .questions[currentQuestion];
 
+    const optionButtons =
+        document.querySelectorAll(".option");
 
-    lockOptions();
+    optionButtons.forEach(button => {
+        button.disabled = true;
+    });
 
+    if (selectedIndex === question.answer) {
 
-    if (selected === question.answer) {
+        optionButtons[selectedIndex]
+            .classList.add("correct");
 
-        button
-            .classList
-            .add("correct");
+        score += points[difficulty];
 
-
-        /*
-        Score based on difficulty.
-        */
-
-        if (difficultyLevel === 0) {
-
-            score += 10;
-
-        } else if (difficultyLevel === 1) {
-
-            score += 20;
-
-        } else {
-
-            score += 30;
-
-        }
-
-
-        document
-            .getElementById("feedback")
-            .innerText =
-            "✅ Correct! Difficulty increased!";
-
+        document.getElementById("feedback").innerHTML =
+            `<span class="correct-text">
+            ${t.correct}<br>
+            +${points[difficulty]} ${t.score}
+            </span>`;
 
         /*
-        CORRECT:
-        Increase difficulty by 1 level.
-
-        Easy → Medium
-        Medium → Hard
-        Hard → Hard
+          Correct answer:
+          Increase difficulty for next question,
+          but never above Hard.
         */
 
-        if (difficultyLevel < 2) {
-
-            difficultyLevel++;
-
+        if (difficulty < 2) {
+            difficulty++;
         }
 
     } else {
 
-        button
-            .classList
-            .add("wrong");
+        optionButtons[selectedIndex]
+            .classList.add("wrong");
 
-
-        document
-            .getElementById("feedback")
-            .innerText =
-            "❌ Incorrect! Next question will be easier.";
-
+        optionButtons[question.answer]
+            .classList.add("correct");
 
         /*
-        WRONG:
-        Decrease difficulty by 1 level.
-
-        Hard → Medium
-        Medium → Easy
-        Easy → Easy
+          Wrong answer:
+          Decrease difficulty for next question,
+          but never below Easy.
         */
 
-        if (difficultyLevel > 0) {
-
-            difficultyLevel--;
-
+        if (difficulty > 0) {
+            difficulty--;
         }
 
+        document.getElementById("feedback").innerHTML =
+            `<span class="wrong-text">
+            ${t.wrong}<br>
+            ${t.correctAnswer}
+            <strong>${question.options[question.answer]}</strong>
+            <br>
+            ${t.nextDifficulty} ${getDifficultyName()}
+            </span>`;
     }
 
+    document.getElementById("score").textContent =
+        `${t.score}: ${score}`;
 
-    document
-        .getElementById("scoreText")
-        .innerText =
-        "⭐ Score: " + score;
-
-
-    document
-        .getElementById("nextBtn")
-        .classList
-        .remove("hidden");
+    document.getElementById("nextBtn")
+        .classList.remove("hidden");
 
 }
-
 
 
 /* =========================
-   LOCK OPTIONS
+   TIMEOUT
 ========================= */
 
-function lockOptions() {
+function handleTimeout() {
 
-    const buttons =
+    if (questionAnswered) return;
+
+    questionAnswered = true;
+
+    const t = translations[language];
+
+    const question =
+        translations[language]
+        .stories[currentStory]
+        .questions[currentQuestion];
+
+    const optionButtons =
         document.querySelectorAll(".option");
 
-
-    buttons.forEach(button => {
-
+    optionButtons.forEach(button => {
         button.disabled = true;
-
-        button.style.cursor =
-            "default";
-
     });
 
-}
+    optionButtons[question.answer]
+        .classList.add("correct");
 
+    /*
+      Timeout is treated as incorrect.
+      Difficulty decreases.
+    */
+
+    if (difficulty > 0) {
+        difficulty--;
+    }
+
+    document.getElementById("feedback").innerHTML =
+        `<span class="wrong-text">
+        ${t.timeout}<br>
+        ${t.correctAnswer}
+        <strong>${question.options[question.answer]}</strong>
+        <br>
+        ${t.nextDifficulty} ${getDifficultyName()}
+        </span>`;
+
+    document.getElementById("nextBtn")
+        .classList.remove("hidden");
+
+}
 
 
 /* =========================
@@ -1989,160 +1134,66 @@ function lockOptions() {
 
 function nextQuestion() {
 
-    /*
-    Move to next question
-    within the same story.
-    */
-
     currentQuestion++;
 
-
     /*
-    After 3 questions,
-    move to next story.
+      Three questions in one story.
     */
 
     if (currentQuestion >= 3) {
 
-        currentQuestion = 0;
-
         currentStory++;
 
+        currentQuestion = 0;
 
         /*
-        Every new story starts
-        from Easy again.
-
-        This keeps the game
-        comfortable for the player.
+          Every new story starts from Easy.
         */
 
-        difficultyLevel = 0;
+        difficulty = 0;
 
     }
-
 
     /*
-    All stories completed.
+      All three stories completed.
     */
 
-    if (currentStory >= stories.length) {
+    if (currentStory >= 3) {
 
-        showResult();
+        endGame();
 
-    } else {
-
-        showQuestion();
-
+        return;
     }
 
-}
+    loadQuestion();
 
+}
 
 
 /* =========================
-   RESULT
+   END GAME
 ========================= */
 
-function showResult() {
+function endGame() {
 
     clearInterval(timer);
 
+    const t = translations[language];
 
-    document
-        .getElementById("gameScreen")
-        .classList
-        .add("hidden");
+    document.getElementById("gameScreen")
+        .classList.add("hidden");
 
+    document.getElementById("endScreen")
+        .classList.remove("hidden");
 
-    document
-        .getElementById("resultScreen")
-        .classList
-        .remove("hidden");
+    document.getElementById("finalTitle")
+        .textContent = t.finished;
 
-
-    document
-        .getElementById("finalScore")
-        .innerText =
-        score;
-
-
-    let message = "";
-
-
-    /*
-    Maximum possible score:
-    9 questions × 30 = 270
-    */
-
-    if (score >= 220) {
-
-        message =
-            "🌟 Excellent! Your memory and attention skills are very strong.";
-
-    }
-
-    else if (score >= 150) {
-
-        message =
-            "👏 Great job! You showed good memory and attention.";
-
-    }
-
-    else if (score >= 80) {
-
-        message =
-            "😊 Good attempt! Keep practicing your memory skills.";
-
-    }
-
-    else {
-
-        message =
-            "💪 Good effort! Try again and improve your score.";
-
-    }
-
-
-    document
-        .getElementById("resultMessage")
-        .innerText =
-        message;
-
-
-    /*
-    Badge
-    */
-
-    if (score >= 220) {
-
-        document
-            .getElementById("badge")
-            .innerText =
-            "🏆 Memory Master";
-
-    }
-
-    else if (score >= 150) {
-
-        document
-            .getElementById("badge")
-            .innerText =
-            "🌟 Memory Champion";
-
-    }
-
-    else {
-
-        document
-            .getElementById("badge")
-            .innerText =
-            "🧠 Story Detective";
-
-    }
+    document.getElementById("finalScore")
+        .textContent =
+        `${t.yourScore} ${score}`;
 
 }
-
 
 
 /* =========================
@@ -2151,32 +1202,31 @@ function showResult() {
 
 function restartGame() {
 
-    clearInterval(timer);
-
-
     currentStory = 0;
-
     currentQuestion = 0;
 
     score = 0;
+    difficulty = 0;
 
-    difficultyLevel = 0;
+    document.getElementById("endScreen")
+        .classList.add("hidden");
 
+    document.getElementById("gameScreen")
+        .classList.remove("hidden");
 
-    document
-        .getElementById("resultScreen")
-        .classList
-        .add("hidden");
-
-
-    document
-        .getElementById("homeScreen")
-        .classList
-        .remove("hidden");
+    loadQuestion();
 
 }
+
+
+/* Default language */
+
+selectLanguage("english");
 
 </script>
 
 </body>
 </html>
+
+        
+                 
