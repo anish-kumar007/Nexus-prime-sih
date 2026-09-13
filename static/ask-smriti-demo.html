@@ -1,0 +1,548 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+<title>Ask Smriti</title>
+<style>
+  :root {
+    --teal-deep: #1a4f4b;
+    --teal-mid: #2a7f79;
+    --sand: #f7f3eb;
+    --clay: #c45a2c;
+    --clay-dark: #9a3f1a;
+    --ink: #1e2b28;
+    --muted: #5c6b66;
+    --line: #d4cbb8;
+    --white: #ffffff;
+    --shadow: 0 8px 24px rgba(26, 79, 75, 0.12);
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body {
+    font-family: "Atkinson Hyperlegible", "Segoe UI", system-ui, -apple-system, sans-serif;
+    background: var(--sand);
+    color: var(--ink);
+    min-height: 100dvh;
+    display: flex;
+    justify-content: center;
+    padding: 20px 16px 40px;
+    line-height: 1.45;
+  }
+  .app {
+    width: 100%;
+    max-width: 440px;
+    display: flex;
+    flex-direction: column;
+    gap: 18px;
+  }
+  .header { text-align: center; padding: 8px 0 4px; }
+  .header h1 {
+    font-size: 1.85rem;
+    font-weight: 700;
+    color: var(--teal-deep);
+  }
+  .header p { margin-top: 4px; font-size: 1.05rem; color: var(--muted); }
+  .status-card {
+    background: var(--white);
+    border-radius: 16px;
+    padding: 16px 18px;
+    box-shadow: var(--shadow);
+    border: 1px solid var(--line);
+    text-align: center;
+    min-height: 64px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+  .status-text {
+    font-size: 1.15rem;
+    font-weight: 600;
+    color: var(--teal-deep);
+  }
+  .status-text.listening { color: var(--clay); }
+  .status-text.error { color: #b33a3a; }
+  .mic-section {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 14px;
+    padding: 8px 0;
+  }
+  .mic-button {
+    width: 148px;
+    height: 148px;
+    border-radius: 50%;
+    border: none;
+    background: var(--teal-mid);
+    color: white;
+    font-size: 3.2rem;
+    cursor: pointer;
+    box-shadow: 0 8px 0 var(--teal-deep);
+    transition: transform 0.1s ease, box-shadow 0.1s ease, background 0.2s;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    -webkit-tap-highlight-color: transparent;
+  }
+  .mic-button:active {
+    transform: translateY(5px);
+    box-shadow: 0 3px 0 var(--teal-deep);
+  }
+  .mic-button.listening {
+    background: var(--clay);
+    box-shadow: 0 8px 0 var(--clay-dark);
+    animation: pulse 1.4s ease-out infinite;
+  }
+  .mic-button:disabled { opacity: 0.55; cursor: not-allowed; }
+  @keyframes pulse {
+    0%   { box-shadow: 0 0 0 0 rgba(196, 90, 44, 0.5); }
+    70%  { box-shadow: 0 0 0 28px rgba(196, 90, 44, 0); }
+    100% { box-shadow: 0 0 0 0 rgba(196, 90, 44, 0); }
+  }
+  .controls { display: flex; flex-direction: column; gap: 12px; }
+  .wake-row { display: flex; justify-content: center; }
+  .wake-toggle {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    font-size: 1.05rem;
+    font-weight: 500;
+    color: var(--teal-deep);
+    cursor: pointer;
+    background: var(--white);
+    padding: 12px 18px;
+    border-radius: 30px;
+    border: 1px solid var(--line);
+    box-shadow: 0 2px 6px rgba(0,0,0,0.04);
+    user-select: none;
+  }
+  .wake-toggle input {
+    width: 22px;
+    height: 22px;
+    accent-color: var(--teal-mid);
+    cursor: pointer;
+  }
+  .lang-row { display: flex; justify-content: center; gap: 10px; }
+  .lang-btn {
+    flex: 1;
+    max-width: 140px;
+    font-size: 1.05rem;
+    font-weight: 600;
+    padding: 12px 16px;
+    border-radius: 28px;
+    border: 2px solid var(--teal-mid);
+    background: var(--white);
+    color: var(--teal-deep);
+    cursor: pointer;
+  }
+  .lang-btn.active {
+    background: var(--teal-mid);
+    color: white;
+  }
+  .transcript-box {
+    background: var(--white);
+    border: 1px solid var(--line);
+    border-radius: 16px;
+    padding: 18px;
+    min-height: 140px;
+    max-height: 260px;
+    overflow-y: auto;
+    font-size: 1.12rem;
+    line-height: 1.55;
+    box-shadow: var(--shadow);
+  }
+  .transcript-box .placeholder { color: var(--muted); font-style: italic; }
+  .transcript-box p { margin-bottom: 12px; }
+  .you { color: #8a5a2b; font-weight: 700; }
+  .smriti { color: var(--teal-deep); font-weight: 700; }
+  .type-row { display: flex; gap: 10px; }
+  .type-row input {
+    flex: 1;
+    font-size: 1.08rem;
+    padding: 14px 16px;
+    border-radius: 14px;
+    border: 1px solid var(--line);
+    background: var(--white);
+  }
+  .type-row button {
+    font-size: 1.08rem;
+    font-weight: 600;
+    padding: 14px 22px;
+    border-radius: 14px;
+    border: none;
+    background: var(--teal-deep);
+    color: white;
+    cursor: pointer;
+  }
+  .faq-hint {
+    font-size: 0.95rem;
+    color: var(--muted);
+    text-align: center;
+    padding: 4px 8px 0;
+  }
+  .perm-banner {
+    background: #fff3e0;
+    border: 1px solid #f0c78a;
+    color: #7a4e12;
+    border-radius: 12px;
+    padding: 12px 14px;
+    font-size: 0.98rem;
+    text-align: center;
+    display: none;
+  }
+  .perm-banner.show { display: block; }
+</style>
+</head>
+<body>
+<div class="app">
+  <div class="header">
+    <h1>🌿 Ask Smriti</h1>
+    <p>Your calm voice companion</p>
+  </div>
+
+  <div class="perm-banner" id="permBanner">
+    Microphone access is needed. Please allow it when the browser asks.
+  </div>
+
+  <div class="status-card">
+    <div class="status-text" id="status">Tap the microphone to speak</div>
+  </div>
+
+  <div class="mic-section">
+    <button class="mic-button" id="micBtn">🎤</button>
+  </div>
+
+  <div class="controls">
+    <div class="wake-row">
+      <label class="wake-toggle">
+        <input type="checkbox" id="wakeToggle" />
+        <span id="wakeLabel">Listen for “Hello Smriti”</span>
+      </label>
+    </div>
+    <div class="lang-row">
+      <button class="lang-btn active" data-lang="en">English</button>
+      <button class="lang-btn" data-lang="hi">हिंदी</button>
+    </div>
+  </div>
+
+  <div class="transcript-box" id="transcript">
+    <span class="placeholder">Your conversation will appear here…</span>
+  </div>
+
+  <div class="type-row">
+    <input type="text" id="typeInput" placeholder="Or type your question here" />
+    <button id="typeBtn">Ask</button>
+  </div>
+
+  <div class="faq-hint" id="hint">
+    Turn on the toggle and say “Hello Smriti”, or just tap the mic.
+  </div>
+
+  <button onclick="window.location.href='home.html'"
+        style="
+            display: block;
+            width: 100%;
+            max-width: 440px;
+            margin: 25px auto 10px;
+            padding: 16px;
+            font-size: 20px;
+            font-weight: bold;
+            border: none;
+            border-radius: 14px;
+            background: #315c8c;
+            color: white;
+            cursor: pointer;
+        ">
+    ← Back to Home
+</button>
+
+</div>
+
+<script>
+const FAQ_EN = [
+  { keywords: ["hi", "hello", "hey", "namaste", "good morning", "good afternoon", "good evening"], answer: () => "Hello! How may I help you today?" },
+  { keywords: ["how are you", "how are you doing"], answer: () => "I'm doing well, thank you for asking! How can I help you?" },
+  { keywords: ["good night", "bye", "goodbye", "see you"], answer: () => "Good night! Take care, I'll be here whenever you need me." },
+  { keywords: ["thank you", "thanks"], answer: () => "You're most welcome!" },
+  { keywords: ["time", "what time", "clock"], answer: () => `It is currently ${new Date().toLocaleTimeString([], {hour:'2-digit', minute:'2-digit'})}.` },
+  { keywords: ["date", "today", "what day", "day is it"], answer: () => `Today is ${new Date().toLocaleDateString([], {weekday:'long', year:'numeric', month:'long', day:'numeric'})}.` },
+  { keywords: ["where am i", "my location", "location", "lost"], answer: () => "I can show your current location on the map. Would you like me to open it?" },
+  { keywords: ["call family", "call my son", "call my daughter", "sos", "help me", "emergency"], answer: () => "Calling your family contact now. Please stay where you are. Help is on the way." },
+  { keywords: ["scared", "afraid", "anxious", "worried", "confused", "lonely"], answer: () => "It's okay, I'm right here with you. Take a slow deep breath. Would you like me to call a family member?" },
+  { keywords: ["medicine", "pill", "tablet", "medication"], answer: () => "Please check your medicine box or ask a family member. Would you like me to remind you later?" },
+  { keywords: ["water", "drink water", "thirsty"], answer: () => "Please drink a glass of water. Staying hydrated is important." },
+  { keywords: ["hungry", "food", "eat"], answer: () => "Please have something light to eat. Would you like me to call someone to help?" },
+  { keywords: ["pain", "headache", "not feeling well"], answer: () => "I'm sorry you're in pain. Please rest. Shall I call a family member or doctor?" },
+  { keywords: ["memory game", "play game", "game rules"], answer: () => "To play the memory game, tap two cards to flip them. If they match, they stay open. Try to match all pairs!" },
+  { keywords: ["exercise", "breathing", "relax"], answer: () => "Let's take three slow breaths together. Breathe in... and out... You're doing great." },
+  { keywords: ["who are you", "your name", "smriti"], answer: () => "I'm Smriti, your voice companion. I'm here to help with time, location, games, and calling family when needed." },
+  { keywords: ["weather", "raining", "hot", "cold"], answer: () => "I can't check live weather yet. Please look outside or ask a family member." },
+  { keywords: ["repeat", "say again"], answer: () => "I said: " + (window.lastSmritiReply || "Please ask me again.") },
+  { keywords: ["help", "what can you do"], answer: () => "You can ask me the time, date, location, medicine, games, or say 'call family' for help." }
+];
+
+const FAQ_HI = [
+  { keywords: ["नमस्ते", "हैलो", "हेलो", "सुप्रभात"], answer: () => "नमस्ते! मैं आपकी कैसे मदद कर सकती हूं?" },
+  { keywords: ["आप कैसे हैं", "कैसी हो"], answer: () => "मैं ठीक हूं, पूछने के लिए धन्यवाद!" },
+  { keywords: ["शुभ रात्रि", "अलविदा", "बाय"], answer: () => "शुभ रात्रि! अपना ख्याल रखें।" },
+  { keywords: ["धन्यवाद", "शुक्रिया"], answer: () => "आपका स्वागत है!" },
+  { keywords: ["समय", "टाइम", "क्या समय"], answer: () => `अभी समय है ${new Date().toLocaleTimeString('hi-IN', {hour:'2-digit', minute:'2-digit'})}.` },
+  { keywords: ["तारीख", "आज का दिन", "आज कौन सा दिन"], answer: () => `आज ${new Date().toLocaleDateString('hi-IN', {weekday:'long', year:'numeric', month:'long', day:'numeric'})} है.` },
+  { keywords: ["मैं कहां हूं", "लोकेशन", "रास्ता भूल गया"], answer: () => "मैं आपकी लोकेशन नक्शे पर दिखा सकती हूं। क्या खोलूं?" },
+  { keywords: ["परिवार को बुलाओ", "मदद करो", "एसओएस"], answer: () => "आपके परिवार को अभी कॉल कर रही हूं। वहीं रुकिए।" },
+  { keywords: ["डर लग रहा है", "घबराहट", "परेशान", "अकेला"], answer: () => "कोई बात नहीं, मैं यहीं हूं। धीरे से सांस लें। क्या परिवार को बुलाऊं?" },
+  { keywords: ["दवा", "दवाई", "गोली"], answer: () => "कृपया अपनी दवा देखें या परिवार से पूछें।" },
+  { keywords: ["पानी", "प्यास"], answer: () => "कृपया एक गिलास पानी पी लीजिए।" },
+  { keywords: ["भूख", "खाना"], answer: () => "कृपया हल्का सा कुछ खा लीजिए।" },
+  { keywords: ["दर्द", "सिर दर्द", "तबीयत खराब"], answer: () => "आराम करें। क्या परिवार या डॉक्टर को बुलाऊं?" },
+  { keywords: ["मेमोरी गेम", "खेल"], answer: () => "दो कार्ड पलटें। मिलने पर वे खुले रहेंगे।" },
+  { keywords: ["सांस", "आराम"], answer: () => "चलिए तीन धीमी सांसें लेते हैं। सांस अंदर... बाहर..." },
+  { keywords: ["तुम कौन हो", "तुम्हारा नाम", "स्मृति"], answer: () => "मैं स्मृति हूं, आपकी वॉइस साथी।" },
+  { keywords: ["मौसम", "बारिश", "गर्मी"], answer: () => "अभी लाइव मौसम नहीं बता सकती। खिड़की से देख लें।" },
+  { keywords: ["दोबारा", "फिर से बोलो"], answer: () => "मैंने कहा: " + (window.lastSmritiReply || "फिर से पूछें।") },
+  { keywords: ["मदद", "क्या कर सकती हो"], answer: () => "आप समय, तारीख, लोकेशन, दवा या 'परिवार को बुलाओ' कह सकते हैं।" }
+];
+
+const FALLBACK_EN = "I'm not sure I understood that. You can ask about time, date, location, medicine, games, or say 'call family'.";
+const FALLBACK_HI = "मुझे समझ नहीं आया। आप समय, तारीख, लोकेशन, दवा या 'परिवार को बुलाओ' कह सकते हैं।";
+
+const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
+let currentLang = "en";
+let commandRecognizer = null;
+let wakeRecognizer = null;
+let listening = false;
+let wakeModeOn = false;
+let wakeShouldRestart = false;
+let permissionGranted = false;
+let isSpeaking = false;
+window.lastSmritiReply = "";
+
+const micBtn = document.getElementById("micBtn");
+const statusEl = document.getElementById("status");
+const transcriptEl = document.getElementById("transcript");
+const wakeToggle = document.getElementById("wakeToggle");
+const wakeLabel = document.getElementById("wakeLabel");
+const permBanner = document.getElementById("permBanner");
+const hintEl = document.getElementById("hint");
+
+const WAKE_PHRASES_EN = ["hello smriti", "hey smriti", "ok smriti", "hi smriti"];
+const WAKE_PHRASES_HI = ["हेलो स्मृति", "नमस्ते स्मृति", "स्मृति"];
+
+function normalize(text) {
+  return text.toLowerCase().replace(/[.,\/#!$%\^&\*;:{}=\-_`~()]/g, "").replace(/\s+/g, " ").trim();
+}
+
+function findAnswer(userText) {
+  const text = normalize(userText);
+  const faq = currentLang === "hi" ? FAQ_HI : FAQ_EN;
+  let best = null, bestScore = 0;
+  for (const entry of faq) {
+    let score = 0;
+    for (const kw of entry.keywords) {
+      const k = normalize(kw);
+      if (text === k) score += 10;
+      else if (text.includes(k)) score += k.length > 8 ? 4 : 2;
+    }
+    if (score > bestScore) { bestScore = score; best = entry; }
+  }
+  return (best && bestScore >= 2) ? best.answer() : (currentLang === "hi" ? FALLBACK_HI : FALLBACK_EN);
+}
+
+let cachedVoices = [];
+function loadVoices() { cachedVoices = speechSynthesis.getVoices(); }
+if (window.speechSynthesis) {
+  loadVoices();
+  speechSynthesis.onvoiceschanged = loadVoices;
+}
+
+function getFemaleVoice(lang) {
+  if (!cachedVoices.length) loadVoices();
+  const prefix = lang.startsWith("hi") ? "hi" : "en";
+  const preferred = ["Google UK English Female","Microsoft Zira","Samantha","Karen","Microsoft Heera","Google हिन्दी","Veena","Aria"];
+  let v = cachedVoices.find(x => preferred.some(n => x.name.includes(n)) && x.lang.toLowerCase().startsWith(prefix));
+  if (!v) v = cachedVoices.find(x => /female|zira|samantha|heera|veena|aria/i.test(x.name) && x.lang.toLowerCase().startsWith(prefix));
+  if (!v) v = cachedVoices.find(x => x.lang.toLowerCase().startsWith(prefix));
+  return v || cachedVoices[0] || null;
+}
+
+function speak(text) {
+  return new Promise(resolve => {
+    if (!window.speechSynthesis) return resolve();
+    speechSynthesis.cancel();
+    isSpeaking = true;
+    setStatus(currentLang === "hi" ? "बोल रही हूं…" : "Speaking…");
+    const u = new SpeechSynthesisUtterance(text);
+    u.rate = 0.88; u.pitch = 1.1;
+    u.lang = currentLang === "hi" ? "hi-IN" : "en-IN";
+    const voice = getFemaleVoice(u.lang);
+    if (voice) u.voice = voice;
+    u.onend = u.onerror = () => { isSpeaking = false; resolve(); };
+    speechSynthesis.speak(u);
+  });
+}
+
+function setStatus(msg, type = "") {
+  statusEl.textContent = msg;
+  statusEl.className = "status-text" + (type ? " " + type : "");
+}
+
+function stopListeningUI() {
+  listening = false;
+  micBtn.classList.remove("listening");
+  if (!wakeModeOn) setStatus(currentLang === "hi" ? "माइक पर टैप करें" : "Tap the microphone to speak");
+}
+
+function updateLabels() {
+  if (currentLang === "hi") {
+    wakeLabel.textContent = "“स्मृति” सुनें";
+    hintEl.textContent = "टॉगल चालू करें और “स्मृति” बोलें, या माइक पर टैप करें।";
+    document.getElementById("typeInput").placeholder = "या यहाँ लिखें";
+    document.getElementById("typeBtn").textContent = "पूछें";
+  } else {
+    wakeLabel.textContent = "Listen for “Hello Smriti”";
+    hintEl.textContent = "Turn on the toggle and say “Hello Smriti”, or just tap the mic.";
+    document.getElementById("typeInput").placeholder = "Or type your question here";
+    document.getElementById("typeBtn").textContent = "Ask";
+  }
+}
+
+async function ensureMicPermission() {
+  if (permissionGranted) return true;
+  try {
+    const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
+    stream.getTracks().forEach(t => t.stop());
+    permissionGranted = true;
+    permBanner.classList.remove("show");
+    return true;
+  } catch (e) {
+    permBanner.classList.add("show");
+    setStatus(currentLang === "hi" ? "माइक की अनुमति दें" : "Please allow microphone access", "error");
+    return false;
+  }
+}
+
+function initRecognizers() {
+  if (!SpeechRecognition) {
+    setStatus("Please use Chrome browser", "error");
+    micBtn.disabled = true;
+    return;
+  }
+  commandRecognizer = new SpeechRecognition();
+  commandRecognizer.continuous = false;
+  commandRecognizer.interimResults = false;
+  commandRecognizer.lang = currentLang === "hi" ? "hi-IN" : "en-IN";
+
+  commandRecognizer.onstart = () => {
+    listening = true;
+    micBtn.classList.add("listening");
+    setStatus(currentLang === "hi" ? "सुन रही हूं…" : "Listening…", "listening");
+  };
+  commandRecognizer.onerror = (e) => {
+    if (e.error !== "aborted") setStatus("Error: " + e.error, "error");
+    stopListeningUI();
+  };
+  commandRecognizer.onend = () => {
+    stopListeningUI();
+    if (wakeModeOn && !isSpeaking) setTimeout(startWakeRecognizer, 400);
+  };
+  commandRecognizer.onresult = (e) => {
+    const said = e.results[0][0].transcript.trim();
+    if (said) handleUserInput(said);
+  };
+
+  wakeRecognizer = new SpeechRecognition();
+  wakeRecognizer.continuous = true;
+  wakeRecognizer.interimResults = true;
+  wakeRecognizer.lang = currentLang === "hi" ? "hi-IN" : "en-IN";
+
+  wakeRecognizer.onresult = (e) => {
+    const phrases = currentLang === "hi" ? WAKE_PHRASES_HI : WAKE_PHRASES_EN;
+    for (let i = e.resultIndex; i < e.results.length; i++) {
+      const said = e.results[i][0].transcript.toLowerCase();
+      if (phrases.some(p => said.includes(p))) {
+        wakeShouldRestart = false;
+        try { wakeRecognizer.stop(); } catch(_){}
+        speak(currentLang === "hi" ? "जी हां, मैं सुन रही हूं।" : "Yes, I'm listening.")
+          .then(() => setTimeout(() => { if (!listening) try{commandRecognizer.start()}catch(_){} }, 300));
+        return;
+      }
+    }
+  };
+  wakeRecognizer.onerror = (e) => { if (e.error !== "no-speech" && e.error !== "aborted") {} };
+  wakeRecognizer.onend = () => {
+    if (wakeModeOn && wakeShouldRestart && !listening && !isSpeaking)
+      setTimeout(() => { try{wakeRecognizer.start()}catch(_){} }, 300);
+  };
+}
+
+function startWakeRecognizer() {
+  if (!wakeRecognizer || !wakeModeOn) return;
+  wakeShouldRestart = true;
+  try { wakeRecognizer.start(); setStatus(currentLang === "hi" ? "“स्मृति” बोलें" : "Say “Hello Smriti”"); } catch(_){}
+}
+
+function stopWakeRecognizer() {
+  wakeShouldRestart = false;
+  try { wakeRecognizer.stop(); } catch(_){}
+  setStatus(currentLang === "hi" ? "माइक पर टैप करें" : "Tap the microphone to speak");
+}
+
+async function startListening() {
+  if (listening || isSpeaking) return;
+  const ok = await ensureMicPermission();
+  if (!ok) return;
+  if (wakeModeOn) { wakeShouldRestart = false; try{wakeRecognizer.stop()}catch(_){} }
+  try { commandRecognizer.start(); } catch(e) { setStatus("Try again", "error"); }
+}
+
+function handleUserInput(text) {
+  const answer = findAnswer(text);
+  window.lastSmritiReply = answer;
+  appendToTranscript(text, answer);
+  speak(answer).then(() => {
+    if (wakeModeOn) setTimeout(startWakeRecognizer, 500);
+    else setStatus(currentLang === "hi" ? "माइक पर टैप करें" : "Tap the microphone to speak");
+  });
+}
+
+function appendToTranscript(user, reply) {
+  if (transcriptEl.querySelector(".placeholder")) transcriptEl.innerHTML = "";
+  transcriptEl.innerHTML += `<p><span class="you">You:</span> ${user}</p><p><span class="smriti">Smriti:</span> ${reply}</p>`;
+  transcriptEl.scrollTop = transcriptEl.scrollHeight;
+}
+
+micBtn.onclick = () => listening ? commandRecognizer.stop() : startListening();
+wakeToggle.onchange = async () => {
+  wakeModeOn = wakeToggle.checked;
+  if (wakeModeOn) {
+    if (!(await ensureMicPermission())) { wakeToggle.checked = false; wakeModeOn = false; return; }
+    startWakeRecognizer();
+  } else stopWakeRecognizer();
+};
+
+document.querySelectorAll(".lang-btn").forEach(btn => {
+  btn.onclick = () => {
+    if (btn.dataset.lang === currentLang) return;
+    currentLang = btn.dataset.lang;
+    document.querySelectorAll(".lang-btn").forEach(b => b.classList.toggle("active", b === btn));
+    updateLabels();
+    const lang = currentLang === "hi" ? "hi-IN" : "en-IN";
+    if (commandRecognizer) commandRecognizer.lang = lang;
+    if (wakeRecognizer) {
+      wakeRecognizer.lang = lang;
+      if (wakeModeOn) { wakeShouldRestart = false; try{wakeRecognizer.stop()}catch(_){} setTimeout(startWakeRecognizer, 400); }
+    }
+  };
+});
+
+document.getElementById("typeBtn").onclick = () => {
+  const t = document.getElementById("typeInput").value.trim();
+  if (t) { handleUserInput(t); document.getElementById("typeInput").value = ""; }
+};
+document.getElementById("typeInput").onkeydown = e => { if (e.key === "Enter") document.getElementById("typeBtn").click(); };
+
+initRecognizers();
+updateLabels();
+</script>
+</body>
+</html>

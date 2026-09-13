@@ -2,6 +2,7 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
+<link rel="manifest" href="/static/manifest.json">
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Adaptive Story Detective</title>
@@ -10,6 +11,7 @@
 * {
     box-sizing: border-box;
 }
+
 
 body {
     margin: 0;
@@ -1183,17 +1185,94 @@ function endGame() {
     document.getElementById("gameScreen")
         .classList.add("hidden");
 
-    document.getElementById("endScreen")
-        .classList.remove("hidden");
+    document
+        .getElementById("resultScreen")
+        .classList
+        .remove("hidden");
 
-    document.getElementById("finalTitle")
-        .textContent = t.finished;
 
-    document.getElementById("finalScore")
-        .textContent =
-        `${t.yourScore} ${score}`;
+    document
+        .getElementById("finalScore")
+        .innerText =
+        score;
+
+
+    let message = "";
+
+
+    /*
+    Maximum possible score:
+    9 questions × 30 = 270
+    */
+
+    if (score >= 220) {
+
+        message =
+            "🌟 Excellent! Your memory and attention skills are very strong.";
+
+    }
+
+    else if (score >= 150) {
+
+        message =
+            "👏 Great job! You showed good memory and attention.";
+
+    }
+
+    else if (score >= 80) {
+
+        message =
+            "😊 Good attempt! Keep practicing your memory skills.";
+
+    }
+
+    else {
+
+        message =
+            "💪 Good effort! Try again and improve your score.";
+
+    }
+
+
+    document
+        .getElementById("resultMessage")
+        .innerText =
+        message;
+
+
+    /*
+    Badge
+    */
+
+    if (score >= 220) {
+
+        document
+            .getElementById("badge")
+            .innerText =
+            "🏆 Memory Master";
+
+    }
+
+    else if (score >= 150) {
+
+        document
+            .getElementById("badge")
+            .innerText =
+            "🌟 Memory Champion";
+
+    }
+
+    else {
+
+        document
+            .getElementById("badge")
+            .innerText =
+            "🧠 Story Detective";
+
+    }
 
 }
+
 
 
 /* =========================
@@ -1224,9 +1303,8 @@ function restartGame() {
 selectLanguage("english");
 
 </script>
-
+<script>
+if ('serviceWorker' in navigator) { navigator.serviceWorker.register('/static/sw.js'); }
+</script>
 </body>
 </html>
-
-        
-                 
