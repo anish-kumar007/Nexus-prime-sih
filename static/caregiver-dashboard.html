@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Smriti - Caregiver Dashboard</title>
+<title>Manova - Caregiver Dashboard</title>
 <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
 <style>
     * { box-sizing: border-box; margin: 0; padding: 0; }
@@ -132,11 +132,47 @@
 <div class="dashboard">
 
     <header>
-        <h1>🩺 Smriti Caregiver Dashboard</h1>
+        <h1>🩺 Manova Caregiver Dashboard</h1>
         <div style="background:white; color:#2c5f8a; padding:8px 16px; border-radius:8px; font-weight:bold;">
             Demo Patient
         </div>
     </header>
+
+    <div class="card" id="caregiverSetupCard">
+        <h2>🔗 Caregiver Setup</h2>
+
+        <div id="setupStep1">
+            <p style="font-size:14px; color:#666; margin-bottom:10px;">
+                Register as a caregiver to get your own ID and connect to a patient.
+            </p>
+            <input type="text" id="caregiverNameInput" placeholder="Your name"
+                style="width:100%; padding:10px; margin-bottom:10px; border:1px solid #ccc; border-radius:8px; font-size:15px;">
+            <button class="action-btn btn-call" style="width:100%;" onclick="registerCaregiver()">
+                Register as Caregiver
+            </button>
+        </div>
+
+        <div id="setupStep2" style="display:none;">
+            <p style="font-size:14px; color:#666; margin-bottom:10px;">
+                Your Caregiver ID: <strong id="caregiverIdText"></strong>
+            </p>
+            <input type="number" id="patientIdInput" placeholder="Patient ID to connect"
+                style="width:100%; padding:10px; margin-bottom:10px; border:1px solid #ccc; border-radius:8px; font-size:15px;">
+            <button class="action-btn btn-message" style="width:100%;" onclick="connectToPatient()">
+                Connect to Patient
+            </button>
+        </div>
+
+        <div id="setupStep3" style="display:none;">
+            <p style="font-size:14px; color:#666; margin-bottom:8px;">Viewing patient:</p>
+            <select id="patientSelector"
+                style="width:100%; padding:10px; border:1px solid #ccc; border-radius:8px; margin-bottom:10px; font-size:15px;"
+                onchange="switchPatient()"></select>
+            <button class="action-btn btn-history" style="width:100%;" onclick="showSetupStep(2)">
+                + Connect Another Patient
+            </button>
+        </div>
+    </div>
 
     <div class="grid">
 
@@ -200,6 +236,16 @@
 
 <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
 <script>
+    // Which patient this dashboard is showing. Defaults to 1 (the demo
+    // patient) but can be overridden with ?patient=2 in the URL, or by
+    // picking from the caregiver's connected patients below — this is
+    // the same ID as USER_ID in home.html / story_detective.html / app.py.
+    const params = new URLSearchParams(window.location.search);
+    let PATIENT_ID = Number(params.get('patient')) || 1;
+
+    // The logged-in caregiver, once registered — persists across visits.
+    let CAREGIVER_ID = Number(localStorage.getItem("manovaCaregiverId")) || null;
+
     let map, marker;
 
     function initMap(lat = 28.6139, lng = 77.2090) {
@@ -218,46 +264,200 @@
             .bindPopup("Patient’s last known location").openPopup();
     }
 
-    function loadData() {
-        const userId = 1;
+    function showSetupStep(step) {
+        document.getElementById("setupStep1").style.display = step === 1 ? "block" : "none";
+        document.getElementById("setupStep2").style.display = step === 2 ? "block" : "none";
+        document.getElementById("setupStep3").style.display = step === 3 ? "block" : "none";
 
-        fetch(`/api/progress/${userId}`).then(r => r.json()).then(data => {
-            const history = data.history || [];
-            document.getElementById("gamesPlayedStat").textContent = history.length;
-            document.getElementById("totalScore").textContent = history.reduce((sum, h) => sum + h.score, 0);
+        if (step === 2 && CAREGIVER_ID) {
+            document.getElementById("caregiverIdText").textContent = CAREGIVER_ID;
+        }
+    }
+
+    function registerCaregiver() {
+        const name = document.getElementById("caregiverNameInput").value.trim();
+
+        if (!name) {
+            alert("Please enter your name.");
+            return;
+        }
+
+        fetch('/api/register_caregiver', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ name: name })
+        })
+        .then(res => res.json())
+        .then(result => {
+            CAREGIVER_ID = result.user_id;
+            localStorage.setItem("manovaCaregiverId", CAREGIVER_ID);
+            showSetupStep(2);
+        })
+        .catch(err => {
+            console.error('Caregiver registration failed:', err);
+            alert('Could not register right now — check the server is running.');
         });
+    }
 
-        fetch(`/api/latest_location/${userId}`).then(r => r.json()).then(data => {
-            if (data.latitude) {
-                initMap(data.latitude, data.longitude);
-                document.getElementById("locationTime").textContent = data.timestamp;
+    function connectToPatient() {
+        const patientId = Number(document.getElementById("patientIdInput").value);
+
+        if (!patientId) {
+            alert("Please enter a valid patient ID.");
+            return;
+        }
+
+        fetch('/api/link_caregiver', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+                caregiver_id: CAREGIVER_ID,
+                patient_id: patientId
+            })
+        })
+        .then(res => res.json())
+        .then(() => {
+            document.getElementById("patientIdInput").value = "";
+            loadLinkedPatients();
+        })
+        .catch(err => {
+            console.error('Connect failed:', err);
+            alert('Could not connect right now — check the server is running.');
+        });
+    }
+
+    function loadLinkedPatients() {
+        if (!CAREGIVER_ID) return;
+
+        fetch(`/api/caregiver/${CAREGIVER_ID}/patients`)
+            .then(res => res.json())
+            .then(patients => {
+                if (!patients || patients.length === 0) {
+                    showSetupStep(2);
+                    return;
+                }
+
+                const selector = document.getElementById("patientSelector");
+                selector.innerHTML = "";
+
+                patients.forEach(p => {
+                    const opt = document.createElement("option");
+                    opt.value = p.id;
+                    opt.textContent = `${p.name} (ID ${p.id})`;
+                    selector.appendChild(opt);
+                });
+
+                // Keep viewing the current patient if still linked,
+                // otherwise fall back to the first connected one.
+                const stillLinked = patients.some(p => p.id === PATIENT_ID);
+                if (!stillLinked) {
+                    PATIENT_ID = patients[0].id;
+                }
+                selector.value = PATIENT_ID;
+
+                const current = patients.find(p => p.id === PATIENT_ID);
+                if (current) {
+                    document.querySelector('header div').textContent = current.name;
+                }
+
+                showSetupStep(3);
+                loadData();
+            })
+            .catch(err => console.error('Loading linked patients failed:', err));
+    }
+
+    function switchPatient() {
+        PATIENT_ID = Number(document.getElementById("patientSelector").value);
+        loadData();
+
+        fetch(`/api/caregiver/${CAREGIVER_ID}/patients`)
+            .then(res => res.json())
+            .then(patients => {
+                const current = patients.find(p => p.id === PATIENT_ID);
+                if (current) {
+                    document.querySelector('header div').textContent = current.name;
+                }
+            })
+            .catch(err => console.error('Patient name lookup failed:', err));
+    }
+
+    async function loadData() {
+
+        // Cognitive progress — pulled from the real backend, not
+        // localStorage, so this works from a different device than
+        // the patient's own phone.
+        try {
+            const progressRes = await fetch(`/api/progress/${PATIENT_ID}`);
+            const progressData = await progressRes.json();
+            const history = progressData.history || [];
+
+            const totalScore = history.reduce(
+                (sum, row) => sum + row.score, 0
+            );
+
+            document.getElementById("totalScore").textContent = totalScore;
+            document.getElementById("gamesPlayedStat").textContent = history.length;
+        } catch (err) {
+            console.error("Progress fetch failed:", err);
+        }
+
+        // Location
+        try {
+            const locRes = await fetch(`/api/latest_location/${PATIENT_ID}`);
+
+            if (locRes.ok) {
+                const loc = await locRes.json();
+                initMap(loc.latitude, loc.longitude);
+                document.getElementById("locationTime").textContent =
+                    loc.timestamp || "Recently";
             } else {
                 initMap();
-                document.getElementById("locationTime").textContent = "Not available yet";
+                document.getElementById("locationTime").textContent =
+                    "Not available yet";
             }
-        });
+        } catch (err) {
+            console.error("Location fetch failed:", err);
+            initMap();
+        }
 
-        fetch(`/api/alerts/${userId}`).then(r => r.json()).then(alerts => {
+        // SOS Alerts — requires the /api/alerts/<id> and /api/trigger_alert
+        // endpoints (see the app.py snippet alongside this file).
+        try {
+            const alertsRes = await fetch(`/api/alerts/${PATIENT_ID}`);
+            const alerts = await alertsRes.json();
+
             const list = document.getElementById("alertsList");
             const badge = document.getElementById("statusBadge");
-            if (!alerts.length) {
+
+            if (!alerts || alerts.length === 0) {
                 list.innerHTML = `<p style="color:#888;">No alerts yet</p>`;
                 badge.className = "status-badge safe";
                 badge.textContent = "● Safe";
             } else {
                 list.innerHTML = "";
                 let hasActive = false;
-                alerts.forEach(a => {
+
+                alerts.slice(0, 5).forEach(a => {
                     const div = document.createElement("div");
                     div.className = "alert-item" + (a.status === "Active" ? " active" : "");
-                    div.innerHTML = `<strong>${a.type}</strong><br><small>${a.timestamp} • ${a.status}</small>`;
+                    div.innerHTML =
+                        `<strong>${a.type}</strong><br><small>${a.timestamp} • ${a.status}</small>`;
                     list.appendChild(div);
                     if (a.status === "Active") hasActive = true;
                 });
+
                 badge.className = hasActive ? "status-badge alert" : "status-badge safe";
                 badge.textContent = hasActive ? "● Needs Attention" : "● Safe";
             }
-        });
+        } catch (err) {
+            console.error("Alerts fetch failed:", err);
+        }
+    }
+
+    if (CAREGIVER_ID) {
+        loadLinkedPatients();
+    } else {
+        showSetupStep(1);
     }
 
     loadData();

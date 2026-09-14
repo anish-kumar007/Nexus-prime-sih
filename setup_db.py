@@ -57,6 +57,22 @@ try:
 except sqlite3.OperationalError:
     pass  
  
+try:
+    cursor.execute("ALTER TABLE Users ADD COLUMN age INTEGER")
+except sqlite3.OperationalError:
+    pass  
+ 
+try:
+    cursor.execute("ALTER TABLE Users ADD COLUMN gender TEXT")
+except sqlite3.OperationalError:
+    pass  
+
+try:
+    cursor.execute("ALTER TABLE Users ADD COLUMN language TEXT DEFAULT 'English'")
+except sqlite3.OperationalError:
+    pass  
+
+
 
 conn.commit()
 conn.close()

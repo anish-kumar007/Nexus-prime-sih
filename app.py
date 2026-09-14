@@ -75,17 +75,39 @@ def latest_location(user_id):
     return jsonify(dict(row))
 
 
-@app.route('/api/create_caregiver', methods=['POST'])
-def create_caregiver():
+@app.route('/api/register_patient', methods=['POST'])
+def register_patient():
     data = request.get_json()
     conn = get_db_connection()
-    conn.execute('''
-        INSERT INTO Users (id, name, role) VALUES (?, ?, 'caregiver')
-        ON CONFLICT(id) DO UPDATE SET name = excluded.name
-    ''', (data['user_id'], data.get('name', 'Caregiver')))
+    cursor = conn.execute('''
+        INSERT INTO Users (name, age, gender, language, stage, role)
+        VALUES (?, ?, ?, ?, ?, 'patient')
+    ''', (
+        data.get('name', 'Patient'),
+        data.get('age'),
+        data.get('gender'),
+        data.get('language', 'English'),
+        data.get('stage', 'Early')
+    ))
+    new_id = cursor.lastrowid
     conn.commit()
     conn.close()
-    return jsonify({"status": "success"})
+    return jsonify({"status": "success", "user_id": new_id})
+ 
+
+@app.route('/api/register_caregiver', methods=['POST'])
+def register_caregiver():
+    data = request.get_json()
+    conn = get_db_connection()
+    cursor = conn.execute(
+        "INSERT INTO Users (name, role) VALUES (?, 'caregiver')",
+        (data.get('name', 'Caregiver'),)
+    )
+    new_id = cursor.lastrowid
+    conn.commit()
+    conn.close()
+    return jsonify({"status": "success", "user_id": new_id})
+ 
 
 @app.route('/api/link_caregiver', methods=['POST'])
 def link_caregiver():

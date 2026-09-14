@@ -855,6 +855,13 @@
             </div>
 
             <div class="profile-field">
+                <label>Your Patient ID</label>
+                <p id="patientIdDisplay" style="font-size: 22px; font-weight: bold;">
+                    Not registered yet — save your profile below
+                </p>
+            </div>
+
+            <div class="profile-field">
                 <label for="profileLanguage">Language</label>
                 <select id="profileLanguage">
                     <option value="English">English</option>
@@ -973,9 +980,11 @@
         localStorage.getItem("smritiGamesPlayed") || 0
     );
 
-    // Stub patient ID until Profile/login is actually wired up —
-    // every save call across this app uses this same value.
-    const USER_ID = 1;
+    // Patient ID — defaults to the demo patient (1) until someone actually
+    // registers via the Profile screen, at which point this becomes their
+    // real, database-assigned id. Every save call across this app uses
+    // this same value.
+    let USER_ID = Number(localStorage.getItem("manovaUserId")) || 1;
 
 
     /* =========================
@@ -1535,7 +1544,18 @@
 
         selectGender(selectedGender);
         updateProfileLocationStatus();
+        updatePatientIdDisplay();
     }
+
+    function updatePatientIdDisplay() {
+        const display = document.getElementById("patientIdDisplay");
+        const registeredId = localStorage.getItem("manovaUserId");
+
+        if (registeredId) {
+            display.textContent = registeredId;
+        } else {
+            display.textContent = "Not registered yet — save your profile below";
+        }
 
     function saveProfile() {
         const name = document.getElementById("profileName").value.trim();
@@ -1566,11 +1586,53 @@
             profileLocationAllowed
         );
 
-        document.getElementById("profileMessage").textContent =
-            "✓ Profile saved successfully.";
+        const alreadyRegistered = localStorage.getItem("manovaUserId");
 
-        updateWelcomeName();
-        speak("Your profile has been saved.");
+        if (alreadyRegistered) {
+            // Already has a real database id from an earlier save —
+            // not rebuilding an "update existing registration" endpoint
+            // today, so this just confirms the local save.
+            document.getElementById("profileMessage").textContent =
+                "✓ Profile saved successfully.";
+
+            updateWelcomeName();
+            speak("Your profile has been saved.");
+            return;
+        }
+
+        // First time saving — actually register this patient and get
+        // a real, database-assigned id back.
+        fetch('/api/register_patient', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+                name: name,
+                age: Number(age),
+                gender: selectedGender,
+                language: language
+            })
+        })
+        .then(res => res.json())
+        .then(result => {
+            USER_ID = result.user_id;
+            localStorage.setItem("manovaUserId", USER_ID);
+            updatePatientIdDisplay();
+
+            document.getElementById("profileMessage").textContent =
+                "✓ Profile saved. Your Patient ID is " + USER_ID +
+                " — share this with a caregiver to connect.";
+
+            updateWelcomeName();
+            speak("Your profile has been saved. Your patient ID is " + USER_ID + ".");
+        })
+        .catch(err => {
+            console.error('Registration failed:', err);
+            document.getElementById("profileMessage").textContent =
+                "✓ Saved on this device, but couldn't reach the server to register.";
+
+            updateWelcomeName();
+            speak("Your profile has been saved.");
+        });
     }
 
     function updateWelcomeName() {
