@@ -1193,11 +1193,32 @@ function endGame() {
         .textContent =
         `${t.yourScore} ${score}`;
 
+        // Save the score for the currently registered Manova patient.
+        // Fall back to demo patient 1 if no profile has been registered yet.
+        const userId = Number(localStorage.getItem("manovaUserId")) || 1;
+
         fetch('/api/save_score', {
-        method: 'POST',
-        headers: {'Content-Type': 'application/json'},
-        body: JSON.stringify({user_id: 1, game_type: 'story_detective', score: score, difficulty: difficultyNames[difficulty]})
-    }).catch(err => console.error('Save failed:', err));
+            method: 'POST',
+            headers: {'Content-Type': 'application/json'},
+            body: JSON.stringify({
+                user_id: userId,
+                game_type: 'story_detective',
+                score: score,
+                difficulty: difficultyNames[difficulty]
+            })
+        })
+        .then(response => {
+            if (!response.ok) {
+                throw new Error(`HTTP ${response.status}`);
+            }
+            return response.json();
+        })
+        .then(data => {
+            console.log('Story Detective score saved:', data);
+        })
+        .catch(err => {
+            console.error('Story Detective score save failed:', err);
+        });
 
 }
 

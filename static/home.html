@@ -991,24 +991,61 @@
        PROGRESS
     ========================= */
 
-    function updateProgress() {
+    async function updateProgress() {
 
-        score = Number(
-            localStorage.getItem("smritiScore") || 0
-        );
+        const progressScoreEl =
+            document.getElementById("progressScore");
 
-        gamesPlayed = Number(
-            localStorage.getItem("smritiGamesPlayed") || 0
-        );
+        const gamesPlayedEl =
+            document.getElementById("gamesPlayed");
 
-        document.getElementById(
-            "progressScore"
-        ).textContent = score;
+        try {
+            const response =
+                await fetch(`/api/progress/${USER_ID}`);
 
-        document.getElementById(
-            "gamesPlayed"
-        ).textContent = gamesPlayed;
+            if (!response.ok) {
+                throw new Error(`HTTP ${response.status}`);
+            }
+
+            const data = await response.json();
+
+            progressScoreEl.textContent =
+                data.word_picture_best ?? 0;
+
+            gamesPlayedEl.textContent =
+                data.total_games ?? 0;
+
+            localStorage.setItem(
+                "smritiScore",
+                data.word_picture_best ?? 0
+            );
+
+            localStorage.setItem(
+                "smritiGamesPlayed",
+                data.total_games ?? 0
+            );
+
+        } catch (error) {
+
+            console.error("Progress loading failed:", error);
+
+            progressScoreEl.textContent =
+                localStorage.getItem("smritiScore") || 0;
+
+            gamesPlayedEl.textContent =
+                localStorage.getItem("smritiGamesPlayed") || 0;
+        }
     }
+
+
+    window.addEventListener("DOMContentLoaded", () => {
+        const requestedScreen =
+            new URLSearchParams(window.location.search).get("screen");
+
+        if (requestedScreen === "progress") {
+            showScreen("progress");
+        }
+    });
 
 
     /* =========================
