@@ -117,6 +117,40 @@
     .btn-message { background: #3498db; }
     .btn-history { background: #8e44ad; }
 
+    .delete-reminder {
+        border: none;
+        background: #f8d7da;
+        color: #721c24;
+        padding: 6px 9px;
+        border-radius: 7px;
+        cursor: pointer;
+        font-size: 12px;
+        font-weight: 600;
+    }
+
+    .reminder-item {
+        background: #f7f9fb;
+        border: 1px solid #e5e9ed;
+        padding: 10px 12px;
+        border-radius: 9px;
+        margin-bottom: 8px;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 10px;
+    }
+
+    .reminder-main {
+        display: flex;
+        flex-direction: column;
+        gap: 3px;
+    }
+
+    .reminder-time {
+        font-weight: bold;
+        color: #2c5f8a;
+    }
+
     .back-link {
         display: inline-block;
         margin-top: 25px;
@@ -196,6 +230,58 @@
             </div>
         </div>
 
+        <!-- Safe Zone / Geofence -->
+        <div class="card">
+            <h2>🛡️ Safe Zone</h2>
+            <p style="font-size:14px; color:#666; margin-bottom:10px;">
+                Set an allowed area around the patient's last known location.
+                The backend will create an alert if the patient moves outside it.
+            </p>
+
+            <div class="info-row">
+                <span class="label">Radius</span>
+                <span class="value">
+                    <input type="number" id="radiusInput" value="200" min="20" max="5000"
+                        style="width:100px; padding:7px; border:1px solid #ccc; border-radius:7px;">
+                    meters
+                </span>
+            </div>
+
+            <button class="action-btn btn-call" style="width:100%; margin-top:12px;"
+                    onclick="setGeofenceAtLastLocation()">
+                📍 Set Safe Zone Here
+            </button>
+
+            <div id="geofenceStatus" style="font-size:13px; color:#666; margin-top:10px;">
+                No safe zone loaded yet.
+            </div>
+        </div>
+
+        <!-- Patient Reminders -->
+        <div class="card">
+            <h2>⏰ Patient Reminders</h2>
+            <p style="font-size:14px; color:#666; margin-bottom:10px;">
+                Add a daily reminder for the patient. The patient app checks
+                these reminders and can announce them by voice.
+            </p>
+
+            <input type="text" id="reminderTitle"
+                placeholder="e.g. Take morning medicine"
+                style="width:100%; padding:10px; margin-bottom:8px; border:1px solid #ccc; border-radius:8px; font-size:15px;">
+
+            <input type="time" id="reminderTime"
+                style="width:100%; padding:10px; margin-bottom:8px; border:1px solid #ccc; border-radius:8px; font-size:15px;">
+
+            <button class="action-btn btn-message" style="width:100%;"
+                    onclick="addReminder()">
+                + Add Daily Reminder
+            </button>
+
+            <div id="remindersList" style="margin-top:14px;">
+                <p style="color:#888;">No reminders loaded</p>
+            </div>
+        </div>
+
         <!-- Cognitive Progress -->
         <div class="card">
             <h2>🧠 Cognitive Progress</h2>
@@ -247,6 +333,13 @@
     let CAREGIVER_ID = Number(localStorage.getItem("manovaCaregiverId")) || null;
 
     let map, marker;
+
+    // Latest patient coordinates received from Flask.
+    let lastKnownLat = null;
+    let lastKnownLng = null;
+
+    // Leaflet circle representing the saved safe zone.
+    let geofenceCircle = null;
 
     function initMap(lat = 28.6139, lng = 77.2090) {
         if (map) {
@@ -381,6 +474,181 @@
             .catch(err => console.error('Patient name lookup failed:', err));
     }
 
+    function drawGeofence(zone) {
+        if (!map || !zone) return;
+
+        if (geofenceCircle) {
+            map.removeLayer(geofenceCircle);
+        }
+
+        geofenceCircle = L.circle(
+            [Number(zone.center_lat), Number(zone.center_lng)],
+            {
+                radius: Number(zone.radius_meters),
+                color: "#2c5f8a",
+                fillOpacity: 0.12
+            }
+        ).addTo(map);
+
+        document.getElementById("geofenceStatus").textContent =
+            `Safe zone: ${Math.round(zone.radius_meters)} m radius`;
+    }
+
+    async function loadGeofence() {
+        try {
+            const res = await fetch(`/api/geofence/${PATIENT_ID}`);
+            if (!res.ok) throw new Error(`Geofence request failed (${res.status})`);
+
+            const zone = await res.json();
+
+            if (zone) {
+                document.getElementById("radiusInput").value =
+                    Math.round(zone.radius_meters);
+                drawGeofence(zone);
+            } else {
+                if (geofenceCircle && map) {
+                    map.removeLayer(geofenceCircle);
+                    geofenceCircle = null;
+                }
+                document.getElementById("geofenceStatus").textContent =
+                    "No safe zone set for this patient.";
+            }
+        } catch (err) {
+            console.error("Geofence fetch failed:", err);
+            document.getElementById("geofenceStatus").textContent =
+                "Could not load safe zone.";
+        }
+    }
+
+    async function setGeofenceAtLastLocation() {
+        if (lastKnownLat === null || lastKnownLng === null) {
+            alert("No patient location is available yet. Wait for a location update.");
+            return;
+        }
+
+        const radius = Number(document.getElementById("radiusInput").value || 200);
+
+        if (!Number.isFinite(radius) || radius < 20) {
+            alert("Please enter a radius of at least 20 meters.");
+            return;
+        }
+
+        try {
+            const res = await fetch('/api/set_geofence', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({
+                    patient_id: PATIENT_ID,
+                    center_lat: lastKnownLat,
+                    center_lng: lastKnownLng,
+                    radius_meters: radius
+                })
+            });
+
+            if (!res.ok) throw new Error(`Set geofence failed (${res.status})`);
+
+            drawGeofence({
+                center_lat: lastKnownLat,
+                center_lng: lastKnownLng,
+                radius_meters: radius
+            });
+
+            alert("Safe zone set successfully.");
+        } catch (err) {
+            console.error("Set geofence failed:", err);
+            alert("Could not set the safe zone. Check that the Flask server is running.");
+        }
+    }
+
+    async function addReminder() {
+        const title = document.getElementById("reminderTitle").value.trim();
+        const time = document.getElementById("reminderTime").value;
+
+        if (!title || !time) {
+            alert("Please enter both a reminder and a time.");
+            return;
+        }
+
+        try {
+            const res = await fetch('/api/add_reminder', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({
+                    patient_id: PATIENT_ID,
+                    title: title,
+                    reminder_time: time,
+                    repeat_daily: 1
+                })
+            });
+
+            if (!res.ok) throw new Error(`Add reminder failed (${res.status})`);
+
+            document.getElementById("reminderTitle").value = "";
+            document.getElementById("reminderTime").value = "";
+
+            await loadReminders();
+        } catch (err) {
+            console.error("Add reminder failed:", err);
+            alert("Could not add the reminder. Check that the Flask server is running.");
+        }
+    }
+
+    async function deleteReminder(reminderId) {
+        try {
+            const res = await fetch(`/api/reminders/${reminderId}`, {
+                method: 'DELETE'
+            });
+
+            if (!res.ok) throw new Error(`Delete reminder failed (${res.status})`);
+
+            await loadReminders();
+        } catch (err) {
+            console.error("Delete reminder failed:", err);
+            alert("Could not delete the reminder.");
+        }
+    }
+
+    async function loadReminders() {
+        try {
+            const res = await fetch(`/api/reminders/${PATIENT_ID}`);
+            if (!res.ok) throw new Error(`Reminder request failed (${res.status})`);
+
+            const reminders = await res.json();
+            const list = document.getElementById("remindersList");
+
+            if (!reminders || reminders.length === 0) {
+                list.innerHTML = `<p style="color:#888;">No reminders set</p>`;
+                return;
+            }
+
+            list.innerHTML = reminders.map(r => `
+                <div class="reminder-item">
+                    <div class="reminder-main">
+                        <span class="reminder-time">⏰ ${r.reminder_time}</span>
+                        <span>${escapeHtml(r.title)}</span>
+                    </div>
+                    <button class="delete-reminder"
+                            onclick="deleteReminder(${Number(r.id)})">
+                        Delete
+                    </button>
+                </div>
+            `).join('');
+        } catch (err) {
+            console.error("Load reminders failed:", err);
+            document.getElementById("remindersList").innerHTML =
+                `<p style="color:#888;">Could not load reminders</p>`;
+        }
+    }
+
+    function escapeHtml(value) {
+        return String(value)
+            .replaceAll("&", "&amp;")
+            .replaceAll("<", "&lt;")
+            .replaceAll(">", "&gt;")
+            .replaceAll('"', "&quot;")
+            .replaceAll("'", "&#039;");
+    }
+
     async function loadData() {
 
         // Cognitive progress — pulled from the real backend, not
@@ -407,10 +675,17 @@
 
             if (locRes.ok) {
                 const loc = await locRes.json();
-                initMap(loc.latitude, loc.longitude);
+
+                // Keep the latest patient coordinates for the safe-zone button.
+                lastKnownLat = Number(loc.latitude);
+                lastKnownLng = Number(loc.longitude);
+
+                initMap(lastKnownLat, lastKnownLng);
                 document.getElementById("locationTime").textContent =
                     loc.timestamp || "Recently";
             } else {
+                lastKnownLat = null;
+                lastKnownLng = null;
                 initMap();
                 document.getElementById("locationTime").textContent =
                     "Not available yet";
@@ -452,8 +727,9 @@
         } catch (err) {
             console.error("Alerts fetch failed:", err);
         }
+            await loadGeofence();
+        await loadReminders();
     }
-
     if (CAREGIVER_ID) {
         loadLinkedPatients();
     } else {

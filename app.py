@@ -155,5 +155,67 @@ def get_alerts(user_id):
     conn.close()
     return jsonify([dict(row) for row in rows])
 
+
+import math
+
+def haversine_meters(lat1, lng1, lat2, lng2):
+    R = 6371000
+    phi1, phi2 = math.radians(lat1), math.radians(lat2)
+    dphi = math.radians(lat2 - lat1)
+    dlambda = math.radians(lng2 - lng1)
+    a = math.sin(dphi/2)**2 + math.cos(phi1)*math.cos(phi2)*math.sin(dlambda/2)**2
+    return 2 * R * math.asin(math.sqrt(a))
+
+@app.route('/api/set_geofence', methods=['POST'])
+def set_geofence():
+    data = request.get_json() or {}
+    conn = get_db_connection()
+    conn.execute('''
+        INSERT INTO SafeZones (patient_id, center_lat, center_lng, radius_meters)
+        VALUES (?, ?, ?, ?)
+        ON CONFLICT(patient_id) DO UPDATE SET
+            center_lat=excluded.center_lat,
+            center_lng=excluded.center_lng,
+            radius_meters=excluded.radius_meters,
+            updated_at=CURRENT_TIMESTAMP
+    ''', (data['patient_id'], data['center_lat'], data['center_lng'], data.get('radius_meters', 200)))
+    conn.commit(); conn.close()
+    return jsonify({"status": "success"})
+
+@app.route('/api/geofence/<int:patient_id>')
+def get_geofence(patient_id):
+    conn = get_db_connection()
+    row = conn.execute('SELECT * FROM SafeZones WHERE patient_id = ?', (patient_id,)).fetchone()
+    conn.close()
+    return jsonify(dict(row) if row else None)
+
+@app.route('/api/add_reminder', methods=['POST'])
+def add_reminder():
+    data = request.get_json() or {}
+    conn = get_db_connection()
+    conn.execute('''
+        INSERT INTO Reminders (patient_id, title, reminder_time, repeat_daily)
+        VALUES (?, ?, ?, ?)
+    ''', (data['patient_id'], data['title'], data['reminder_time'], data.get('repeat_daily', 1)))
+    conn.commit(); conn.close()
+    return jsonify({"status": "success"})
+
+@app.route('/api/reminders/<int:patient_id>')
+def get_reminders(patient_id):
+    conn = get_db_connection()
+    rows = conn.execute(
+        'SELECT * FROM Reminders WHERE patient_id = ? AND active = 1', (patient_id,)
+    ).fetchall()
+    conn.close()
+    return jsonify([dict(r) for r in rows])
+
+@app.route('/api/reminders/<int:reminder_id>', methods=['DELETE'])
+def delete_reminder(reminder_id):
+    conn = get_db_connection()
+    conn.execute('UPDATE Reminders SET active = 0 WHERE id = ?', (reminder_id,))
+    conn.commit(); conn.close()
+    return jsonify({"status": "deleted"})
+
+
 if __name__ == '__main__':
     app.run(debug=True, host='127.0.0.1', port=5000)
