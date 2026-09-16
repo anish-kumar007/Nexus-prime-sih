@@ -1,6 +1,6 @@
 # Nexus Prime — SIH 2026 (SIH26003)
 
-Companion app for elderly dementia patients in India's North-Eastern Region — cognitive games, a voice assistant, GPS safety, and caregiver connectivity.
+Companion app for elderly dementia patients in India's North-Eastern Region — cognitive games, a voice assistant, GPS safety, geofencing support and caregiver connectivity.
 
 ## Tech Stack
 - Frontend: HTML, CSS, JavaScript
