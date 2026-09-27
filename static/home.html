@@ -1191,6 +1191,33 @@
     }
 
 
+    const firedToday = new Set();
+
+async function checkReminders() {
+    try {
+        const res = await fetch(`/api/reminders/${USER_ID}`);
+        const reminders = await res.json();
+        const hhmm = new Date().toTimeString().slice(0, 5);
+        reminders.forEach(r => {
+            const key = r.id + '_' + hhmm;
+            if (r.reminder_time === hhmm && !firedToday.has(key)) {
+                firedToday.add(key);
+                speak(`Reminder: ${r.title}`);
+                if (Notification.permission === 'granted') {
+                    new Notification('Manova Reminder', { body: r.title });
+                }
+            }
+        });
+    } catch (e) { console.error('Reminder check failed', e); }
+}
+
+if ('Notification' in window && Notification.permission !== 'granted' && Notification.permission !== 'denied') {
+    Notification.requestPermission();
+}
+setInterval(checkReminders, 30000);
+checkReminders();
+
+
     /* =========================
        ASK SMRITI
     ========================= */
