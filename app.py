@@ -71,16 +71,33 @@ def get_progress(user_id):
         "history": [dict(row) for row in rows]
     })
 
+consecutive_outside_tracker = {}  # in-memory, resets if the server restarts
+
 @app.route('/api/update_location', methods=['POST'])
 def update_location():
     data = request.get_json() or {}
     conn = get_db_connection()
-    conn.execute('''
-        INSERT INTO Locations (user_id, latitude, longitude)
-        VALUES (?, ?, ?)
-    ''', (data['user_id'], data['latitude'], data['longitude']))
-    conn.commit(); conn.close()
-    return jsonify({"status":"success", "recieved":data})
+    conn.execute('INSERT INTO Locations (user_id, latitude, longitude) VALUES (?, ?, ?)',
+        (data['user_id'], data['latitude'], data['longitude']))
+    conn.commit()
+
+    zone = conn.execute('SELECT * FROM SafeZones WHERE patient_id = ?', (data['user_id'],)).fetchone()
+    if zone:
+        distance = haversine_meters(data['latitude'], data['longitude'], zone['center_lat'], zone['center_lng'])
+        pid = data['user_id']
+        if distance > zone['radius_meters']:
+            consecutive_outside_tracker[pid] = consecutive_outside_tracker.get(pid, 0) + 1
+            if consecutive_outside_tracker[pid] >= 2:
+                conn.execute('INSERT INTO Alerts (user_id, type, status) VALUES (?, ?, ?)',
+                    (pid, 'Left Safe Zone', 'Active'))
+                conn.commit()
+                consecutive_outside_tracker[pid] = 0
+        else:
+            consecutive_outside_tracker[pid] = 0
+
+    conn.close()
+    return jsonify({"status": "success", "recieved": data})
+
 
 @app.route('/api/latest_location/<int:user_id>')
 def latest_location(user_id):
@@ -120,10 +137,14 @@ def register_caregiver():
 def link_caregiver():
     data = request.get_json() or {}
     conn = get_db_connection()
-    conn.execute('INSERT INTO CaregiverLinks (caregiver_id, patient_id) VALUES (?, ?)',
-                 (data['caregiver_id'], data['patient_id']))
-    conn.commit(); conn.close()
-    return jsonify({"status":"success"})
+    existing = conn.execute('SELECT id FROM CaregiverLinks WHERE caregiver_id = ? AND patient_id = ?',
+        (data['caregiver_id'], data['patient_id'])).fetchone()
+    if not existing:
+        conn.execute('INSERT INTO CaregiverLinks (caregiver_id, patient_id) VALUES (?, ?)',
+            (data['caregiver_id'], data['patient_id']))
+        conn.commit()
+    conn.close()
+    return jsonify({"status": "success"})
 
 @app.route('/api/caregiver/<int:caregiver_id>/patients')
 def get_linked_patients(caregiver_id):
