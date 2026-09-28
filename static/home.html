@@ -1193,6 +1193,20 @@
 
     const firedToday = new Set();
 
+    async function showReminderNotification(title) {
+    if (!('Notification' in window) || Notification.permission !== 'granted') return;
+    try {
+        const reg = await navigator.serviceWorker.getRegistration();
+        if (reg) {
+            await reg.showNotification('Manova Reminder', { body: title });
+        } else {
+            new Notification('Manova Reminder', { body: title });
+        }
+    } catch (e) {
+        console.error('Notification failed', e);
+    }
+}
+
 async function checkReminders() {
     try {
         const res = await fetch(`/api/reminders/${USER_ID}`);
@@ -1203,13 +1217,11 @@ async function checkReminders() {
             if (r.reminder_time === hhmm && !firedToday.has(key)) {
                 firedToday.add(key);
                 speak(`Reminder: ${r.title}`);
-                if (Notification.permission === 'granted') {
-                    new Notification('Manova Reminder', { body: r.title });
-                }
+                showReminderNotification(r.title);
             }
         });
     } catch (e) { console.error('Reminder check failed', e); }
-}
+
 
 if ('Notification' in window && Notification.permission !== 'granted' && Notification.permission !== 'denied') {
     Notification.requestPermission();

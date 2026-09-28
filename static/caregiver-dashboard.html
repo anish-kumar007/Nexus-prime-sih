@@ -502,8 +502,11 @@
             const zone = await res.json();
 
             if (zone) {
-                document.getElementById("radiusInput").value =
-                    Math.round(zone.radius_meters);
+                const radiusEl = document.getElementById("radiusInput");
+                if (document.activeElement !== radiusEl) {
+                    radiusEl.value = Math.round(zone.radius_meters);
+                }
+                    
                 drawGeofence(zone);
             } else {
                 if (geofenceCircle && map) {
