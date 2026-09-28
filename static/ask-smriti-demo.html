@@ -3,82 +3,109 @@
 <head>
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
-<title>Ask Smriti</title>
+<title>Ask Smriti | Digital India Companion</title>
 <style>
   :root {
-    --teal-deep: #1a4f4b;
-    --teal-mid: #2a7f79;
-    --sand: #f7f3eb;
-    --clay: #c45a2c;
-    --clay-dark: #9a3f1a;
-    --ink: #1e2b28;
-    --muted: #5c6b66;
-    --line: #d4cbb8;
-    --white: #ffffff;
-    --shadow: 0 8px 24px rgba(26, 79, 75, 0.12);
+    --saffron: #FF9933;
+    --green: #138808;
+    --navy: #0b3d91;
+    --navy-dark: #062a66;
+    --ink: #1a1a1a;
+    --muted: #4a5568;
+    --bg: #f4f7fb;
+    --card: #ffffff;
+    --line: #d0d7e2;
+    --danger: #b33a3a;
+    --shadow: 0 6px 20px rgba(11, 61, 145, 0.1);
   }
   * { box-sizing: border-box; margin: 0; padding: 0; }
   body {
-    font-family: "Atkinson Hyperlegible", "Segoe UI", system-ui, -apple-system, sans-serif;
-    background: var(--sand);
+    font-family: "Segoe UI", system-ui, -apple-system, "Noto Sans", sans-serif;
+    background: var(--bg);
     color: var(--ink);
     min-height: 100dvh;
     display: flex;
     justify-content: center;
-    padding: 20px 16px 40px;
-    line-height: 1.45;
+    padding: 12px 12px 28px;
+    line-height: 1.5;
   }
   .app {
     width: 100%;
-    max-width: 440px;
+    max-width: 460px;
     display: flex;
     flex-direction: column;
-    gap: 18px;
+    gap: 14px;
   }
-  .header { text-align: center; padding: 8px 0 4px; }
-  .header h1 {
-    font-size: 1.85rem;
-    font-weight: 700;
-    color: var(--teal-deep);
+  .gov-bar {
+    height: 6px;
+    border-radius: 6px;
+    background: linear-gradient(90deg, var(--saffron) 0 33%, #fff 33% 66%, var(--green) 66% 100%);
   }
-  .header p { margin-top: 4px; font-size: 1.05rem; color: var(--muted); }
-  .status-card {
-    background: var(--white);
-    border-radius: 16px;
-    padding: 16px 18px;
-    box-shadow: var(--shadow);
+  .header {
+    background: var(--card);
     border: 1px solid var(--line);
+    border-radius: 14px;
+    padding: 16px 16px 14px;
+    box-shadow: var(--shadow);
     text-align: center;
-    min-height: 64px;
+  }
+  .header .badge {
+    display: inline-block;
+    font-size: 0.72rem;
+    font-weight: 700;
+    letter-spacing: 0.04em;
+    color: var(--navy);
+    background: #e8eef8;
+    border: 1px solid #c5d3ea;
+    border-radius: 999px;
+    padding: 4px 10px;
+    margin-bottom: 8px;
+  }
+  .header h1 {
+    font-size: 1.55rem;
+    color: var(--navy-dark);
+    font-weight: 700;
+  }
+  .header p {
+    margin-top: 4px;
+    font-size: 0.98rem;
+    color: var(--muted);
+  }
+  .status-card, .transcript-box, .controls, .type-row, .faq-panel {
+    background: var(--card);
+    border: 1px solid var(--line);
+    border-radius: 14px;
+    box-shadow: var(--shadow);
+  }
+  .status-card {
+    padding: 14px 16px;
+    text-align: center;
+    min-height: 58px;
     display: flex;
     align-items: center;
     justify-content: center;
   }
-  .status-text {
-    font-size: 1.15rem;
-    font-weight: 600;
-    color: var(--teal-deep);
-  }
-  .status-text.listening { color: var(--clay); }
-  .status-text.error { color: #b33a3a; }
+  .status-text { font-size: 1.08rem; font-weight: 600; color: var(--navy-dark); }
+  .status-text.listening { color: #c05600; }
+  .status-text.error { color: var(--danger); }
   .mic-section {
     display: flex;
     flex-direction: column;
     align-items: center;
-    gap: 14px;
-    padding: 8px 0;
+    gap: 10px;
+    padding: 6px 0;
   }
   .mic-button {
-    width: 148px;
-    height: 148px;
+    width: 132px;
+    height: 132px;
     border-radius: 50%;
-    border: none;
-    background: var(--teal-mid);
+    border: 4px solid #fff;
+    background: var(--navy);
     color: white;
-    font-size: 3.2rem;
+    font-size: 2.8rem;
     cursor: pointer;
-    box-shadow: 0 8px 0 var(--teal-deep);
-    transition: transform 0.1s ease, box-shadow 0.1s ease, background 0.2s;
+    box-shadow: 0 8px 0 var(--navy-dark);
+    transition: transform 0.1s ease, box-shadow 0.1s ease;
     display: flex;
     align-items: center;
     justify-content: center;
@@ -86,118 +113,151 @@
   }
   .mic-button:active {
     transform: translateY(5px);
-    box-shadow: 0 3px 0 var(--teal-deep);
+    box-shadow: 0 3px 0 var(--navy-dark);
   }
   .mic-button.listening {
-    background: var(--clay);
-    box-shadow: 0 8px 0 var(--clay-dark);
+    background: #c05600;
+    box-shadow: 0 8px 0 #8a3d00;
     animation: pulse 1.4s ease-out infinite;
   }
   .mic-button:disabled { opacity: 0.55; cursor: not-allowed; }
   @keyframes pulse {
-    0%   { box-shadow: 0 0 0 0 rgba(196, 90, 44, 0.5); }
-    70%  { box-shadow: 0 0 0 28px rgba(196, 90, 44, 0); }
-    100% { box-shadow: 0 0 0 0 rgba(196, 90, 44, 0); }
+    0%   { box-shadow: 0 0 0 0 rgba(192, 86, 0, 0.45); }
+    70%  { box-shadow: 0 0 0 26px rgba(192, 86, 0, 0); }
+    100% { box-shadow: 0 0 0 0 rgba(192, 86, 0, 0); }
   }
-  .controls { display: flex; flex-direction: column; gap: 12px; }
-  .wake-row { display: flex; justify-content: center; }
+  .controls { padding: 14px; display: flex; flex-direction: column; gap: 12px; }
   .wake-toggle {
     display: flex;
     align-items: center;
     gap: 10px;
-    font-size: 1.05rem;
-    font-weight: 500;
-    color: var(--teal-deep);
+    font-size: 0.98rem;
+    font-weight: 600;
+    color: var(--navy-dark);
     cursor: pointer;
-    background: var(--white);
-    padding: 12px 18px;
-    border-radius: 30px;
-    border: 1px solid var(--line);
-    box-shadow: 0 2px 6px rgba(0,0,0,0.04);
     user-select: none;
   }
   .wake-toggle input {
-    width: 22px;
-    height: 22px;
-    accent-color: var(--teal-mid);
-    cursor: pointer;
+    width: 20px;
+    height: 20px;
+    accent-color: var(--navy);
   }
-  .lang-row { display: flex; justify-content: center; gap: 10px; }
+  .lang-row {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 8px;
+  }
   .lang-btn {
-    flex: 1;
-    max-width: 140px;
-    font-size: 1.05rem;
-    font-weight: 600;
-    padding: 12px 16px;
-    border-radius: 28px;
-    border: 2px solid var(--teal-mid);
-    background: var(--white);
-    color: var(--teal-deep);
+    font-size: 0.92rem;
+    font-weight: 700;
+    padding: 10px 6px;
+    border-radius: 10px;
+    border: 2px solid var(--navy);
+    background: #fff;
+    color: var(--navy-dark);
     cursor: pointer;
   }
   .lang-btn.active {
-    background: var(--teal-mid);
-    color: white;
+    background: var(--navy);
+    color: #fff;
   }
   .transcript-box {
-    background: var(--white);
-    border: 1px solid var(--line);
-    border-radius: 16px;
-    padding: 18px;
-    min-height: 140px;
-    max-height: 260px;
+    padding: 16px;
+    min-height: 150px;
+    max-height: 240px;
     overflow-y: auto;
-    font-size: 1.12rem;
-    line-height: 1.55;
-    box-shadow: var(--shadow);
+    font-size: 1.05rem;
   }
   .transcript-box .placeholder { color: var(--muted); font-style: italic; }
-  .transcript-box p { margin-bottom: 12px; }
-  .you { color: #8a5a2b; font-weight: 700; }
-  .smriti { color: var(--teal-deep); font-weight: 700; }
-  .type-row { display: flex; gap: 10px; }
+  .transcript-box p { margin-bottom: 10px; }
+  .you { color: #8a4b12; font-weight: 700; }
+  .smriti { color: var(--navy-dark); font-weight: 700; }
+  .type-row { display: flex; gap: 8px; padding: 10px; }
   .type-row input {
     flex: 1;
-    font-size: 1.08rem;
-    padding: 14px 16px;
-    border-radius: 14px;
+    font-size: 1rem;
+    padding: 12px 14px;
+    border-radius: 10px;
     border: 1px solid var(--line);
-    background: var(--white);
   }
   .type-row button {
-    font-size: 1.08rem;
-    font-weight: 600;
-    padding: 14px 22px;
-    border-radius: 14px;
+    font-size: 1rem;
+    font-weight: 700;
+    padding: 12px 18px;
+    border-radius: 10px;
     border: none;
-    background: var(--teal-deep);
+    background: var(--navy);
     color: white;
     cursor: pointer;
   }
-  .faq-hint {
-    font-size: 0.95rem;
+  .faq-panel { padding: 14px; }
+  .faq-panel h3 {
+    font-size: 1rem;
+    color: var(--navy-dark);
+    margin-bottom: 10px;
+  }
+  .faq-chips {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+  }
+  .faq-chip {
+    border: 1px solid var(--line);
+    background: #f0f4fa;
+    color: var(--navy-dark);
+    border-radius: 999px;
+    padding: 8px 12px;
+    font-size: 0.88rem;
+    font-weight: 600;
+    cursor: pointer;
+  }
+  .faq-chip:active { background: #e2eaf5; }
+  .hint {
+    font-size: 0.9rem;
     color: var(--muted);
     text-align: center;
-    padding: 4px 8px 0;
+    padding: 2px 6px;
   }
   .perm-banner {
-    background: #fff3e0;
+    background: #fff6e8;
     border: 1px solid #f0c78a;
     color: #7a4e12;
     border-radius: 12px;
-    padding: 12px 14px;
-    font-size: 0.98rem;
+    padding: 11px 12px;
+    font-size: 0.95rem;
     text-align: center;
     display: none;
   }
   .perm-banner.show { display: block; }
+  .back-btn {
+    display: block;
+    width: 100%;
+    margin-top: 6px;
+    padding: 14px;
+    font-size: 1.05rem;
+    font-weight: 700;
+    border: none;
+    border-radius: 12px;
+    background: var(--navy-dark);
+    color: white;
+    cursor: pointer;
+  }
+  .footer-note {
+    text-align: center;
+    font-size: 0.78rem;
+    color: var(--muted);
+    padding-top: 4px;
+  }
 </style>
 </head>
 <body>
 <div class="app">
+  <div class="gov-bar"></div>
+
   <div class="header">
-    <h1>🌿 Ask Smriti</h1>
-    <p>I’m here whenever you need me</p>
+    <div class="badge">DIGITAL INDIA · CITIZEN COMPANION</div>
+    <h1>Ask Smriti</h1>
+    <p id="subtitle">A simple voice helper for daily needs</p>
   </div>
 
   <div class="perm-banner" id="permBanner">
@@ -209,19 +269,19 @@
   </div>
 
   <div class="mic-section">
-    <button class="mic-button" id="micBtn">🎤</button>
+    <button class="mic-button" id="micBtn" aria-label="Start listening">🎤</button>
   </div>
 
   <div class="controls">
-    <div class="wake-row">
-      <label class="wake-toggle">
-        <input type="checkbox" id="wakeToggle" />
-        <span id="wakeLabel">Listen for “Hello Smriti”</span>
-      </label>
-    </div>
+    <label class="wake-toggle">
+      <input type="checkbox" id="wakeToggle" />
+      <span id="wakeLabel">Listen for “Hello Smriti”</span>
+    </label>
     <div class="lang-row">
-      <button class="lang-btn active" data-lang="en">English</button>
+      <button class="lang-btn active" data-lang="en">EN</button>
       <button class="lang-btn" data-lang="hi">हिंदी</button>
+      <button class="lang-btn" data-lang="bn">বাংলা</button>
+      <button class="lang-btn" data-lang="as">অসমীয়া</button>
     </div>
   </div>
 
@@ -234,77 +294,162 @@
     <button id="typeBtn">Ask</button>
   </div>
 
-  <div class="faq-hint" id="hint">
+  <div class="faq-panel">
+    <h3 id="faqTitle">Quick help</h3>
+    <div class="faq-chips" id="faqChips"></div>
+  </div>
+
+  <div class="hint" id="hint">
     Turn on the toggle and say “Hello Smriti”, or just tap the mic.
   </div>
 
-  <button onclick="window.location.href='home.html'"
-        style="
-            display: block;
-            width: 100%;
-            max-width: 440px;
-            margin: 25px auto 10px;
-            padding: 16px;
-            font-size: 20px;
-            font-weight: bold;
-            border: none;
-            border-radius: 14px;
-            background: #315c8c;
-            color: white;
-            cursor: pointer;
-        ">
-    ← Back to Home
-</button>
-
+  <button class="back-btn" onclick="window.location.href='home.html'">← Back to Home</button>
+  <div class="footer-note">For support only · Not a medical emergency service</div>
 </div>
 
 <script>
-const FAQ_EN = [
-  { keywords: ["hi", "hello", "hey", "namaste", "good morning", "good afternoon", "good evening"], answer: () => "Hello! How may I help you today?" },
-  { keywords: ["how are you", "how are you doing"], answer: () => "I'm doing well, thank you for asking! How can I help you?" },
-  { keywords: ["good night", "bye", "goodbye", "see you"], answer: () => "Good night! Take care, I'll be here whenever you need me." },
-  { keywords: ["thank you", "thanks"], answer: () => "You're most welcome!" },
-  { keywords: ["time", "what time", "clock"], answer: () => `It is currently ${new Date().toLocaleTimeString([], {hour:'2-digit', minute:'2-digit'})}.` },
-  { keywords: ["date", "today", "what day", "day is it"], answer: () => `Today is ${new Date().toLocaleDateString([], {weekday:'long', year:'numeric', month:'long', day:'numeric'})}.` },
-  { keywords: ["where am i", "my location", "location", "lost"], answer: () => "I can show your current location on the map. Would you like me to open it?" },
-  { keywords: ["call family", "call my son", "call my daughter", "sos", "help me", "emergency"], answer: () => "Calling your family contact now. Please stay where you are. Help is on the way." },
-  { keywords: ["scared", "afraid", "anxious", "worried", "confused", "lonely"], answer: () => "It's okay, I'm right here with you. Take a slow deep breath. Would you like me to call a family member?" },
-  { keywords: ["medicine", "pill", "tablet", "medication"], answer: () => "Please check your medicine box or ask a family member. Would you like me to remind you later?" },
-  { keywords: ["water", "drink water", "thirsty"], answer: () => "Please drink a glass of water. Staying hydrated is important." },
-  { keywords: ["hungry", "food", "eat"], answer: () => "Please have something light to eat. Would you like me to call someone to help?" },
-  { keywords: ["pain", "headache", "not feeling well"], answer: () => "I'm sorry you're in pain. Please rest. Shall I call a family member or doctor?" },
-  { keywords: ["memory game", "play game", "game rules"], answer: () => "To play the memory game, tap two cards to flip them. If they match, they stay open. Try to match all pairs!" },
-  { keywords: ["exercise", "breathing", "relax"], answer: () => "Let's take three slow breaths together. Breathe in... and out... You're doing great." },
-  { keywords: ["who are you", "your name", "smriti"], answer: () => "I'm Smriti, your voice companion. I'm here to help with time, location, games, and calling family when needed." },
-  { keywords: ["weather", "raining", "hot", "cold"], answer: () => "I can't check live weather yet. Please look outside or ask a family member." },
-  { keywords: ["repeat", "say again"], answer: () => "I said: " + (window.lastSmritiReply || "Please ask me again.") },
-  { keywords: ["help", "what can you do"], answer: () => "You can ask me the time, date, location, medicine, games, or say 'call family' for help." }
-];
+/* ---------- FAQ banks (expand as needed) ---------- */
+const FAQ = {
+  en: [
+    { keywords: ["hi","hello","hey","namaste"], answer: () => "Hello! How may I help you today?", chip: "Hello" },
+    { keywords: ["time","what time","clock"], answer: () => `It is currently ${new Date().toLocaleTimeString([], {hour:'2-digit', minute:'2-digit'})}.`, chip: "Time" },
+    { keywords: ["date","today","what day"], answer: () => `Today is ${new Date().toLocaleDateString([], {weekday:'long', year:'numeric', month:'long', day:'numeric'})}.`, chip: "Date" },
+    { keywords: ["where am i","location","lost"], answer: () => "I can show your current location on the map. Would you like me to open it?", chip: "Location" },
+    { keywords: ["call family","sos","help me","emergency","call my son","call my daughter"], answer: () => "Calling your family contact now. Please stay where you are.", chip: "Call family" },
+    { keywords: ["scared","afraid","anxious","worried","lonely","confused"], answer: () => "It's okay, I'm right here with you. Take a slow deep breath. Shall I call a family member?", chip: "I feel scared" },
+    { keywords: ["medicine","pill","tablet","medication"], answer: () => "Please check your medicine box or ask a family member. Would you like a reminder later?", chip: "Medicine" },
+    { keywords: ["water","thirsty"], answer: () => "Please drink a glass of water. Staying hydrated is important.", chip: "Water" },
+    { keywords: ["hungry","food","eat"], answer: () => "Please have something light to eat. Would you like me to call someone to help?", chip: "Food" },
+    { keywords: ["pain","headache","not feeling well"], answer: () => "I'm sorry you're in pain. Please rest. Shall I call a family member or doctor?", chip: "Pain" },
+    { keywords: ["memory game","play game","game"], answer: () => "To play the memory game, tap two cards to flip them. If they match, they stay open. Try to match all pairs!", chip: "Memory game" },
+    { keywords: ["breathing","relax","exercise"], answer: () => "Let's take three slow breaths together. Breathe in... and out... You're doing great.", chip: "Breathing" },
+    { keywords: ["who are you","your name","smriti"], answer: () => "I'm Smriti, your voice companion. I can help with time, location, medicine reminders, games, and calling family.", chip: "Who are you?" },
+    { keywords: ["thank you","thanks"], answer: () => "You're most welcome!", chip: "Thank you" },
+    { keywords: ["help","what can you do"], answer: () => "You can ask about time, date, location, medicine, games, or say 'call family' for help.", chip: "What can you do?" }
+  ],
+  hi: [
+    { keywords: ["नमस्ते","हैलो","हेलो"], answer: () => "नमस्ते! मैं आपकी कैसे मदद कर सकती हूं?", chip: "नमस्ते" },
+    { keywords: ["समय","टाइम"], answer: () => `अभी समय है ${new Date().toLocaleTimeString('hi-IN',{hour:'2-digit',minute:'2-digit'})}.`, chip: "समय" },
+    { keywords: ["तारीख","आज"], answer: () => `आज ${new Date().toLocaleDateString('hi-IN',{weekday:'long',year:'numeric',month:'long',day:'numeric'})} है.`, chip: "तारीख" },
+    { keywords: ["लोकेशन","मैं कहां"], answer: () => "मैं आपकी लोकेशन नक्शे पर दिखा सकती हूं। क्या खोलूं?", chip: "लोकेशन" },
+    { keywords: ["परिवार","एसओएस","मदद"], answer: () => "आपके परिवार को अभी कॉल कर रही हूं। वहीं रुकिए।", chip: "परिवार बुलाओ" },
+    { keywords: ["डर","घबराहट","अकेला"], answer: () => "कोई बात नहीं, मैं यहीं हूं। धीरे से सांस लें। क्या परिवार को बुलाऊं?", chip: "डर लग रहा है" },
+    { keywords: ["दवा","दवाई","गोली"], answer: () => "कृपया अपनी दवा देखें या परिवार से पूछें।", chip: "दवा" },
+    { keywords: ["पानी","प्यास"], answer: () => "कृपया एक गिलास पानी पी लीजिए।", chip: "पानी" },
+    { keywords: ["भूख","खाना"], answer: () => "कृपया हल्का सा कुछ खा लीजिए।", chip: "खाना" },
+    { keywords: ["दर्द","सिर दर्द"], answer: () => "आराम करें। क्या परिवार या डॉक्टर को बुलाऊं?", chip: "दर्द" },
+    { keywords: ["खेल","मेमोरी"], answer: () => "दो कार्ड पलटें। मिलने पर वे खुले रहेंगे।", chip: "खेल" },
+    { keywords: ["सांस","आराम"], answer: () => "चलिए तीन धीमी सांसें लेते हैं। सांस अंदर... बाहर...", chip: "सांस" },
+    { keywords: ["तुम कौन","स्मृति"], answer: () => "मैं स्मृति हूं, आपकी वॉइस साथी।", chip: "आप कौन हैं?" },
+    { keywords: ["धन्यवाद","शुक्रिया"], answer: () => "आपका स्वागत है!", chip: "धन्यवाद" },
+    { keywords: ["मदद","क्या कर सकती"], answer: () => "आप समय, तारीख, लोकेशन, दवा या 'परिवार को बुलाओ' कह सकते हैं।", chip: "मदद" }
+  ],
+  bn: [
+    { keywords: ["নমস্কার","হ্যালো","হাই"], answer: () => "নমস্কার! আমি কীভাবে সাহায্য করতে পারি?", chip: "নমস্কার" },
+    { keywords: ["সময়","কটা বাজে"], answer: () => `এখন সময় ${new Date().toLocaleTimeString('bn-IN',{hour:'2-digit',minute:'2-digit'})}.`, chip: "সময়" },
+    { keywords: ["তারিখ","আজ"], answer: () => `আজ ${new Date().toLocaleDateString('bn-IN',{weekday:'long',year:'numeric',month:'long',day:'numeric'})}.`, chip: "তারিখ" },
+    { keywords: ["লোকেশন","কোথায়"], answer: () => "আমি আপনার লোকেশন মানচিত্রে দেখাতে পারি। খুলব কি?", chip: "লোকেশন" },
+    { keywords: ["পরিবার","সাহায্য","এসওএস"], answer: () => "আপনার পরিবারকে এখনই কল করছি। অনুগ্রহ করে একই জায়গায় থাকুন।", chip: "পরিবার ডাকো" },
+    { keywords: ["ভয়","অস্থির","একা"], answer: () => "ঠিক আছে, আমি এখানে আছি। ধীরে শ্বাস নিন। পরিবারকে ডাকব কি?", chip: "ভয় লাগছে" },
+    { keywords: ["ওষুধ","ট্যাবলেট"], answer: () => "অনুগ্রহ করে ওষুধের বাক্স দেখুন বা পরিবারকে জিজ্ঞাসা করুন।", chip: "ওষুধ" },
+    { keywords: ["পানি","তৃষ্ণা"], answer: () => "অনুগ্রহ করে এক গ্লাস পানি পান করুন।", chip: "পানি" },
+    { keywords: ["ক্ষুধা","খাবার"], answer: () => "অনুগ্রহ করে হালকা কিছু খান।", chip: "খাবার" },
+    { keywords: ["ব্যথা","মাথাব্যথা"], answer: () => "বিশ্রাম নিন। পরিবার বা ডাক্তারকে ডাকব কি?", chip: "ব্যথা" },
+    { keywords: ["খেলা","মেমোরি"], answer: () => "দুটি কার্ড উল্টান। মিললে সেগুলি খোলা থাকবে।", chip: "খেলা" },
+    { keywords: ["শ্বাস","আরাম"], answer: () => "চলুন তিনটি ধীর শ্বাস নিই। শ্বাস নিন... ছাড়ুন...", chip: "শ্বাস" },
+    { keywords: ["কে তুমি","স্মৃতি"], answer: () => "আমি স্মৃতি, আপনার ভয়েস সঙ্গী।", chip: "আপনি কে?" },
+    { keywords: ["ধন্যবাদ"], answer: () => "আপনাকে স্বাগতম!", chip: "ধন্যবাদ" },
+    { keywords: ["সাহায্য","কী করতে পারো"], answer: () => "আপনি সময়, তারিখ, লোকেশন, ওষুধ বা 'পরিবার ডাকো' বলতে পারেন।", chip: "সাহায্য" }
+  ],
+  as: [
+    { keywords: ["নমস্কাৰ","হেলো","হাই"], answer: () => "নমস্কাৰ! মই আপোনাক কেনেকৈ সহায় কৰিব পাৰোঁ?", chip: "নমস্কাৰ" },
+    { keywords: ["সময়","কিমান বাজিছে"], answer: () => `এতিয়া সময় ${new Date().toLocaleTimeString('en-IN',{hour:'2-digit',minute:'2-digit'})}.`, chip: "সময়" },
+    { keywords: ["তাৰিখ","আজি"], answer: () => `আজি ${new Date().toLocaleDateString('en-IN',{weekday:'long',year:'numeric',month:'long',day:'numeric'})}.`, chip: "তাৰিখ" },
+    { keywords: ["লোকেচন","ক'ত"], answer: () => "মই আপোনাৰ লোকেচন মানচিত্ৰত দেখুৱাব পাৰোঁ। খুলিম নেকি?", chip: "লোকেচন" },
+    { keywords: ["পৰিয়াল","সহায়","এছঅ’এছ"], answer: () => "আপোনাৰ পৰিয়ালক এতিয়াই কল কৰি আছোঁ। অনুগ্ৰহ কৰি তাতে থাকক।", chip: "পৰিয়াল মাতা" },
+    { keywords: ["ভয়","অস্থিৰ","অকলে"], answer: () => "ঠিক আছে, মই ইয়াতে আছোঁ। লাহে লাহে উশাহ লওক। পৰিয়ালক মাতিম নেকি?", chip: "ভয় লাগিছে" },
+    { keywords: ["ঔষধ","টেবলেট"], answer: () => "অনুগ্ৰহ কৰি ঔষধৰ বাকচ চাওক বা পৰিয়ালক সোধক।", chip: "ঔষধ" },
+    { keywords: ["পানী","পিয়াহ"], answer: () => "অনুগ্ৰহ কৰি এগিলাচ পানী খাওক।", chip: "পানী" },
+    { keywords: ["ভোক","খাদ্য"], answer: () => "অনুগ্ৰহ কৰি পাতল কিবা এটা খাওক।", chip: "খাদ্য" },
+    { keywords: ["বেদনা","মূৰৰ বিষ"], answer: () => "জীৰণি লওক। পৰিয়াল বা চিকিৎসকক মাতিম নেকি?", chip: "বেদনা" },
+    { keywords: ["খেল","মেমৰি"], answer: () => "দুটা কাৰ্ড উলটাওক। মিলিলে সেইবোৰ খোলা থাকিব।", chip: "খেল" },
+    { keywords: ["উশাহ","জীৰণি"], answer: () => "আহক তিনিটা লাহে উশাহ লওঁ। উশাহ লওক... এৰি দিয়ক...", chip: "উশাহ" },
+    { keywords: ["তুমি কোন","স্মৃতি"], answer: () => "মই স্মৃতি, আপোনাৰ ভইচ সংগী।", chip: "আপুনি কোন?" },
+    { keywords: ["ধন্যবাদ"], answer: () => "আপোনাক স্বাগতম!", chip: "ধন্যবাদ" },
+    { keywords: ["সহায়","কি কৰিব পাৰা"], answer: () => "আপুনি সময়, তাৰিখ, লোকেচন, ঔষধ বা 'পৰিয়াল মাতা' ক’ব পাৰে।", chip: "সহায়" }
+  ]
+};
 
-const FAQ_HI = [
-  { keywords: ["नमस्ते", "हैलो", "हेलो", "सुप्रभात"], answer: () => "नमस्ते! मैं आपकी कैसे मदद कर सकती हूं?" },
-  { keywords: ["आप कैसे हैं", "कैसी हो"], answer: () => "मैं ठीक हूं, पूछने के लिए धन्यवाद!" },
-  { keywords: ["शुभ रात्रि", "अलविदा", "बाय"], answer: () => "शुभ रात्रि! अपना ख्याल रखें।" },
-  { keywords: ["धन्यवाद", "शुक्रिया"], answer: () => "आपका स्वागत है!" },
-  { keywords: ["समय", "टाइम", "क्या समय"], answer: () => `अभी समय है ${new Date().toLocaleTimeString('hi-IN', {hour:'2-digit', minute:'2-digit'})}.` },
-  { keywords: ["तारीख", "आज का दिन", "आज कौन सा दिन"], answer: () => `आज ${new Date().toLocaleDateString('hi-IN', {weekday:'long', year:'numeric', month:'long', day:'numeric'})} है.` },
-  { keywords: ["मैं कहां हूं", "लोकेशन", "रास्ता भूल गया"], answer: () => "मैं आपकी लोकेशन नक्शे पर दिखा सकती हूं। क्या खोलूं?" },
-  { keywords: ["परिवार को बुलाओ", "मदद करो", "एसओएस"], answer: () => "आपके परिवार को अभी कॉल कर रही हूं। वहीं रुकिए।" },
-  { keywords: ["डर लग रहा है", "घबराहट", "परेशान", "अकेला"], answer: () => "कोई बात नहीं, मैं यहीं हूं। धीरे से सांस लें। क्या परिवार को बुलाऊं?" },
-  { keywords: ["दवा", "दवाई", "गोली"], answer: () => "कृपया अपनी दवा देखें या परिवार से पूछें।" },
-  { keywords: ["पानी", "प्यास"], answer: () => "कृपया एक गिलास पानी पी लीजिए।" },
-  { keywords: ["भूख", "खाना"], answer: () => "कृपया हल्का सा कुछ खा लीजिए।" },
-  { keywords: ["दर्द", "सिर दर्द", "तबीयत खराब"], answer: () => "आराम करें। क्या परिवार या डॉक्टर को बुलाऊं?" },
-  { keywords: ["मेमोरी गेम", "खेल"], answer: () => "दो कार्ड पलटें। मिलने पर वे खुले रहेंगे।" },
-  { keywords: ["सांस", "आराम"], answer: () => "चलिए तीन धीमी सांसें लेते हैं। सांस अंदर... बाहर..." },
-  { keywords: ["तुम कौन हो", "तुम्हारा नाम", "स्मृति"], answer: () => "मैं स्मृति हूं, आपकी वॉइस साथी।" },
-  { keywords: ["मौसम", "बारिश", "गर्मी"], answer: () => "अभी लाइव मौसम नहीं बता सकती। खिड़की से देख लें।" },
-  { keywords: ["दोबारा", "फिर से बोलो"], answer: () => "मैंने कहा: " + (window.lastSmritiReply || "फिर से पूछें।") },
-  { keywords: ["मदद", "क्या कर सकती हो"], answer: () => "आप समय, तारीख, लोकेशन, दवा या 'परिवार को बुलाओ' कह सकते हैं।" }
-];
+const UI = {
+  en: {
+    subtitle: "A simple voice helper for daily needs",
+    statusIdle: "Tap the microphone to speak",
+    statusListen: "Listening…",
+    statusSpeak: "Speaking…",
+    statusWake: "Say “Hello Smriti”",
+    wake: "Listen for “Hello Smriti”",
+    hint: "Turn on the toggle and say “Hello Smriti”, or just tap the mic.",
+    typePh: "Or type your question here",
+    ask: "Ask",
+    faqTitle: "Quick help",
+    fallback: "I'm not sure I understood that. You can ask about time, date, location, medicine, games, or say 'call family'.",
+    wakeReply: "Yes, I'm listening.",
+    micNeed: "Please allow microphone access"
+  },
+  hi: {
+    subtitle: "रोजमर्रा की जरूरतों के लिए सरल आवाज़ सहायक",
+    statusIdle: "बोलने के लिए माइक पर टैप करें",
+    statusListen: "सुन रही हूं…",
+    statusSpeak: "बोल रही हूं…",
+    statusWake: "“स्मृति” बोलें",
+    wake: "“स्मृति” सुनें",
+    hint: "टॉगल चालू करें और “स्मृति” बोलें, या माइक पर टैप करें।",
+    typePh: "या यहाँ लिखें",
+    ask: "पूछें",
+    faqTitle: "त्वरित मदद",
+    fallback: "मुझे समझ नहीं आया। आप समय, तारीख, लोकेशन, दवा या 'परिवार को बुलाओ' कह सकते हैं।",
+    wakeReply: "जी हां, मैं सुन रही हूं।",
+    micNeed: "कृपया माइक की अनुमति दें"
+  },
+  bn: {
+    subtitle: "দৈনন্দিন প্রয়োজনে সহজ ভয়েস সহায়ক",
+    statusIdle: "কথা বলতে মাইকে ট্যাপ করুন",
+    statusListen: "শুনছি…",
+    statusSpeak: "বলছি…",
+    statusWake: "“স্মৃতি” বলুন",
+    wake: "“স্মৃতি” শুনুন",
+    hint: "টগল চালু করে “স্মৃতি” বলুন, অথবা মাইকে ট্যাপ করুন।",
+    typePh: "অথবা এখানে লিখুন",
+    ask: "জিজ্ঞাসা",
+    faqTitle: "দ্রুত সাহায্য",
+    fallback: "বুঝতে পারিনি। সময়, তারিখ, লোকেশন, ওষুধ বা 'পরিবার ডাকো' বলতে পারেন।",
+    wakeReply: "জি, আমি শুনছি।",
+    micNeed: "অনুগ্রহ করে মাইকের অনুমতি দিন"
+  },
+  as: {
+    subtitle: "দৈনন্দিন প্ৰয়োজনৰ বাবে সৰল ভইচ সহায়ক",
+    statusIdle: "কথা ক’বলৈ মাইকত টিপক",
+    statusListen: "শুনি আছোঁ…",
+    statusSpeak: "কৈ আছোঁ…",
+    statusWake: "“স্মৃতি” কওক",
+    wake: "“স্মৃতি” শুনক",
+    hint: "টগল অন কৰি “স্মৃতি” কওক, বা মাইকত টিপক।",
+    typePh: "বা ইয়াত লিখক",
+    ask: "সোধক",
+    faqTitle: "দ্ৰুত সহায়",
+    fallback: "বুজি পোৱা নাই। সময়, তাৰিখ, লোকেচন, ঔষধ বা 'পৰিয়াল মাতা' ক’ব পাৰে।",
+    wakeReply: "হয়, মই শুনি আছোঁ।",
+    micNeed: "অনুগ্ৰহ কৰি মাইকৰ অনুমতি দিয়ক"
+  }
+};
 
-const FALLBACK_EN = "I'm not sure I understood that. You can ask about time, date, location, medicine, games, or say 'call family'.";
-const FALLBACK_HI = "मुझे समझ नहीं आया। आप समय, तारीख, लोकेशन, दवा या 'परिवार को बुलाओ' कह सकते हैं।";
+const LANG_CODE = { en: "en-IN", hi: "hi-IN", bn: "bn-IN", as: "as-IN" };
+const WAKE = {
+  en: ["hello smriti", "hey smriti", "ok smriti", "hi smriti"],
+  hi: ["हेलो स्मृति", "नमस्ते स्मृति", "स्मृति"],
+  bn: ["হ্যালো স্মৃতি", "নমস্কার স্মৃতি", "স্মৃতি"],
+  as: ["হেলো স্মৃতি", "নমস্কাৰ স্মৃতি", "স্মৃতি"]
+};
 
 const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
 let currentLang = "en";
@@ -324,9 +469,7 @@ const wakeToggle = document.getElementById("wakeToggle");
 const wakeLabel = document.getElementById("wakeLabel");
 const permBanner = document.getElementById("permBanner");
 const hintEl = document.getElementById("hint");
-
-const WAKE_PHRASES_EN = ["hello smriti", "hey smriti", "ok smriti", "hi smriti"];
-const WAKE_PHRASES_HI = ["हेलो स्मृति", "नमस्ते स्मृति", "स्मृति"];
+const faqChips = document.getElementById("faqChips");
 
 function normalize(text) {
   return text.toLowerCase().replace(/[.,\/#!$%\^&\*;:{}=\-_`~()]/g, "").replace(/\s+/g, " ").trim();
@@ -334,18 +477,18 @@ function normalize(text) {
 
 function findAnswer(userText) {
   const text = normalize(userText);
-  const faq = currentLang === "hi" ? FAQ_HI : FAQ_EN;
+  const faq = FAQ[currentLang] || FAQ.en;
   let best = null, bestScore = 0;
   for (const entry of faq) {
     let score = 0;
     for (const kw of entry.keywords) {
       const k = normalize(kw);
       if (text === k) score += 10;
-      else if (text.includes(k)) score += k.length > 8 ? 4 : 2;
+      else if (text.includes(k)) score += k.length > 6 ? 4 : 2;
     }
     if (score > bestScore) { bestScore = score; best = entry; }
   }
-  return (best && bestScore >= 2) ? best.answer() : (currentLang === "hi" ? FALLBACK_HI : FALLBACK_EN);
+  return (best && bestScore >= 2) ? best.answer() : UI[currentLang].fallback;
 }
 
 let cachedVoices = [];
@@ -355,14 +498,13 @@ if (window.speechSynthesis) {
   speechSynthesis.onvoiceschanged = loadVoices;
 }
 
-function getFemaleVoice(lang) {
+function getVoice(lang) {
   if (!cachedVoices.length) loadVoices();
-  const prefix = lang.startsWith("hi") ? "hi" : "en";
-  const preferred = ["Google UK English Female","Microsoft Zira","Samantha","Karen","Microsoft Heera","Google हिन्दी","Veena","Aria"];
-  let v = cachedVoices.find(x => preferred.some(n => x.name.includes(n)) && x.lang.toLowerCase().startsWith(prefix));
-  if (!v) v = cachedVoices.find(x => /female|zira|samantha|heera|veena|aria/i.test(x.name) && x.lang.toLowerCase().startsWith(prefix));
-  if (!v) v = cachedVoices.find(x => x.lang.toLowerCase().startsWith(prefix));
-  return v || cachedVoices[0] || null;
+  const prefix = lang.slice(0, 2).toLowerCase();
+  return cachedVoices.find(v => v.lang.toLowerCase().startsWith(prefix))
+    || cachedVoices.find(v => /female|zira|heera|samantha/i.test(v.name))
+    || cachedVoices[0]
+    || null;
 }
 
 function speak(text) {
@@ -370,11 +512,11 @@ function speak(text) {
     if (!window.speechSynthesis) return resolve();
     speechSynthesis.cancel();
     isSpeaking = true;
-    setStatus(currentLang === "hi" ? "बोल रही हूं…" : "Speaking…");
+    setStatus(UI[currentLang].statusSpeak);
     const u = new SpeechSynthesisUtterance(text);
-    u.rate = 0.88; u.pitch = 1.1;
-    u.lang = currentLang === "hi" ? "hi-IN" : "en-IN";
-    const voice = getFemaleVoice(u.lang);
+    u.rate = 0.9; u.pitch = 1.05;
+    u.lang = LANG_CODE[currentLang] || "en-IN";
+    const voice = getVoice(u.lang);
     if (voice) u.voice = voice;
     u.onend = u.onerror = () => { isSpeaking = false; resolve(); };
     speechSynthesis.speak(u);
@@ -389,21 +531,32 @@ function setStatus(msg, type = "") {
 function stopListeningUI() {
   listening = false;
   micBtn.classList.remove("listening");
-  if (!wakeModeOn) setStatus(currentLang === "hi" ? "माइक पर टैप करें" : "Tap the microphone to speak");
+  if (!wakeModeOn) setStatus(UI[currentLang].statusIdle);
+}
+
+function renderChips() {
+  const list = FAQ[currentLang] || FAQ.en;
+  faqChips.innerHTML = "";
+  list.slice(0, 8).forEach(item => {
+    if (!item.chip) return;
+    const b = document.createElement("button");
+    b.className = "faq-chip";
+    b.textContent = item.chip;
+    b.onclick = () => handleUserInput(item.chip);
+    faqChips.appendChild(b);
+  });
 }
 
 function updateLabels() {
-  if (currentLang === "hi") {
-    wakeLabel.textContent = "“स्मृति” सुनें";
-    hintEl.textContent = "टॉगल चालू करें और “स्मृति” बोलें, या माइक पर टैप करें।";
-    document.getElementById("typeInput").placeholder = "या यहाँ लिखें";
-    document.getElementById("typeBtn").textContent = "पूछें";
-  } else {
-    wakeLabel.textContent = "Listen for “Hello Smriti”";
-    hintEl.textContent = "Turn on the toggle and say “Hello Smriti”, or just tap the mic.";
-    document.getElementById("typeInput").placeholder = "Or type your question here";
-    document.getElementById("typeBtn").textContent = "Ask";
-  }
+  const u = UI[currentLang];
+  document.getElementById("subtitle").textContent = u.subtitle;
+  wakeLabel.textContent = u.wake;
+  hintEl.textContent = u.hint;
+  document.getElementById("typeInput").placeholder = u.typePh;
+  document.getElementById("typeBtn").textContent = u.ask;
+  document.getElementById("faqTitle").textContent = u.faqTitle;
+  if (!listening && !isSpeaking && !wakeModeOn) setStatus(u.statusIdle);
+  renderChips();
 }
 
 async function ensureMicPermission() {
@@ -416,7 +569,7 @@ async function ensureMicPermission() {
     return true;
   } catch (e) {
     permBanner.classList.add("show");
-    setStatus(currentLang === "hi" ? "माइक की अनुमति दें" : "Please allow microphone access", "error");
+    setStatus(UI[currentLang].micNeed, "error");
     return false;
   }
 }
@@ -430,12 +583,12 @@ function initRecognizers() {
   commandRecognizer = new SpeechRecognition();
   commandRecognizer.continuous = false;
   commandRecognizer.interimResults = false;
-  commandRecognizer.lang = currentLang === "hi" ? "hi-IN" : "en-IN";
+  commandRecognizer.lang = LANG_CODE[currentLang];
 
   commandRecognizer.onstart = () => {
     listening = true;
     micBtn.classList.add("listening");
-    setStatus(currentLang === "hi" ? "सुन रही हूं…" : "Listening…", "listening");
+    setStatus(UI[currentLang].statusListen, "listening");
   };
   commandRecognizer.onerror = (e) => {
     if (e.error !== "aborted") setStatus("Error: " + e.error, "error");
@@ -453,45 +606,48 @@ function initRecognizers() {
   wakeRecognizer = new SpeechRecognition();
   wakeRecognizer.continuous = true;
   wakeRecognizer.interimResults = true;
-  wakeRecognizer.lang = currentLang === "hi" ? "hi-IN" : "en-IN";
+  wakeRecognizer.lang = LANG_CODE[currentLang];
 
   wakeRecognizer.onresult = (e) => {
-    const phrases = currentLang === "hi" ? WAKE_PHRASES_HI : WAKE_PHRASES_EN;
+    const phrases = WAKE[currentLang] || WAKE.en;
     for (let i = e.resultIndex; i < e.results.length; i++) {
       const said = e.results[i][0].transcript.toLowerCase();
       if (phrases.some(p => said.includes(p))) {
         wakeShouldRestart = false;
         try { wakeRecognizer.stop(); } catch(_){}
-        speak(currentLang === "hi" ? "जी हां, मैं सुन रही हूं।" : "Yes, I'm listening.")
-          .then(() => setTimeout(() => { if (!listening) try{commandRecognizer.start()}catch(_){} }, 300));
+        speak(UI[currentLang].wakeReply)
+          .then(() => setTimeout(() => { if (!listening) try { commandRecognizer.start(); } catch(_){} }, 300));
         return;
       }
     }
   };
-  wakeRecognizer.onerror = (e) => { if (e.error !== "no-speech" && e.error !== "aborted") {} };
+  wakeRecognizer.onerror = () => {};
   wakeRecognizer.onend = () => {
     if (wakeModeOn && wakeShouldRestart && !listening && !isSpeaking)
-      setTimeout(() => { try{wakeRecognizer.start()}catch(_){} }, 300);
+      setTimeout(() => { try { wakeRecognizer.start(); } catch(_){} }, 300);
   };
 }
 
 function startWakeRecognizer() {
   if (!wakeRecognizer || !wakeModeOn) return;
   wakeShouldRestart = true;
-  try { wakeRecognizer.start(); setStatus(currentLang === "hi" ? "“स्मृति” बोलें" : "Say “Hello Smriti”"); } catch(_){}
+  try {
+    wakeRecognizer.start();
+    setStatus(UI[currentLang].statusWake);
+  } catch(_){}
 }
 
 function stopWakeRecognizer() {
   wakeShouldRestart = false;
   try { wakeRecognizer.stop(); } catch(_){}
-  setStatus(currentLang === "hi" ? "माइक पर टैप करें" : "Tap the microphone to speak");
+  setStatus(UI[currentLang].statusIdle);
 }
 
 async function startListening() {
   if (listening || isSpeaking) return;
   const ok = await ensureMicPermission();
   if (!ok) return;
-  if (wakeModeOn) { wakeShouldRestart = false; try{wakeRecognizer.stop()}catch(_){} }
+  if (wakeModeOn) { wakeShouldRestart = false; try { wakeRecognizer.stop(); } catch(_){} }
   try { commandRecognizer.start(); } catch(e) { setStatus("Try again", "error"); }
 }
 
@@ -501,7 +657,7 @@ function handleUserInput(text) {
   appendToTranscript(text, answer);
   speak(answer).then(() => {
     if (wakeModeOn) setTimeout(startWakeRecognizer, 500);
-    else setStatus(currentLang === "hi" ? "माइक पर टैप करें" : "Tap the microphone to speak");
+    else setStatus(UI[currentLang].statusIdle);
   });
 }
 
@@ -526,11 +682,15 @@ document.querySelectorAll(".lang-btn").forEach(btn => {
     currentLang = btn.dataset.lang;
     document.querySelectorAll(".lang-btn").forEach(b => b.classList.toggle("active", b === btn));
     updateLabels();
-    const lang = currentLang === "hi" ? "hi-IN" : "en-IN";
+    const lang = LANG_CODE[currentLang];
     if (commandRecognizer) commandRecognizer.lang = lang;
     if (wakeRecognizer) {
       wakeRecognizer.lang = lang;
-      if (wakeModeOn) { wakeShouldRestart = false; try{wakeRecognizer.stop()}catch(_){} setTimeout(startWakeRecognizer, 400); }
+      if (wakeModeOn) {
+        wakeShouldRestart = false;
+        try { wakeRecognizer.stop(); } catch(_){}
+        setTimeout(startWakeRecognizer, 400);
+      }
     }
   };
 });
@@ -539,7 +699,9 @@ document.getElementById("typeBtn").onclick = () => {
   const t = document.getElementById("typeInput").value.trim();
   if (t) { handleUserInput(t); document.getElementById("typeInput").value = ""; }
 };
-document.getElementById("typeInput").onkeydown = e => { if (e.key === "Enter") document.getElementById("typeBtn").click(); };
+document.getElementById("typeInput").onkeydown = e => {
+  if (e.key === "Enter") document.getElementById("typeBtn").click();
+};
 
 initRecognizers();
 updateLabels();
